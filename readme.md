@@ -14,7 +14,7 @@
     * [Airport class](#airport-class)
 <!-- /TOC -->
 
-##Introduction
+## Introduction
 This is a Python 3 wrapper for the [flightplandatabase.com](https://www.flightplandatabase.com/) API. Please read the terms of use for this API at [https://flightplandatabase.com/dev/api](https://flightplandatabase.com/dev/api). A large part of this documentation also comes from that website.
 
 This library consists of three classes of commands. They are as follows:
@@ -29,13 +29,13 @@ When using this wrapper, `key` needs to be passed as the first argument for ever
 This wrapper does not support changing the units in which the flight plans are returned to anything other than aviation units, and that's not on the to-do list. Feel free to implement it yourself in a branch, however, and push the changed branch back to main.
 
 
-##Data format
-###General
+## Data format
+### General
 Information is passed to or from the library as nested native Python dicts, lists, etc. This is converted to and from JSON by the library for interaction with the API.
 
 All commands in this wrapper return two variables: `headers`, which is the response headers, and `result`, which is the message response returned by the server. Both consist of native Python structures.
 
-###Header
+### Header
 A typical header dict looks as follows. Note that choosing pages or units has not been implemented in this wrapper, so the units, for instance, will always be `AVIATION`. When headers are not applicable to the response, they will not be included. In the code examples in this file, I have placed the intended value of each field and its type between `<>` brackets. :
 ```
 {
@@ -53,7 +53,7 @@ A typical header dict looks as follows. Note that choosing pages or units has no
 }
 ```
 
-###Flight plan response
+### Flight plan response
 Flight plan responses are passed as `result` when using commands pertaining to flight plans. They look as follows:
 ```
 {
@@ -114,8 +114,8 @@ The valid node types are as follows:
 | DME    | Distance measuring equipment     |
 | LATLON | Latitude/Longitude point         |
 
-##Commands
-###API class
+## Commands
+### API class
 The API class has the following commands:
   * `ping(key)`: This checks the API status to see if it is up. Usage is `flightplandb.API.ping(key)`. If successful, `result` is
 ```
@@ -126,7 +126,7 @@ The API class has the following commands:
 ```
   * `revoke(key)`: This permanently deactivates the key passed in the revoke request. After running this, a new key must be set by hand in the FlightPlanDatabase settings, under the section "API Access". If successful, `result` is the same as for `ping()`.
 
-###Plan class
+### Plan class
 The Plan class has the following commands:
   * `fetch(key, id)`This fetches a flight plan based on its ID. Usage is `flightplandb.Plan.fetch(key, id)`. The `result` returned is the flight plan with fields as shown earlier.
   * `post(key, route)`: This posts a flight plan which is passed to it as a route object (see `"route":` in the response form earlier ). Usage is `flightplandb.Plan.fetch(key, route)`. Returns the same as `fetch()`, so essentially first posts and then fetches the flight plan.
@@ -152,7 +152,7 @@ The parameters for flight plan generation are as follows, where I have added `re
 }
 ```
 
-###Airport class
+### Airport class
 The Airport class has the following commands:
   * `weather()`: This gets the weather of an airport, as specified by ICAO code, passed as a string. Usage is `flightplandb.Airport.weather(key, ICAO)`. The `result` returned is as follows:
 ```

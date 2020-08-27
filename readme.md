@@ -15,7 +15,7 @@
 <!-- /TOC -->
 
 ## Introduction
-This is a Python 3 wrapper for the [flightplandatabase.com](https://www.flightplandatabase.com/) API. Please read the terms of use for this API at [https://flightplandatabase.com/dev/api](https://flightplandatabase.com/dev/api). A large part of this documentation also comes from that website.
+This is a Python 3 wrapper for the Flight Plan Database API. Please read the terms of use for this API at [https://flightplandatabase.com/dev/api](https://flightplandatabase.com/dev/api). A large part of this documentation also comes from that website.
 
 This library consists of three classes of commands. They are as follows:
   * API - Commands in this class are meant to make it easier to use the API. They do not serve actual flight resources, but only information linked to the API itself.

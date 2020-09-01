@@ -1,5 +1,7 @@
 # FlightplanDB-python
 
+Warning: this documentation is heavily outdated! Please read the code if you absolutely must use this branch!
+
 <!-- TOC titleSize:2 tabSpaces:2 depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 skip:0 title:1 charForUnorderedList:* -->
 ## Table of Contents
 * [FlightplanDB-python](#flightplandb-python)

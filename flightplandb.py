@@ -2,6 +2,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 
+# Actions purely related to the API interaction
 class API:
 
     # Checks API status to see if it is up
@@ -10,8 +11,7 @@ class API:
         url = "https://api.flightplandatabase.com/"
         # BasicHTTPAuth with API key passed as username, no password
         result = requests.get(url, auth=HTTPBasicAuth(key, None))
-        # the headers get passed back as a dict
-        # the reponse gets passed back as JSON
+        # the headers and response get passed back as a dict
         return(result.headers, result.json())
 
     # Revokes API key
@@ -92,20 +92,107 @@ class Plan:
         result = requests.post(url, json=params, auth=HTTPBasicAuth(key, None))
         return(result.headers, result.json())
 
+    # Everything to do with flightplan likes
+    class Like:
 
-# Fetches various info related to airports
-class Airport:
+        # Fetches your like status for a flight plan.
+        @staticmethod
+        def get(id):
+            url = "https://api.flightplandatabase.com/search/plans"
 
-    # Fetches info about airport by ICAO code
+
+# Contains everything pertaining to navigation
+#class Nav:
+
+    # NATS
     @staticmethod
-    def info(key, icao):
-        url = f"https://api.flightplandatabase.com/nav/airport/{icao}"
+    def NATS(key):
+        url = "https://api.flightplandatabase.com/nav/NATS"
+        result = requests.get(
+            url,
+            auth=HTTPBasicAuth(key, None)
+            )
+        return(result.headers, result.json())
+
+    # PACOTS
+    @staticmethod
+    def PACOTS(key):
+        url = "https://api.flightplandatabase.com/nav/PACOTS"
+        result = requests.get(
+            url,
+            auth=HTTPBasicAuth(key, None)
+            )
+        return(result.headers, result.json())
+
+    # Search
+    @staticmethod
+    def search(key, query, types=None):
+        params = {"q": query, "types": types}
+        url = "https://api.flightplandatabase.com/search/nav"
+        result = requests.get(
+            url,
+            params=params,
+            auth=HTTPBasicAuth(key, None)
+            )
+        return(result.headers, result.json())
+
+    # Fetches various info related to airports
+    class Airport:
+
+        # Fetches info about airport by ICAO code
+        @staticmethod
+        def info(key, icao):
+            url = f"https://api.flightplandatabase.com/nav/airport/{icao}"
+            result = requests.get(url, auth=HTTPBasicAuth(key, None))
+            return(result.headers, result.json())
+
+        # Fetches weather for airport by ICAO code
+        @staticmethod
+        def weather(key, icao):
+            url = f"https://api.flightplandatabase.com/weather/{icao}"
+            result = requests.get(url, auth=HTTPBasicAuth(key, None))
+            return(result.headers, result.json())
+
+
+# Commands related to registered users
+class User:
+
+    # Fetches profile information
+    @staticmethod
+    def info(key, username):
+        url = f"https://api.flightplandatabase.com/user/{username}"
         result = requests.get(url, auth=HTTPBasicAuth(key, None))
         return(result.headers, result.json())
 
-    # Fetches weather for airport by ICAO code
+    # An alias for info where username is the current user
     @staticmethod
-    def weather(key, icao):
-        url = f"https://api.flightplandatabase.com/weather/{icao}"
+    def info_me(key):
+        url = "https://api.flightplandatabase.com/me/"
         result = requests.get(url, auth=HTTPBasicAuth(key, None))
+        return(result.headers, result.json())
+
+    # Fetches profile information
+    @staticmethod
+    def plans(key, username):
+        url = f"https://api.flightplandatabase.com/user/{username}/plans"
+        result = requests.get(url, auth=HTTPBasicAuth(key, None))
+        return(result.headers, result.json())
+
+    # Fetches profile information
+    @staticmethod
+    def likes(key, username):
+        url = f"https://api.flightplandatabase.com/user/{username}/likes"
+        result = requests.get(url, auth=HTTPBasicAuth(key, None))
+        return(result.headers, result.json())
+
+    # Fetches profile information
+    @staticmethod
+    def search(key, query):
+        url = "https://api.flightplandatabase.com/search/users"
+        params = {"q": query}
+        result = requests.get(
+            url,
+            params=params,
+            auth=HTTPBasicAuth(key, None)
+            )
         return(result.headers, result.json())

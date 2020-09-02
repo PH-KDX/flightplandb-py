@@ -73,7 +73,7 @@ class Plan:
             result = requests.delete(url, auth=HTTPBasicAuth(key, None))
             return(result.headers, result.json())
 
-    "Creates a Flight Plan and Returns The Plan in Specific Format"
+    """Creates a Flight Plan and Returns The Plan in Specific Format"""
     @staticmethod
     def formattedFetch(key, route, format="json"):
         jsonPlan = Plan.generate(key, route)

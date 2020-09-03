@@ -50,41 +50,33 @@ class API:
 # General actions pertaining to flight plans
 class Plan:
 
-    # Fetches a flight plan and its associated route by ID
+    # Fetches a flight plan and its by ID and returns it in specified format
     @staticmethod
-    def fetch(key, id):
-        if not isinstance(id, int):
-            raise ValueError("The flight plan ID must be an integer")
-        else:
-            url = f"https://api.flightplandatabase.com/plan/{id}"
-            result = requests.get(url, auth=HTTPBasicAuth(key, None))
-            result_dict = result.json()
-            try:
-                result_dict = fptimestamp(result_dict)
-            except TypeError:
-                pass
-            return(result.headers, result_dict)
-
-    # Creates a flight plan and returns the plan in specified format
-    @staticmethod
-    def formattedFetch(key, id, format="json"):
+    def fetch(key, id, format="json"):
         exports = {
+            "json": "application/json",
+            "xml": "application/xml",
+            "csv": "text/csv",
+            "pdf": "application/pdf",
+            "kml": "application/vnd.fpd.export.v1.kml+xml",
             "xplane": "application/vnd.fpd.export.v1.xplane",
             "xplane11": "application/vnd.fpd.export.v1.xplane11",
-            "fsx": "application/vnd.fpd.export.v1.fsx",
             "fs9": "application/vnd.fpd.export.v1.fs9",
+            "fsx": "application/vnd.fpd.export.v1.fsx",
             "squawkbox": "application/vnd.fpd.export.v1.squawkbox",
             "xfmc": "application/vnd.fpd.export.v1.xfmc",
             "pmdg": "application/vnd.fpd.export.v1.pmdg",
-            "pdf": "application/pdf",
-            "kml": "application/vnd.fpd.export.v1.kml+xml",
-            "json": "application/json",
             "airbusx": "application/vnd.fpd.export.v1.airbusx",
             "qualitywings": "application/vnd.fpd.export.v1.qualitywings",
             "ifly747": "application/vnd.fpd.export.v1.ifly747",
             "flightgear": "application/vnd.fpd.export.v1.flightgear",
-            "tfdi717": "application/vnd.fpd.export.v1.tfdi717"
+            "tfdi717": "application/vnd.fpd.export.v1.tfdi717",
+            "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
             }
+        if format not in exports:
+            raise ValueError(
+                "Format must be one of the options specified in the docs"
+                )
         headers = {"Accept": str(exports[format.lower()])}
         url = f"https://api.flightplandatabase.com/plan/{id}"
         result = requests.get(
@@ -273,21 +265,29 @@ class User:
         result = requests.get(url, auth=HTTPBasicAuth(key, None))
         return(result.headers, result.json())
 
-    # Fetches profile information
+    # Fetches flight plans by user
     @staticmethod
-    def plans(key, username):
+    def plans(key, username, params=None):
         url = f"https://api.flightplandatabase.com/user/{username}/plans"
-        result = requests.get(url, auth=HTTPBasicAuth(key, None))
+        result = requests.get(
+            url,
+            params=params,
+            auth=HTTPBasicAuth(key, None)
+            )
         return(result.headers, result.json())
 
-    # Fetches profile information
+    # Fetches flight plans liked by user
     @staticmethod
-    def likes(key, username):
+    def likes(key, username, params=None):
         url = f"https://api.flightplandatabase.com/user/{username}/likes"
-        result = requests.get(url, auth=HTTPBasicAuth(key, None))
+        result = requests.get(
+            url,
+            params=params,
+            auth=HTTPBasicAuth(key, None)
+            )
         return(result.headers, result.json())
 
-    # Fetches profile information
+    # Searches for user by username
     @staticmethod
     def search(key, query):
         url = "https://api.flightplandatabase.com/search/users"

@@ -1,6 +1,6 @@
 # FlightplanDB-python
 
-Warning: this documentation is heavily outdated! Please read the code if you absolutely must use this branch!
+Warning: this documentation is heavily outdated, and the code may have unexpected bugs! Please read the code if you absolutely must use this branch!
 
 <!-- TOC titleSize:2 tabSpaces:2 depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 skip:0 title:1 charForUnorderedList:* -->
 ## Table of Contents
@@ -13,16 +13,19 @@ Warning: this documentation is heavily outdated! Please read the code if you abs
   * [Commands](#commands)
     * [API class](#api-class)
     * [Plan class](#plan-class)
-    * [Airport class](#airport-class)
+    * [Nav class](#nav-class)
+      * [Airport class](#airport-class)
 <!-- /TOC -->
 
 ## Introduction
 This is a Python 3 wrapper for the Flight Plan Database API. Please read the terms of use for this API at [https://flightplandatabase.com/dev/api](https://flightplandatabase.com/dev/api). A large part of this documentation also comes from that website.
 
-This library consists of three classes of commands. They are as follows:
-  * API - Commands in this class are meant to make it easier to use the API. They do not serve actual flight resources, but only information linked to the API itself.
-  * Plan - All the commands in here have to do with flight planning.
-  * Airport - These commands fetch info about airports, rather than flight plans.
+This library consists of several classes of commands. They are as follows:
+  * API - Commands in this class are do not serve actual flight resources, but only information linked to the API itself.
+  * Plan - Flight plan creation, removal, editing etc.
+  * Nav - Everything related to navigation; so airways, waypoints, airports info and the like.
+    * Airport - These commands fetch info about airports, rather than flight plans.This is a subclass of Nav.
+  * User - Data about the users of Flight Plan Database.
 
 Authentication occurs using the HTTPBasicAuth scheme. An API token is passed, referred to in here as `key`, as the username only. No password is used. It is recommended to keep the token outside of your code, using something like `python-dotenv`.
 
@@ -87,6 +90,12 @@ Flight plan responses are passed as `result` when using commands pertaining to f
         "name":<application name, str or None>,
         "url":<application URL, str or None>
     },
+    "cycle":{<AIRAC navigation data cycle associated with this plan>
+      "id":<cycle id, int>,
+      "ident":<AIRAC cycle identifier, str>,
+      "year":<last two digits of year in which the cycle was released, int>,
+      "release":<subrelease within the year release, int>
+    },
     "route":{<route object linked with the flight plan>
         "nodes":[<nodes in the route (2 minimum, though only one is shown), array>
             {
@@ -118,7 +127,7 @@ The valid node types are as follows:
 
 ## Commands
 ### API class
-The API class has the following commands:
+The `API` class has the following commands:
   * `ping(key)`: This checks the API status to see if it is up. Usage is `flightplandb.API.ping(key)`. If successful, `result` is
 ```
 {
@@ -129,12 +138,14 @@ The API class has the following commands:
   * `revoke(key)`: This permanently deactivates the key passed in the revoke request. After running this, a new key must be set by hand in the FlightPlanDatabase settings, under the section "API Access". If successful, `result` is the same as for `ping()`.
 
 ### Plan class
-The Plan class has the following commands:
+The `Plan` class has the following commands:
   * `fetch(key, id)`This fetches a flight plan based on its ID. Usage is `flightplandb.Plan.fetch(key, id)`. The `result` returned is the flight plan with fields as shown earlier.
   * `post(key, route)`: This posts a flight plan which is passed to it as a route object (see `"route":` in the response form earlier ). Usage is `flightplandb.Plan.fetch(key, route)`. Returns the same as `fetch()`, so essentially first posts and then fetches the flight plan.
   * `edit(key, id, route)`: This updates a pre-existing flight plan. Usage is `flightplandb.Plan.edit(key, id, route)`. Basically does the same as `post()`, with the same `result` value, but overwrites the flight plan which has the passed id with the new data passed in `route`.
-  * `generate(key, params)`: This sends some parameters to the flight planning engine, which generates a route based on them and sends the route back as in `fetch()`. Usage is `flightplandb.Plan.generate(key, id, route)`. The parameter specification is shown below.
   * `delete(key, id)`: This deletes an existing flight plan by ID. If the deletion is successful, then the `result` returned is the same as that for `ping()`.
+  * `decode(key, params)`: This sends a string of comma- or space-separated waypoints, beginning and ending with valid airport ICAOs, to the decoder. The decoder then creates a route with that info and sends the route back as in `fetch()`. Usage is `flightplandb.Plan.decode(key, route_string)`. An example `route_string` would be `EHAM SPY VENAS KJFK`.
+  * `generate(key, params)`: This sends some parameters as a dict to the flight planning engine, which generates a route based on them and sends the route back as in `fetch()`. Usage is `flightplandb.Plan.generate(key, parameters)`. The parameter specification is shown below.
+
 
 The parameters for flight plan generation are as follows, where I have added `req` to the required fields and `def` followed by the default value to the nonrequired fields:
 ```
@@ -154,8 +165,22 @@ The parameters for flight plan generation are as follows, where I have added `re
 }
 ```
 
-### Airport class
-The Airport class has the following commands:
+### Nav class
+The `Nav` class has the following commands:
+  * `NATS()`: This fetches the current North Atlantic Tracks. It takes no parameters. Usage is `flightplandb.Nav.NATS()`. Returns a `response` which looks like this:
+  ```
+  [
+    {
+      "ident": <track identifier, string>,
+      "route": <route object, like that in a flight plan response>,
+      "validFrom"
+      "validTo"
+    }
+  ]
+  ```
+  * `PACOTS()`: This fetches the current Pacific Organized Track System tracks.
+#### Airport class
+The `Airport` class has the following commands:
   * `weather()`: This gets the weather of an airport, as specified by ICAO code, passed as a string. Usage is `flightplandb.Airport.weather(key, ICAO)`. The `result` returned is as follows:
 ```
 {
@@ -185,7 +210,7 @@ The Airport class has the following commands:
     "dusk": <dusk, datetime>"
   },
   "runwayCount": <number of runways at airport, int>,
-  "runways": \[<array of all runways. Note each runway will appear twice, once from each end. For this example. though, we only have one runway for simplicity>
+  "runways": [<array of all runways. Note each runway will appear twice, once from each end. For this example. though, we only have one runway for simplicity>
     {
       "ident": <name of runway, str>,
       "width": <width of runway, float>,
@@ -194,7 +219,7 @@ The Airport class has the following commands:
       "surface": <runway surface, str>,
       "thresholdOffset": <distance of threshold from runway end, float>,
       "overrunLength": <runway overrun length, float>,
-      "ends": \[<array of both ends of the runway>
+      "ends": [<array of both ends of the runway>
         {
           "ident": <name of first end, str>,
           "lat": <latitude of first end, int>,
@@ -204,8 +229,8 @@ The Airport class has the following commands:
           "ident": <name of second end, str>,
           "lat": <latitude of second end, int>,
           "lon": <latitude of second end, int>        }
-      \],
-      "navaids": \[<array of navaids associated with runway>
+      ],
+      "navaids": [<array of navaids associated with runway>
         {
           "ident": <navaid identifier, str>,
           "type": <navaid type, str>,
@@ -220,16 +245,16 @@ The Airport class has the following commands:
           "elevation": <navaid elevation, int>,
           "range": <navaid range, int>
         }
-      \]
+      ]
     }
-  \],
-  "frequencies": \[<array of voice frequencies associated with the airport>
+  ],
+  "frequencies": [<array of voice frequencies associated with the airport>
     {
       "type": <type of frequency eg GND or TWR, str>,
       "frequency": <frequency in Hz, int>,
       "name": <frequency name, str>
     }
-  \],
+  ],
   "weather": {<see weather() documentation for details like types>
     "METAR": <metar>,
     "TAF": <taf>

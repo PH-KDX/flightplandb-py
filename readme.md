@@ -1,5 +1,7 @@
 # FlightplanDB-python
 
+Warning: this documentation is heavily outdated! Please read the code if you absolutely must use this branch!
+
 <!-- TOC titleSize:2 tabSpaces:2 depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 skip:0 title:1 charForUnorderedList:* -->
 ## Table of Contents
 * [FlightplanDB-python](#flightplandb-python)
@@ -130,8 +132,8 @@ The API class has the following commands:
 The Plan class has the following commands:
   * `fetch(key, id)`This fetches a flight plan based on its ID. Usage is `flightplandb.Plan.fetch(key, id)`. The `result` returned is the flight plan with fields as shown earlier.
   * `post(key, route)`: This posts a flight plan which is passed to it as a route object (see `"route":` in the response form earlier ). Usage is `flightplandb.Plan.fetch(key, route)`. Returns the same as `fetch()`, so essentially first posts and then fetches the flight plan.
-  * `patch(key, id, route)`: This updates a pre-existing flight plan. Usage is `flightplandb.Plan.patch(key, id, route)`. Basically does the same as `post()`, with the same `result` value, but overwrites the flight plan which has the passed id with the new data passed in `route`.
-  * `generate(key, params)`: This sends some parameters to the flight planning engine, which generates a route based on them and sends the route back as in `fetch()`. Usage is `flightplandb.Plan.patch(key, id, route)`. The parameter specification is shown below.
+  * `edit(key, id, route)`: This updates a pre-existing flight plan. Usage is `flightplandb.Plan.edit(key, id, route)`. Basically does the same as `post()`, with the same `result` value, but overwrites the flight plan which has the passed id with the new data passed in `route`.
+  * `generate(key, params)`: This sends some parameters to the flight planning engine, which generates a route based on them and sends the route back as in `fetch()`. Usage is `flightplandb.Plan.generate(key, id, route)`. The parameter specification is shown below.
   * `delete(key, id)`: This deletes an existing flight plan by ID. If the deletion is successful, then the `result` returned is the same as that for `ping()`.
 
 The parameters for flight plan generation are as follows, where I have added `req` to the required fields and `def` followed by the default value to the nonrequired fields:

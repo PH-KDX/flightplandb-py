@@ -66,6 +66,22 @@ class Plan:
             result = requests.delete(url, auth=HTTPBasicAuth(key, None))
             return(result.headers, result.json())
 
+
+    """Creates a Flight Plan and Returns The Plan in Specific Format"""
+    @staticmethod
+    def formattedFetch(key, route, format="json"):
+        jsonPlan = Plan.generate(key, route)
+        id = jsonPlan[1]['id']
+        exports = {"xplane" : "application/vnd.fpd.export.v1.xplane", "xplane11" : "application/vnd.fpd.export.v1.xplane11", "fsx" : "application/vnd.fpd.export.v1.fsx",
+                   "fs9" : "application/vnd.fpd.export.v1.fs9", "squawkbox" : "application/vnd.fpd.export.v1.squawkbox", "xfmc" : "application/vnd.fpd.export.v1.xfmc",
+                   "pmdg" : "application/vnd.fpd.export.v1.pmdg", "pdf" : "application/pdf", "kml" : "application/vnd.fpd.export.v1.kml+xml",
+                   "json" : "application/vnd.fpd.export.v1.json+json", "airbusx" : "application/vnd.fpd.export.v1.airbusx", "qualitywings" : "application/vnd.fpd.export.v1.qualitywings",
+                   "ifly747" : "application/vnd.fpd.export.v1.ifly747", "flightgear" : "application/vnd.fpd.export.v1.flightgear", "tfdi717" : "application/vnd.fpd.export.v1.tfdi717"}
+        headers = {"Accept" : str(exports[format.lower()])}
+        url = f"https://api.flightplandatabase.com/plan/{id}"
+        result = requests.get(url, auth=HTTPBasicAuth(key, None), headers=headers)
+        return result.text
+      
     # Creates a new flight plan using the route generator
     @staticmethod
     def generate(key, params):

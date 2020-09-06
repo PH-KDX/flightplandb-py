@@ -2,6 +2,22 @@
 
 Warning: this is bleeding-edge code; the documentation is heavily outdated, and the code may have unexpected bugs! Please read the code if you absolutely must use this branch!
 
+<!-- TOC titleSize:2 tabSpaces:2 depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 skip:0 title:1 charForUnorderedList:* -->
+## Table of Contents
+* [FlightplanDB-python](#flightplandb-python)
+  * [Introduction](#introduction)
+  * [Data format](#data-format)
+    * [General](#general)
+    * [Header](#header)
+    * [Flight plan response](#flight-plan-response)
+  * [Commands](#commands)
+    * [API class](#api-class)
+    * [Plan class](#plan-class)
+    * [Nav class](#nav-class)
+      * [Airport class](#airport-class)
+    * [User class](#user-class)
+<!-- /TOC -->
+
 ## Introduction
 This is a Python 3 wrapper for the Flight Plan Database API. Please read the terms of use for this API at [https://flightplandatabase.com/dev/api](https://flightplandatabase.com/dev/api). A large part of this documentation also comes from that website.
 
@@ -170,7 +186,8 @@ The parameters for flight plan generation are as follows, where I have added `re
 }
 ```
 * `decode(key, params)`: This sends a string of comma- or space-separated waypoints, beginning and ending with valid airport ICAOs, to the decoder. The decoder then creates a route with that info and sends the route back as in `fetch()`. Usage is `flightplandb.Plan.decode(key, route_string)`. An example `route_string` would be `EHAM SPY VENAS KJFK`.
-* `search(key, params)`: Searches for flight plans. Results are paginated, and contained in nested dictionaries. The following search parameters are available and will be combined to form a search request. None of the fields are required, but at least one must be provided:
+* `search(key, params)`: Searches for flight plans. Results are paginated, and contained in nested dictionaries. Usage is `flightplandb.Plan.search(key, params)`.
+The following search parameters are available and will be combined to form a search request. None of the fields are required, but at least one must be provided:
 ```
 {
   "q": <search query, str>,
@@ -204,7 +221,19 @@ The `Nav` class has the following commands:
     }
   ]
   ```
-  * `PACOTS()`: This fetches the current Pacific Organized Track System tracks.
+  * `PACOTS()`: This fetches the current Pacific Organized Track System tracks. Usage is `flightplandb.Nav.NATS()`. Returns a list of navaids, where each navaid looks like this:
+  ```
+  {
+    "ident": <navaid identifier, str>
+    "type": <navaid type as in the flight plan response , str>
+    "lat": <navaid latitude, float>
+    "lon": <navaid longitude, float>
+    "name": <navaid name if available, str or None>
+    "elevation": <navaid elevation, float>
+    "airportICAO": <airport ICAO if available, str or None>
+    "runwayIdent": <airport identifier if available, str or None>
+  }
+  ```
 
 #### Airport class
 The `Airport` class has the following commands:
@@ -291,10 +320,24 @@ The `Airport` class has the following commands:
 
 ### User class
 The `User` class has the following commands:
-  * `info(key, username)`:
-  * `info_me(key)`: alias for `info()`, where `username` is the current user.
-  * `plans(key, username, params)`: fetches flight plans made by a user.
-  * `likes(key, username, params)`: fetches a list of the flight plans liked by the user.
+  * `info(key, username)`: fetches profile information for any registered user, returning the following response:
+```
+{
+  "id": <user id, int>,
+  "username": <user name, str>,
+  "location": <user-provided location, str or None>,
+  "gravatarHash": <gravatar hash based on user email, str>,
+  "joined": <UTC user registration, datetime>,
+  "lastSeen": <UTC user last seen, datetime>,
+  "plansCount": <count of flight plans created by user, int>,
+  "plansDistance": <total distance of user flight plans, float>,
+  "plansDownloads": <download count of user plans, int>,
+  "plansLikes": <like count of user plans, int>
+}
+```
+  * `info_me(key)`: alias for `info()`, where `username` is the current user. Usage is
+  * `plans(key, username, params)`: fetches flight plans made by a user. Returns an array of flight plan responses as described earlier, leaving out the `route` section in each.
+  * `likes(key, username, params)`: fetches a list of the flight plans liked by the user. Like `plans()`, it returns an array of flight plan responses as described earlier, leaving out the `route` section in each.
 For both `plans()` and `likes()`, `params` is set to `None` by default. The `params` options are as follows, where all the parameters are optional:
 ```
 {

@@ -256,7 +256,19 @@ class User:
     def info(key, username):
         url = f"https://api.flightplandatabase.com/user/{username}"
         result = requests.get(url, auth=HTTPBasicAuth(key, None))
-        return(result.headers, result.json())
+        result_dict = result.json()
+        # convert all the ISO-8601 JS timestamps to Python datetime object
+        for i in ["joined", "lastSeen"]:
+            try:
+                result_dict[i] = fromjsiso(
+                    result_dict[i]
+                    )
+            except KeyError:
+                pass
+            except ValueError:
+                print(f"[{i}] was not a valid timestamp")
+                raise
+        return(result.headers, result_dict)
 
     # An alias for info where username is the current user
     @staticmethod

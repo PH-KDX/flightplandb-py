@@ -1,7 +1,5 @@
 # FlightplanDB-python
 
-Warning: this is bleeding-edge code; the documentation is heavily outdated, and the code may have unexpected bugs! Please read the code if you absolutely must use this branch!
-
 <!-- TOC titleSize:2 tabSpaces:2 depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 skip:0 title:1 charForUnorderedList:* -->
 ## Table of Contents
 * [FlightplanDB-python](#flightplandb-python)
@@ -221,7 +219,7 @@ The `Nav` class has the following commands:
     }
   ]
   ```
-  * `PACOTS()`: This fetches the current Pacific Organized Track System tracks. Usage is `flightplandb.Nav.NATS()`. Returns a list of navaids, where each navaid looks like this:
+  * `PACOTS()`: This fetches the current Pacific Organized Track System tracks. Usage is `flightplandb.Nav.PACOTS()`. Returns a list of navaids, where each navaid looks like this:
   ```
   {
     "ident": <navaid identifier, str>
@@ -320,7 +318,7 @@ The `Airport` class has the following commands:
 
 ### User class
 The `User` class has the following commands:
-  * `info(key, username)`: fetches profile information for any registered user, returning the following response:
+  * `info(key, username)`: fetches profile information for any registered user. Usage is `flightplandb.User.info(key, username)`. Returns the following response:
 ```
 {
   "id": <user id, int>,
@@ -335,9 +333,9 @@ The `User` class has the following commands:
   "plansLikes": <like count of user plans, int>
 }
 ```
-  * `info_me(key)`: alias for `info()`, where `username` is the current user. Usage is
-  * `plans(key, username, params)`: fetches flight plans made by a user. Returns an array of flight plan responses as described earlier, leaving out the `route` section in each.
-  * `likes(key, username, params)`: fetches a list of the flight plans liked by the user. Like `plans()`, it returns an array of flight plan responses as described earlier, leaving out the `route` section in each.
+  * `info_me(key)`: alias for `info()`, where `username` is the current user. Usage is `flightplandb.User.info_me(key)`.
+  * `plans(key, username, params)`: fetches flight plans made by a user. Returns an array of flight plan responses as described earlier, leaving out the `route` section in each. Usage is `flightplandb.User.plans(key, username, params)`. The possible options for `params` are described in detail below.
+  * `likes(key, username, params)`: fetches a list of the flight plans liked by the user. Usage is `flightplandb.User.likes(key, username, params)`. Like `plans()`, it returns an array of flight plan responses as described earlier, leaving out the `route` section in each.
 For both `plans()` and `likes()`, `params` is set to `None` by default. The `params` options are as follows, where all the parameters are optional:
 ```
 {
@@ -346,4 +344,4 @@ For both `plans()` and `likes()`, `params` is set to `None` by default. The `par
   "sort":<order of the returned plans (default created), str>
 }
 ```
-  * `search(key, query)`: searches for a user by username.
+  * `search(key, query)`: searches for a user by username. `query` is a plain string, containing all or part of a username.

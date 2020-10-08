@@ -3,6 +3,10 @@ from requests.auth import HTTPBasicAuth
 from datetime import datetime
 
 
+# base API URL
+baseurl = "https://api.flightplandatabase.com"
+
+
 # Small functions used for type conversions etc
 # general js to python timestamp
 def fromjsiso(timestamp):
@@ -33,18 +37,39 @@ class API:
     # Checks API status to see if it is up
     @staticmethod
     def ping(key):
-        url = "https://api.flightplandatabase.com/"
+        url = baseurl
+
         # BasicHTTPAuth with API key passed as username, no password
-        result = requests.get(url, auth=HTTPBasicAuth(key, None))
-        # the headers and response get passed back as a dict
-        return(result.headers, result.json())
+        result = requests.get(
+            url,
+            auth=HTTPBasicAuth(key, None)
+            )
+
+        if result.status_code == 200:
+            response = True
+        else:
+            result.raise_for_status()
+
+        return(result.headers, response)
 
     # Revokes API key
     @staticmethod
     def revoke(key):
-        url = "https://api.flightplandatabase.com/auth/revoke"
-        result = requests.get(url, auth=HTTPBasicAuth(key, None))
-        return(result.headers, result.json())
+        url = f"{baseurl}/auth/revoke"
+
+        result = requests.get(
+            url,
+            auth=HTTPBasicAuth(key, None)
+            )
+
+        # key was successfully revoked
+        if result.status_code == 200:
+            response = True
+        # else raise HTTP error
+        else:
+            result.raise_for_status()
+
+        return(result.headers, response)
 
 
 # General actions pertaining to flight plans
@@ -78,15 +103,20 @@ class Plan:
                 "Format must be one of the options specified in the docs"
                 )
         headers = {"Accept": str(exports[format.lower()])}
-        url = f"https://api.flightplandatabase.com/plan/{id}"
+        url = f"{baseurl}/plan/{id}"
         result = requests.get(
             url,
             auth=HTTPBasicAuth(key, None),
             headers=headers
             )
+
+        # raise exception if HTTP status code is not in 200 range
+        result.raise_for_status()
+
         if format == "json":
             result_dict = result.json()
             try:
+                # converts JS timestamps to datetime objects
                 result_dict = fptimestamp(result_dict)
             except TypeError:
                 pass
@@ -97,8 +127,16 @@ class Plan:
     # Takes a dict and posts it to a flight plan
     @staticmethod
     def post(key, route):
-        url = "https://api.flightplandatabase.com/plan"
-        result = requests.post(url, json=route, auth=HTTPBasicAuth(key, None))
+        url = f"{baseurl}/plan"
+
+        result = requests.post(
+            url,
+            json=route,
+            auth=HTTPBasicAuth(key, None)
+            )
+
+        result.raise_for_status()
+
         result_dict = result.json()
         try:
             result_dict = fptimestamp(result_dict)
@@ -112,12 +150,16 @@ class Plan:
         if not isinstance(id, int):
             raise ValueError("The flight plan ID must be an integer")
         else:
-            url = f"https://api.flightplandatabase.com/plan/{id}"
+            url = f"{baseurl}/plan/{id}"
+
             result = requests.patch(
                 url,
                 json=route,
                 auth=HTTPBasicAuth(key, None)
             )
+
+            result.raise_for_status()
+
             result_dict = result.json()
             try:
                 result_dict = fptimestamp(result_dict)
@@ -131,15 +173,33 @@ class Plan:
         if not isinstance(id, int):
             raise ValueError("The flight plan ID must be an integer")
         else:
-            url = f"https://api.flightplandatabase.com/plan/{id}"
-            result = requests.delete(url, auth=HTTPBasicAuth(key, None))
-            return(result.headers, result.json())
+            url = f"{baseurl}/plan/{id}"
+
+            result = requests.delete(
+                url,
+                auth=HTTPBasicAuth(key, None)
+                )
+
+            if result.status_code == 200:
+                response = True
+
+            result.raise_for_status()
+
+            return(result.headers, response)
 
     # Creates a new flight plan using the route generator
     @staticmethod
     def generate(key, params):
-        url = "https://api.flightplandatabase.com/auto/generate"
-        result = requests.post(url, json=params, auth=HTTPBasicAuth(key, None))
+        url = f"{baseurl}/auto/generate"
+
+        result = requests.post(
+            url,
+            json=params,
+            auth=HTTPBasicAuth(key, None)
+            )
+
+        result.raise_for_status()
+
         result_dict = result.json()
         try:
             result_dict = fptimestamp(result_dict)
@@ -150,13 +210,16 @@ class Plan:
     # Decodes a route from a space-separated string to a flight plan
     @staticmethod
     def decode(key, route):
-        url = "https://api.flightplandatabase.com/auto/decode"
+        url = f"{baseurl}/auto/decode"
         route_dict = {"route": route}
         result = requests.post(
             url,
             json=route_dict,
             auth=HTTPBasicAuth(key, None)
             )
+
+        result.raise_for_status()
+
         result_dict = result.json()
         try:
             result_dict = fptimestamp(result_dict)
@@ -167,12 +230,16 @@ class Plan:
     # Searches for a route based on several parameters
     @staticmethod
     def search(key, params):
-        url = "https://api.flightplandatabase.com/search/plans"
+        url = f"{baseurl}/search/plans"
+
         result = requests.get(
             url,
             params=params,
             auth=HTTPBasicAuth(key, None)
             )
+
+        result.raise_for_status()
+
         result_dict = result.json()
         print(result_dict)
         try:
@@ -182,6 +249,66 @@ class Plan:
             pass
         return(result.headers, result_dict)
 
+    # Contains everything for working with flight plan likes
+    class Like:
+
+        # Gets like status for flight plan
+        @staticmethod
+        def get(key, id):
+            url = f"{baseurl}/{id}/like"
+
+            result = requests.get(
+                url,
+                auth=HTTPBasicAuth(key, None)
+                )
+
+            if result.status_code == 200:
+                status = True
+            elif result.status_code == 404:
+                status = False
+            else:
+                result.raise_for_status()
+
+            return(result.headers, status)
+
+        # Adds like to flight plan
+        @staticmethod
+        def create(key, id):
+            url = f"{baseurl}/{id}/like"
+
+            result = requests.post(
+                url,
+                auth=HTTPBasicAuth(key, None)
+                )
+
+            if result.status_code == 200:
+                status = True
+            elif result.status_code == 201:
+                status = False
+            else:
+                result.raise_for_status()
+
+            return(result.headers, status)
+
+        # Removes like from flight plan
+        @staticmethod
+        def remove(key):
+            url = f"{baseurl}/{id}/like"
+
+            result = requests.delete(
+                url,
+                auth=HTTPBasicAuth(key, None)
+                )
+
+            if result.status_code == 200:
+                status = True
+            elif result.status_code == 404:
+                status = False
+            else:
+                result.raise_for_status()
+
+            return(result.headers, status)
+
 
 # Contains everything pertaining to navigation
 class Nav:
@@ -189,33 +316,45 @@ class Nav:
     # NATS
     @staticmethod
     def NATS(key):
-        url = "https://api.flightplandatabase.com/nav/NATS"
+        url = f"{baseurl}/nav/NATS"
+
         result = requests.get(
             url,
             auth=HTTPBasicAuth(key, None)
             )
+
+        result.raise_for_status()
+
         return(result.headers, result.json())
 
     # PACOTS
     @staticmethod
     def PACOTS(key):
-        url = "https://api.flightplandatabase.com/nav/PACOTS"
+        url = f"{baseurl}/nav/PACOTS"
+
         result = requests.get(
             url,
             auth=HTTPBasicAuth(key, None)
             )
+
+        result.raise_for_status()
+
         return(result.headers, result.json())
 
     # Search
     @staticmethod
     def search(key, query, types=None):
         params = {"q": query, "types": types}
-        url = "https://api.flightplandatabase.com/search/nav"
+        url = f"{baseurl}/search/nav"
+
         result = requests.get(
             url,
             params=params,
             auth=HTTPBasicAuth(key, None)
             )
+
+        result.raise_for_status()
+
         return(result.headers, result.json())
 
     # Fetches various info related to airports
@@ -224,8 +363,15 @@ class Nav:
         # Fetches info about airport by ICAO code
         @staticmethod
         def info(key, icao):
-            url = f"https://api.flightplandatabase.com/nav/airport/{icao}"
-            result = requests.get(url, auth=HTTPBasicAuth(key, None))
+            url = f"{baseurl}/nav/airport/{icao}"
+
+            result = requests.get(
+                url,
+                auth=HTTPBasicAuth(key, None)
+                )
+
+            result.raise_for_status()
+
             result_dict = result.json()
             # convert all the ISO-8601 JS timestamps to Python datetime object
             for i in ["sunrise", "sunset", "dawn", "dusk"]:
@@ -243,8 +389,11 @@ class Nav:
         # Fetches weather for airport by ICAO code
         @staticmethod
         def weather(key, icao):
-            url = f"https://api.flightplandatabase.com/weather/{icao}"
+            url = f"{baseurl}/weather/{icao}"
             result = requests.get(url, auth=HTTPBasicAuth(key, None))
+
+            result.raise_for_status()
+
             return(result.headers, result.json())
 
 
@@ -254,8 +403,15 @@ class User:
     # Fetches profile information
     @staticmethod
     def info(key, username):
-        url = f"https://api.flightplandatabase.com/user/{username}"
-        result = requests.get(url, auth=HTTPBasicAuth(key, None))
+        url = f"{baseurl}/user/{username}"
+
+        result = requests.get(
+            url,
+            auth=HTTPBasicAuth(key, None)
+            )
+
+        result.raise_for_status()
+
         result_dict = result.json()
         # convert all the ISO-8601 JS timestamps to Python datetime object
         for i in ["joined", "lastSeen"]:
@@ -273,40 +429,59 @@ class User:
     # An alias for info where username is the current user
     @staticmethod
     def info_me(key):
-        url = "https://api.flightplandatabase.com/me/"
-        result = requests.get(url, auth=HTTPBasicAuth(key, None))
+        url = f"{baseurl}/me/"
+
+        result = requests.get(
+            url,
+            auth=HTTPBasicAuth(key, None)
+            )
+
+        result.raise_for_status()
+
         return(result.headers, result.json())
 
     # Fetches flight plans by user
     @staticmethod
     def plans(key, username, params=None):
-        url = f"https://api.flightplandatabase.com/user/{username}/plans"
+        url = f"{baseurl}/user/{username}/plans"
+
         result = requests.get(
             url,
             params=params,
             auth=HTTPBasicAuth(key, None)
             )
+
+        result.raise_for_status()
+
         return(result.headers, result.json())
 
     # Fetches flight plans liked by user
     @staticmethod
     def likes(key, username, params=None):
-        url = f"https://api.flightplandatabase.com/user/{username}/likes"
+        url = f"{baseurl}/user/{username}/likes"
+
         result = requests.get(
             url,
             params=params,
             auth=HTTPBasicAuth(key, None)
             )
+
+        result.raise_for_status()
+
         return(result.headers, result.json())
 
     # Searches for user by username
     @staticmethod
     def search(key, query):
-        url = "https://api.flightplandatabase.com/search/users"
+        url = f"{baseurl}/search/users"
         params = {"q": query}
+
         result = requests.get(
             url,
             params=params,
             auth=HTTPBasicAuth(key, None)
             )
+
+        result.raise_for_status()
+
         return(result.headers, result.json())

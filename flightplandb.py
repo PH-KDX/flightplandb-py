@@ -281,9 +281,9 @@ class Plan:
                 auth=HTTPBasicAuth(key, None)
                 )
 
-            if result.status_code == 200:
+            if result.status_code == 201:
                 status = True
-            elif result.status_code == 201:
+            elif result.status_code == 200:
                 status = False
             else:
                 result.raise_for_status()

@@ -11,6 +11,7 @@
   * [Commands](#commands)
     * [API class](#api-class)
     * [Plan class](#plan-class)
+      * [Like class](#like-class)
     * [Nav class](#nav-class)
       * [Airport class](#airport-class)
     * [User class](#user-class)
@@ -20,10 +21,11 @@
 This is a Python 3 wrapper for the Flight Plan Database API. Please read the terms of use for this API at [https://flightplandatabase.com/dev/api](https://flightplandatabase.com/dev/api). A large part of this documentation also comes from that website.
 
 This library consists of several classes of commands. They are as follows:
-  * API - Commands in this class are do not serve actual flight resources, but only information linked to the API itself.
+  * API - Commands in here pertain to the API interface itself.
   * Plan - Flight plan creation, removal, editing etc.
-  * Nav - Everything related to navigation; so airways, waypoints, airports info and the like.
-    * Airport - These commands fetch info about airports, rather than flight plans.This is a subclass of Nav.
+    * Like (subclass of Plan) - You might like some flight plans more than others. This section allows you to express your deepest feelings.
+  * Nav - Everything related to navigation, including airways, waypoints, and airport info.
+    * Airport (subclass of Nav) - These commands retrieve information about airports.
   * User - Data about the users of Flight Plan Database.
 
 Authentication occurs using the HTTPBasicAuth scheme. An API token is passed, referred to in here as `key`, as the username only. No password is used. It is recommended to keep the token outside of your code, using something like `python-dotenv`.
@@ -35,7 +37,7 @@ This wrapper does not support changing the units in which the flight plans are r
 
 ## Data format
 ### General
-All commands in this wrapper return two variables: `headers`, which is the response headers, and `result`, which is the message response returned by the server. Both consist of native Python structures.
+All commands in this wrapper return two variables: `headers`, which is the response headers, and `result`, which is the message response returned by the server. The first one is always a dict, and the second one is a native Python structure such as dicts or booleans. If the server returns an invalid status code, the wrapper will raise an HTTPError.
 
 ### Header
 A typical header dict looks as follows. Note that choosing pages or units has not been implemented in this wrapper, so the units, for instance, will always be `AVIATION`. When headers are not applicable to the response, they will not be included. In the code examples in this file, I have placed the intended value of each field and its type between `<>` brackets. :
@@ -125,18 +127,14 @@ The valid node types are as follows:
 ## Commands
 ### API class
 The `API` class has the following commands:
-  * `ping(key)`: This checks the API status to see if it is up. Usage is `flightplandb.API.ping(key)`. If successful, `result` is
-```
-{
-    "message": "OK",
-    "errors": None
-}
-```
-  * `revoke(key)`: This permanently deactivates the key passed in the revoke request. After running this, a new key must be set by hand in the FlightPlanDatabase settings, under the section "API Access". If successful, `result` is the same as for `ping()`.
+  * `ping()`: This checks the API status to see if it is up. Usage is `flightplandb.API.ping(key)`.
+  * `revoke()`: This permanently deactivates the key passed in the revoke request. After running this, a new key must be set by hand in the Flight Plan Database settings, under the section "API Access". Usage is `flightplandb.API.revoke(key)`.
+
+For both `ping()` and `revoke()`, if the request is successful, `result` is `True`; otherwise it raises an `HTTPError`.
 
 ### Plan class
 The `Plan` class has the following commands:
-  * `fetch(key, id)`This fetches a flight plan based on its ID. Usage is `flightplandb.Plan.fetch(key, id)`. The `result` returned is the flight plan with fields as shown earlier.
+  * `fetch()`This fetches a flight plan based on its ID. Usage is `flightplandb.Plan.fetch(key, id)`. The `result` returned is the flight plan with fields as shown earlier.
   Optionally, you can do `fetch(key, id, format)` to fetch a flight plan in a specific format, where the format can be one of the following:
 
   | Format key value |              Flight plan format              |
@@ -160,10 +158,12 @@ The `Plan` class has the following commands:
   |     `tfdi717`    |        TFDi Design 717 (version 1 XML)       |
   | `infiniteflight` |                Infinite Flight               |
 
-  * `post(key, route)`: This posts a flight plan which is passed to it as a route object (see `"route":` in the response form earlier ). Usage is `flightplandb.Plan.fetch(key, route)`. Returns the same as `fetch()`, so essentially first posts and then fetches the flight plan.
-  * `edit(key, id, route)`: This updates a pre-existing flight plan. Usage is `flightplandb.Plan.edit(key, id, route)`. Basically does the same as `post()`, with the same `result` value, but overwrites the flight plan which has the passed id with the new data passed in `route`.
-  * `delete(key, id)`: This deletes an existing flight plan by ID. If the deletion is successful, then the `result` returned is the same as that for `ping()`.
-  * `generate(key, params)`: This sends some parameters as a dict to the flight planning engine, which generates a route based on them and sends the route back as in `fetch()`. Usage is `flightplandb.Plan.generate(key, parameters)`. The parameter specification is shown below.
+  * `post()`: This posts a flight plan which is passed to it as a route object (see `"route":` in the response form earlier). Usage is `flightplandb.Plan.fetch(key, route)`. Returns the same as `fetch()`, so essentially first posts and then fetches the flight plan.
+  * `edit()`: This updates a pre-existing flight plan. Usage is `flightplandb.Plan.edit(key, id, route)`. Basically does the same as `post()`, with the same `result` value, but overwrites the flight plan which has the passed id with the new data passed in `route`.
+  * `delete()`: This deletes an existing flight plan by ID. Usage is `flightplandb.Plan.delete(key, id)`. If the deletion is successful, then the `result` returned is the same as that for `ping()`.
+  * `generate()`: This sends some parameters as a dict to the flight planning engine, which generates a route based on them and sends the route back as in `fetch()`. Usage is `flightplandb.Plan.generate(key, parameters)`. The parameter specification is shown below.
+
+All these commands raise an `HTTPError` on failure.
 
 
 The parameters for flight plan generation are as follows, where I have added `req` to the required fields and `def` followed by the default value to the nonrequired fields:
@@ -183,8 +183,8 @@ The parameters for flight plan generation are as follows, where I have added `re
     "descentSpeed":<descent speed, int, def 250>
 }
 ```
-* `decode(key, params)`: This sends a string of comma- or space-separated waypoints, beginning and ending with valid airport ICAOs, to the decoder. The decoder then creates a route with that info and sends the route back as in `fetch()`. Usage is `flightplandb.Plan.decode(key, route_string)`. An example `route_string` would be `EHAM SPY VENAS KJFK`.
-* `search(key, params)`: Searches for flight plans. Results are paginated, and contained in nested dictionaries. Usage is `flightplandb.Plan.search(key, params)`.
+* `decode()`: This sends a string of comma- or space-separated waypoints, beginning and ending with valid airport ICAOs, to the decoder. The decoder then creates a route with that info and sends the route back as in `fetch()`. Usage is `flightplandb.Plan.decode(key, route_string)`. An example `route_string` would be `EHAM SPY VENAS KJFK`.
+* `search()`: Searches for flight plans. Results are paginated, and contained in nested dictionaries. Usage is `flightplandb.Plan.search(key, params)`.
 The following search parameters are available and will be combined to form a search request. None of the fields are required, but at least one must be provided:
 ```
 {
@@ -205,21 +205,28 @@ The following search parameters are available and will be combined to form a sea
   "sort":<order of the returned plans (default created), str>
 }
 ```
+#### Like class
+The `Like` subclass of `Plan` has the following commands:
+  * `get()`: This gets the like status of a flight plan, as specified by plan id, passed as an `int`. Returns a `result` of `True` if the plan was liked, `False` if it was not liked or else raises an `HTTPError`. Usage is `flightplandb.Plan.Like.get(key, id)`.
+  * `create()`: This adds a like to a flight plan, as specified by plan id, passed as an `int`. Returns a `result` of `True` if the plan was successfully liked, `False` if it was already liked or else raises an `HTTPError`. Usage is `flightplandb.Plan.Like.create(key, id)`.
+  * `remove()`: This removes a like from a flight plan, as specified by plan id, passed as an `int`. Returns a `result` of `True` if the plan was successfully unliked, `False` if it was already unliked or else raises an `HTTPError`. Usage is `flightplandb.Plan.Like.remove(key, id)`.
 
 ### Nav class
 The `Nav` class has the following commands:
-  * `NATS()`: This fetches the current North Atlantic Tracks. It takes no parameters. Usage is `flightplandb.Nav.NATS()`. Returns a `response` which looks like this:
+  * `NATS()`: This fetches the current North Atlantic Tracks. It takes no parameters. Usage is `flightplandb.Nav.NATS()`.
+  Returns a `response` which looks like this:
   ```
-  [
-    {
+  {
       "ident": <track identifier, string>,
-      "route": <route object, like that in a flight plan response>,
-      "validFrom"
-      "validTo"
-    }
-  ]
+      "route": <route object, like that in a flight plan response, with valid FLs eastLevels and westLevels>,
+      "validFrom": <timestamp of validity start, datetime>,
+      "validTo": <timestamp of validity end, datetime>
+  }
   ```
-  * `PACOTS()`: This fetches the current Pacific Organized Track System tracks. Usage is `flightplandb.Nav.PACOTS()`. Returns a list of navaids, where each navaid looks like this:
+  * `PACOTS()`: This fetches the current Pacific Organized Track System tracks. Usage is `flightplandb.Nav.PACOTS()`.
+  Returns a `response` which looks like the `NATS()` response without the flight levels.
+  * `search()`: This fetches the current Pacific Organized Track System tracks. Usage is `flightplandb.Nav.search()`.
+  Returns a list of navaids, where each navaid looks like this:
   ```
   {
     "ident": <navaid identifier, str>
@@ -233,8 +240,10 @@ The `Nav` class has the following commands:
   }
   ```
 
+They raise an `HTTPError` on failure.
+
 #### Airport class
-The `Airport` class has the following commands:
+The `Airport` subclass of `Nav` has the following commands, both of which raise an `HTTPError` on failure:
   * `weather()`: This gets the weather of an airport, as specified by ICAO code, passed as a string. Usage is `flightplandb.Airport.weather(key, ICAO)`. The `result` returned is as follows:
 ```
 {
@@ -317,8 +326,8 @@ The `Airport` class has the following commands:
 ```
 
 ### User class
-The `User` class has the following commands:
-  * `info(key, username)`: fetches profile information for any registered user. Usage is `flightplandb.User.info(key, username)`. Returns the following response:
+The `User` class has the following commands, which raise an `HTTPError` on failure:
+  * `info()`: fetches profile information for any registered user. Usage is `flightplandb.User.info(key, username)`. Returns the following response:
 ```
 {
   "id": <user id, int>,
@@ -333,9 +342,9 @@ The `User` class has the following commands:
   "plansLikes": <like count of user plans, int>
 }
 ```
-  * `info_me(key)`: alias for `info()`, where `username` is the current user. Usage is `flightplandb.User.info_me(key)`.
-  * `plans(key, username, params)`: fetches flight plans made by a user. Returns an array of flight plan responses as described earlier, leaving out the `route` section in each. Usage is `flightplandb.User.plans(key, username, params)`. The possible options for `params` are described in detail below.
-  * `likes(key, username, params)`: fetches a list of the flight plans liked by the user. Usage is `flightplandb.User.likes(key, username, params)`. Like `plans()`, it returns an array of flight plan responses as described earlier, leaving out the `route` section in each.
+  * `info_me()`: alias for `info()`, where `username` is the current user. Usage is `flightplandb.User.info_me(key)`.
+  * `plans()`: fetches flight plans made by a user. Returns an array of flight plan responses as described earlier, leaving out the `route` section in each. Usage is `flightplandb.User.plans(key, username, params)`. The possible options for `params` are described in detail below.
+  * `likes()`: fetches a list of the flight plans liked by the user. Usage is `flightplandb.User.likes(key, username, params)`. Like `plans()`, it returns an array of flight plan responses as described earlier, leaving out the `route` section in each.
 For both `plans()` and `likes()`, `params` is set to `None` by default. The `params` options are as follows, where all the parameters are optional:
 ```
 {
@@ -344,4 +353,18 @@ For both `plans()` and `likes()`, `params` is set to `None` by default. The `par
   "sort":<order of the returned plans (default created), str>
 }
 ```
-  * `search(key, query)`: searches for a user by username. `query` is a plain string, containing all or part of a username.
+  * `search()`: searches for a user by username. `query` is a plain string, containing all or part of a username. Usage is `flightplandb.User.search(key, query)`. Returns a list of possible users like this:
+  ```
+  {
+    "id": <user id, int>,
+    "username": <user name, str>,
+    "location": <user-provided location, str or None>,
+    "gravatarHash": <gravatar hash based on user email, str>
+  },
+  {
+    "id": 8473892,
+    "username": "somerandomname",
+    "gravatarHash": "802350da209d5a382493cde1594ba059",
+    "location": None
+  }
+  ```

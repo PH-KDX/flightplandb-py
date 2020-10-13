@@ -17,4 +17,7 @@ setup(
             "mypy==0.790",
         ]
     },
+    entry_points = {
+        'console_scripts': ['flightdb-test=FlightPlanDB.flightplandb:test_run'],
+    }
 )

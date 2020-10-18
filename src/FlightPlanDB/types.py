@@ -19,10 +19,28 @@ class User():
     id: int
     # Username
     username: str
-    # User provided location information.
+    # User provided location information. Null if not available
     location: Optional[Union[str, None]] = None
     # Gravatar hash based on user's account email address.
     gravatarHash: Optional[str] = None
+    # UTC Date and time of user registration
+    joined: Optional[datetime] = None
+    # UTC Date and time the user was last connected
+    lastSeen: Optional[datetime] = None
+    # Number of flight plans created by the user
+    plansCount: Optional[int] = 0
+    # Total distance of all user's flight plans
+    plansDistance: Optional[float] = 0.0
+    # Total download count of all user's plans
+    plansDownloads: Optional[int] = 0
+    # Total like count of all user's plans
+    plansLikes: Optional[int] = 0
+
+    def __post_init__(self):
+        self.joined = isoparse(self.joined) \
+            if self.joined else self.joined
+        self.lastSeen = isoparse(self.lastSeen) \
+            if self.lastSeen else self.lastSeen
 
 
 @dataclass
@@ -226,34 +244,6 @@ class GenerateQuery():
 
 
 @dataclass
-class User():
-    # Unique user identifier number
-    id: int
-    # Username
-    username: str
-    # User provided location information. Null if not available
-    location: Union[str, None]
-    # Gravatar hash based on user's account email address. Used to fetch avatar images
-    gravatarHash: str
-    # UTC Date and time of user registration
-    joined: datetime
-    # UTC Date and time the user was last connected
-    lastSeen: datetime
-    # Number of flight plans created by the user
-    plansCount: int
-    # Total distance of all user's flight plans, with units determined by the X-Units header
-    plansDistance: float
-    # Total download count of all user's plans
-    plansDownloads: int
-    # Total like count of all user's plans
-    plansLikes: int
-
-    def __post_init__(self):
-        self.joined = isoparse(self.joined)
-        self.lastSeen = isoparse(self.lastSeen)
-
-
-@dataclass
 class Tag():
     # Tag name
     name: str
@@ -379,9 +369,9 @@ class Frequency():
 
 @dataclass
 class Weather():
-    # Current METAR report for the airport. Null if no METAR report is available
+    # Current METAR report for the airport
     METAR: Union[str, None]
-    # Current TAF report for the airport. Null if no TAF report is available
+    # Current TAF report for the airport
     TAF: Union[str, None]
 
 

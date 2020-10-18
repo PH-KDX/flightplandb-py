@@ -123,6 +123,22 @@ class FlightPlanDB:
     def plan(self):
         return PlanAPI(self)
 
+    @property
+    def user(self):
+        return UserAPI(self)
+
+    @property
+    def tags(self):
+        return TagsAPI(self)
+
+    @property
+    def nav(self):
+        return NavAPI(self)
+
+    @property
+    def weather(self):
+        return WeatherAPI(self)
+
 
 class PlanAPI():
     def __init__(self, flightplandb: FlightPlanDB):
@@ -198,7 +214,7 @@ class UserAPI():
                 lambda p: Plan(**p),
                 self._fp.get(f"/user/{username}/likes")))
 
-    def search(self, username: str) -> List[Plan]:
+    def search(self, username: str) -> List[User]:
         return list(
             map(
                 lambda u: User(**u),
@@ -237,13 +253,13 @@ class NavAPI():
             self._fp.get("/search/nav", params=params)))
 
 
-class Weather():
+class WeatherAPI():
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
     def __call__(self, icao: str) -> Weather:
         return Weather(**self._fp.get(f"/weather/{icao}"))
-   
+
 
 def test_run():
     import os

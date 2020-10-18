@@ -113,6 +113,18 @@ class Route():
     def __post_init__(self):
         self.nodes = list(map(lambda x: RouteNode(**x), self.nodes))
 
+@dataclass
+class Cycle():
+    # FlightPlanDB cycle id
+    id: int
+    # AIP-style cycle id
+    ident: str
+    # last two digits of cycle year
+    year: int
+    # cycle release
+    release: int
+
+
 
 @dataclass
 class Plan():
@@ -158,7 +170,7 @@ class Plan():
     route: Optional[Route] = None
 
     # TODO: unknown keyword from server response
-    cycle: Optional[Any] = None
+    cycle: Optional[Cycle] = None
 
     def __post_init__(self):
         self.createdAt = isoparse(self.createdAt)
@@ -168,6 +180,7 @@ class Plan():
         if self.application:
             self.application = Application(**self.application)
         self.route = Route(**self.route)
+        self.cycle = Cycle(**self.cycle)
 
 
 @dataclass

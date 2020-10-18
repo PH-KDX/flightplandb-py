@@ -9,7 +9,7 @@ from requests.auth import HTTPBasicAuth
 from requests.structures import CaseInsensitiveDict
 from urllib.parse import urljoin
 
-from FlightPlanDB.types import (
+from flightplandb.types import (
     StatusResponse,
     PlanQuery, Plan, GenerateQuery,
     User, Tag,
@@ -144,7 +144,7 @@ class PlanAPI():
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
-    def plan(self, id: int) -> Plan:
+    def __call__(self, id: int) -> Plan:
         """
         Fetches a flight plan and its by ID and returns it in specified format
         """

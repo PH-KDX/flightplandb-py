@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="FlightPlanDB",
+    name="flightplandb",
     version="0.0.1",
     package_dir={"": "src"},
     packages=find_packages("src"),
@@ -15,9 +15,10 @@ setup(
         "dev": [
             "flake8==3.8.4",
             "mypy==0.790",
+            "python-dotenv==0.14.0"
         ]
     },
     entry_points = {
-        'console_scripts': ['flightdb-test=FlightPlanDB.flightplandb:test_run'],
+        'console_scripts': ['flightdb-test=flightplandb.flightplandb:test_run'],
     }
 )

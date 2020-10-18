@@ -9,3 +9,7 @@ tmp/
 **.eggs/
 
 **__pycache__/
+
+.python-version
+
+ignore/

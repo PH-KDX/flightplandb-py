@@ -34,12 +34,14 @@ class FlightPlanDB:
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
         self.url_base = url_base
 
-    def __call__(self, method: str, path, *args, **kwargs):
+    def __call__(self, method: str, path, *args, ignore_statuses=[], **kwargs):
         resp = requests.request(
             method,
             urljoin(self.url_base, path),
             auth=HTTPBasicAuth(self.key, None),
             *args, **kwargs)
+        if resp.status_code not in ignore_statuses:
+            resp.raise_for_status()
         self._header = resp.headers
         return resp.json()
 
@@ -165,14 +167,18 @@ class PlanAPI():
                 lambda p: Plan(**p),
                 self._fp.get("/search/plans", params=plan_query.as_dict())))
 
-    def has_liked(self, id: int) -> StatusResponse:
-        return StatusResponse(**self._fp.get(f"/plan/{id}/like"))
+    def has_liked(self, id: int) -> bool:
+        sr = StatusResponse(
+            **self._fp.get(f"/plan/{id}/like", ignore_statuses=[404]))
+        return sr.message != "Not Found"
 
     def like(self, id: int) -> StatusResponse:
         return StatusResponse(**self._fp.post(f"/plan/{id}/like"))
 
-    def unlike(self, id: int) -> StatusResponse:
-        return StatusResponse(**self._fp.delete(f"/plan/{id}/like"))
+    def unlike(self, id: int) -> bool:
+        sr = StatusResponse(
+            **self._fp.delete(f"/plan/{id}/like", ignore_statuses=[404]))
+        return sr.message != "Not Found"
 
     def generate(self, gen_query: GenerateQuery) -> Plan:
         return Plan(
@@ -188,6 +194,7 @@ class UserAPI():
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
+    @property
     def me(self) -> User:
         return User(**self._fp.get("/me"))
 

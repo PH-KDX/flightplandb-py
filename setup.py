@@ -18,7 +18,8 @@ setup(
             "python-dotenv==0.14.0"
         ]
     },
-    entry_points = {
-        'console_scripts': ['flightdb-test=flightplandb.flightplandb:test_run'],
+    entry_points={
+        'console_scripts': [
+            'flightdb=flightplandb.commands:main']
     }
 )

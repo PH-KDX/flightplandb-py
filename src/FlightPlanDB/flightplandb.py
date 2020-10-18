@@ -9,14 +9,19 @@ from requests.auth import HTTPBasicAuth
 from requests.structures import CaseInsensitiveDict
 from urllib.parse import urljoin
 
-from FlightPlanDB.response_types import (
-    StatusResponse, PlanQuery, Plan)
+from FlightPlanDB.types import (
+    StatusResponse,
+    PlanQuery, Plan, GenerateQuery,
+    User, Tag,
+    Airport, Track, Navaid,
+    Weather
+)
 
 
 class FlightPlanDB:
     def __init__(
             self, key: str,
-            base_url: str = "https://api.flightplandatabase.com"):
+            url_base: str = "https://api.flightplandatabase.com"):
         """
         To get an API key, visit your account settings page.
         Your account will need a verified email address to add an API key.
@@ -27,12 +32,12 @@ class FlightPlanDB:
         """
         self.key: str = key
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
-        self.base_url = base_url
+        self.url_base = url_base
 
     def __call__(self, method: str, path, *args, **kwargs):
         resp = requests.request(
             method,
-            urljoin(self.base_url, path),
+            urljoin(self.url_base, path),
             auth=HTTPBasicAuth(self.key, None),
             *args, **kwargs)
         self._header = resp.headers
@@ -113,306 +118,132 @@ class FlightPlanDB:
         self._header = resp.headers
         return StatusResponse(**resp.json())
 
+    # Sub APIs
+    @property
+    def plan(self):
+        return PlanAPI(self)
+
+
+class PlanAPI():
+    def __init__(self, flightplandb: FlightPlanDB):
+        self._fp = flightplandb
+
     def plan(self, id: int) -> Plan:
         """
         Fetches a flight plan and its by ID and returns it in specified format
         """
-        return Plan(**self.get(f"/plan/{id}"))
+        return Plan(**self._fp.get(f"/plan/{id}"))
 
-    def new_plan(self, plan: Plan) -> Plan:
-        return Plan(**self.post("/plan", json=asdict(plan)))
+    def create(self, plan: Plan) -> Plan:
+        return Plan(**self._fp.post("/plan", json=asdict(plan)))
 
-    def edit_plan(self, plan: Plan) -> Plan:
-        return Plan(**self.patch(f"/plan/{plan.id}", json=asdict(plan)))
+    def edit(self, plan: Plan) -> Plan:
+        return Plan(**self._fp.patch(f"/plan/{plan.id}", json=asdict(plan)))
 
-    def delete_plan(self, id: int) -> StatusResponse:
-        return StatusResponse(**self.delete("/plan/{id}"))
+    def delete(self, id: int) -> StatusResponse:
+        return StatusResponse(**self._fp.delete("/plan/{id}"))
 
     def search(self, plan_query: PlanQuery) -> List[Plan]:
         return list(
             map(
                 lambda p: Plan(**p),
-                self.get("/search/plans", params=plan_query.as_dict())))
-
-#     def generate(key, params):
-
-#         url = f"{baseurl}/auto/generate"
-
-#         result = requests.post(
-#             url,
-#             json=params,
-#             auth=HTTPBasicAuth(key, None)
-#             )
-
-#         result.raise_for_status()
-
-#         result_dict = result.json()
-#         try:
-#             result_dict = fptimestamp(result_dict)
-#         except TypeError:
-#             pass
-#         return(result.headers, result_dict)
-
-#     # Decodes a route from a space-separated string to a flight plan
-#     @staticmethod
-#     def decode(key, route):
-#         url = f"{baseurl}/auto/decode"
-#         route_dict = {"route": route}
-#         result = requests.post(
-#             url,
-#             json=route_dict,
-#             auth=HTTPBasicAuth(key, None)
-#             )
-
-#         result.raise_for_status()
-
-#         result_dict = result.json()
-#         try:
-#             result_dict = fptimestamp(result_dict)
-#         except TypeError:
-#             pass
-#         return(result.headers, result_dict)
-
-#     # Searches for a route based on several parameters
-#     @staticmethod
-#     # Contains everything for working with flight plan likes
-#     class Like:
-
-#         # Gets like status for flight plan
-#         @staticmethod
-#         def get(key, id):
-#             url = f"{baseurl}/{id}/like"
-
-#             result = requests.get(
-#                 url,
-#                 auth=HTTPBasicAuth(key, None)
-#                 )
-
-#             if result.status_code == 200:
-#                 status = True
-#             elif result.status_code == 404:
-#                 status = False
-#             else:
-#                 result.raise_for_status()
-
-#             return(result.headers, status)
-
-#         # Adds like to flight plan
-#         @staticmethod
-#         def create(key, id):
-#             url = f"{baseurl}/{id}/like"
-
-#             result = requests.post(
-#                 url,
-#                 auth=HTTPBasicAuth(key, None)
-#                 )
-
-#             if result.status_code == 201:
-#                 status = True
-#             elif result.status_code == 200:
-#                 status = False
-#             else:
-#                 result.raise_for_status()
-
-#             return(result.headers, status)
-
-#         # Removes like from flight plan
-#         @staticmethod
-#         def remove(key):
-#             url = f"{baseurl}/{id}/like"
-
-#             result = requests.delete(
-#                 url,
-#                 auth=HTTPBasicAuth(key, None)
-#                 )
-
-#             if result.status_code == 200:
-#                 status = True
-#             elif result.status_code == 404:
-#                 status = False
-#             else:
-#                 result.raise_for_status()
-
-#             return(result.headers, status)
-
-
-# # Contains everything pertaining to navigation
-# class Nav:
-
-#     # NATS
-#     @staticmethod
-#     def NATS(key):
-#         url = f"{baseurl}/nav/NATS"
-
-#         result = requests.get(
-#             url,
-#             auth=HTTPBasicAuth(key, None)
-#             )
-
-#         result.raise_for_status()
-
-#         return(result.headers, result.json())
-
-#     # PACOTS
-#     @staticmethod
-#     def PACOTS(key):
-#         url = f"{baseurl}/nav/PACOTS"
-
-#         result = requests.get(
-#             url,
-#             auth=HTTPBasicAuth(key, None)
-#             )
-
-#         result.raise_for_status()
-
-#         return(result.headers, result.json())
-
-#     # Search
-#     @staticmethod
-#     def search(key, query, types=None):
-#         params = {"q": query, "types": types}
-#         url = f"{baseurl}/search/nav"
-
-#         result = requests.get(
-#             url,
-#             params=params,
-#             auth=HTTPBasicAuth(key, None)
-#             )
-
-#         result.raise_for_status()
-
-#         return(result.headers, result.json())
-
-#     # Fetches various info related to airports
-#     class Airport:
-
-#         # Fetches info about airport by ICAO code
-#         @staticmethod
-#         def info(key, icao):
-#             url = f"{baseurl}/nav/airport/{icao}"
-
-#             result = requests.get(
-#                 url,
-#                 auth=HTTPBasicAuth(key, None)
-#                 )
-
-#             result.raise_for_status()
-
-#             result_dict = result.json()
-#             # convert all the ISO-8601 JS
-#             # timestamps to Python datetime object
-#             for i in ["sunrise", "sunset", "dawn", "dusk"]:
-#                 try:
-#                     result_dict["times"][i] = fromjsiso(
-#                         result_dict["times"][i]
-#                         )
-#                 except KeyError:
-#                     pass
-#                 except ValueError:
-#                     print(f"[times][{i}] was not a valid timestamp")
-#                     raise
-#             return(result.headers, result_dict)
-
-#         # Fetches weather for airport by ICAO code
-#         @staticmethod
-#         def weather(key, icao):
-#             url = f"{baseurl}/weather/{icao}"
-#             result = requests.get(url, auth=HTTPBasicAuth(key, None))
-
-#             result.raise_for_status()
-
-#             return(result.headers, result.json())
-
-
-# # Commands related to registered users
-# class User:
-
-#     # Fetches profile information
-#     @staticmethod
-#     def info(key, username):
-#         url = f"{baseurl}/user/{username}"
-
-#         result = requests.get(
-#             url,
-#             auth=HTTPBasicAuth(key, None)
-#             )
-
-#         result.raise_for_status()
-
-#         result_dict = result.json()
-#         # convert all the ISO-8601 JS timestamps to Python datetime object
-#         for i in ["joined", "lastSeen"]:
-#             try:
-#                 result_dict[i] = fromjsiso(
-#                     result_dict[i]
-#                     )
-#             except KeyError:
-#                 pass
-#             except ValueError:
-#                 print(f"[{i}] was not a valid timestamp")
-#                 raise
-#         return(result.headers, result_dict)
-
-#     # An alias for info where username is the current user
-#     @staticmethod
-#     def info_me(key):
-#         url = f"{baseurl}/me/"
-
-#         result = requests.get(
-#             url,
-#             auth=HTTPBasicAuth(key, None)
-#             )
-
-#         result.raise_for_status()
-
-#         return(result.headers, result.json())
-
-#     # Fetches flight plans by user
-#     @staticmethod
-#     def plans(key, username, params=None):
-#         url = f"{baseurl}/user/{username}/plans"
-
-#         result = requests.get(
-#             url,
-#             params=params,
-#             auth=HTTPBasicAuth(key, None)
-#             )
-
-#         result.raise_for_status()
-
-#         return(result.headers, result.json())
-
-#     # Fetches flight plans liked by user
-#     @staticmethod
-#     def likes(key, username, params=None):
-#         url = f"{baseurl}/user/{username}/likes"
-
-#         result = requests.get(
-#             url,
-#             params=params,
-#             auth=HTTPBasicAuth(key, None)
-#             )
-
-#         result.raise_for_status()
-
-#         return(result.headers, result.json())
-
-#     # Searches for user by username
-#     @staticmethod
-#     def search(key, query):
-#         url = f"{baseurl}/search/users"
-#         params = {"q": query}
-
-#         result = requests.get(
-#             url,
-#             params=params,
-#             auth=HTTPBasicAuth(key, None)
-#             )
-
-#         result.raise_for_status()
-
-#         return(result.headers, result.json())
-
+                self._fp.get("/search/plans", params=plan_query.as_dict())))
+
+    def has_liked(self, id: int) -> StatusResponse:
+        return StatusResponse(**self._fp.get(f"/plan/{id}/like"))
+
+    def like(self, id: int) -> StatusResponse:
+        return StatusResponse(**self._fp.post(f"/plan/{id}/like"))
+
+    def unlike(self, id: int) -> StatusResponse:
+        return StatusResponse(**self._fp.delete(f"/plan/{id}/like"))
+
+    def generate(self, gen_query: GenerateQuery) -> Plan:
+        return Plan(
+            **self._fp.patch(
+                "/auto/generate", json=asdict(gen_query)))
+
+    def decode(self, route: str) -> Plan:
+        return Plan(**self._fp.post(
+            "/auto/decode", json={"route": route}))
+
+
+class UserAPI():
+    def __init__(self, flightplandb: FlightPlanDB):
+        self._fp = flightplandb
+
+    def me(self) -> User:
+        return User(**self._fp.get("/me"))
+
+    def __call__(self, username: str) -> User:
+        return User(**self._fp.get(f"user/{username}"))
+
+    def plans(self, username: str) -> List[Plan]:
+        # TODO: params
+        # page The page of results to fetch
+        # limit [20] The number of plans to return per page (max 100)
+        # sort The order of the returned plans
+        return list(
+            map(
+                lambda p: Plan(**p),
+                self._fp.get(f"/user/{username}/plans")))
+
+    def likes(self, username: str) -> List[Plan]:
+        # TODO: params
+        # page The page of results to fetch
+        # limit [20] The number of plans to return per page (max 100)
+        # sort The order of the returned plans
+        return list(
+            map(
+                lambda p: Plan(**p),
+                self._fp.get(f"/user/{username}/likes")))
+
+    def search(self, username: str) -> List[Plan]:
+        return list(
+            map(
+                lambda u: User(**u),
+                self._fp.get("/search/users", {"q": username})))
+
+
+class TagsAPI():
+    def __init__(self, flightplandb: FlightPlanDB):
+        self._fp = flightplandb
+
+    def __call__(self) -> List[Tag]:
+        return list(map(lambda t: Tag(**t), self._fp.get("/tags")))
+
+
+class NavAPI():
+    def __init__(self, flightplandb: FlightPlanDB):
+        self._fp = flightplandb
+
+    def airport(self, icao) -> Airport:
+        return Airport(**self._fp.get(f"/nav/airport/{icao}"))
+
+    def nats(self) -> List[Track]:
+        return list(
+            map(lambda n: Track(**n), self._fp.get("/nav/NATS")))
+
+    def pacots(self) -> List[Track]:
+        return list(
+            map(lambda t: Track(**t), self._fp.get("/nav/PACOTS")))
+
+    def search(self, q: str, types: str = None) -> List[Navaid]:
+        params = {"q": q}
+        if types:
+            params["types"] = types
+        return list(map(
+            lambda n: Navaid(**n),
+            self._fp.get("/search/nav", params=params)))
+
+
+class Weather():
+    def __init__(self, flightplandb: FlightPlanDB):
+        self._fp = flightplandb
+
+    def __call__(self, icao: str) -> Weather:
+        return Weather(**self._fp.get(f"/weather/{icao}"))
+   
 
 def test_run():
     import os

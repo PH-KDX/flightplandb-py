@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from typing import List, Union, Any, Optional
+from typing import List, Union, Optional
 from dataclasses import dataclass, fields
 from dateutil.parser import isoparse
 from datetime import datetime
-from enum import Enum
+from enum import Enum, EnumMeta, auto
 
 
 @dataclass
@@ -65,13 +65,25 @@ class RouteNodeType(Enum):
     def __deepcopy__(self, memo):
         return self.name
 
+    def __str__(self):
+        return self.value
 
-ViaType = Enum('ViaType', 'SID STAR AWY-HI AWY-LO NAT PACOT')
-ViaType.__deepcopy__ = lambda self, memo: self.name  # type: ignore
 
-# class ViaType(_ViaType):
-#     def __deepcopy__(self, memo):
-#         return self.name
+# ViaType = Enum('ViaType', 'SID STAR AWY-HI AWY-LO NAT PACOT')
+# ViaType.__deepcopy__ = lambda self, memo: self.name  # type: ignore
+
+class ViaTypeMeta(EnumMeta):
+    def __getitem__(cls, name):
+        return cls._member_map_[name.replace("-", "_")]
+
+
+class ViaType(Enum, metaclass=ViaTypeMeta):
+    SID = auto()
+    STAR = auto()
+    AWY_HI = auto()
+    AWY_LO = auto()
+    NAT = auto()
+    PACOT = auto()
 
 
 @dataclass
@@ -102,7 +114,7 @@ class RouteNode():
 
     def __post_init__(self):
         self.type = RouteNodeType[self.type]
-        self.via = Via(**self.via) if self.via else self.via
+        self.via = Via(**self.via) if type(self.via) == dict else self.via
 
 
 @dataclass
@@ -111,7 +123,13 @@ class Route():
     nodes: List[RouteNode]
 
     def __post_init__(self):
-        self.nodes = list(map(lambda x: RouteNode(**x), self.nodes))
+        self.nodes = list(
+            map(
+                lambda x: RouteNode(**x) if type(x) == dict else x,
+                self.nodes
+                )
+            )
+
 
 @dataclass
 class Cycle():
@@ -123,7 +141,6 @@ class Cycle():
     year: int
     # cycle release
     release: int
-
 
 
 @dataclass
@@ -173,14 +190,20 @@ class Plan():
     cycle: Optional[Cycle] = None
 
     def __post_init__(self):
-        self.createdAt = isoparse(self.createdAt)
-        self.updatedAt = isoparse(self.updatedAt)
+        self.createdAt = (isoparse(self.createdAt)
+                          if type(self.createdAt) != datetime
+                          else self.createdAt)
+        self.updatedAt = (isoparse(self.updatedAt)
+                          if type(self.updatedAt) != datetime
+                          else self.updatedAt)
 
         self.user = User(**self.user) if self.user else self.user
         if self.application:
             self.application = Application(**self.application)
-        self.route = Route(**self.route)
-        self.cycle = Cycle(**self.cycle)
+        self.route = (Route(**self.route)
+                      if type(self.route) == dict else self.route)
+        self.cycle = (Cycle(**self.cycle)
+                      if type(self.cycle) == dict else self.cycle)
 
 
 @dataclass
@@ -289,10 +312,18 @@ class Times():
     dusk: datetime
 
     def __post_init__(self):
-        self.sunrise = isoparse(self.sunrise)
-        self.sunset = isoparse(self.sunset)
-        self.dawn = isoparse(self.dawn)
-        self.dusk = isoparse(self.dusk)
+        self.sunrise = (isoparse(self.sunrise)
+                        if type(self.sunrise) != datetime
+                        else self.sunrise)
+        self.sunset = (isoparse(self.sunset)
+                       if type(self.sunset) != datetime
+                       else self.sunset)
+        self.dawn = (isoparse(self.dawn)
+                     if type(self.dawn) != datetime
+                     else self.dawn)
+        self.dusk = (isoparse(self.dusk)
+                     if type(self.dusk) != datetime
+                     else self.dusk)
 
 
 @dataclass

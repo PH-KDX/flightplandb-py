@@ -13,3 +13,9 @@ tmp/
 .python-version
 
 ignore/
+
+_flightplandb.py
+metatest.py
+test.py
+
+html/

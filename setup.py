@@ -17,9 +17,5 @@ setup(
             "mypy==0.790",
             "python-dotenv==0.14.0"
         ]
-    },
-    entry_points={
-        'console_scripts': [
-            'flightdb=flightplandb.commands:main']
     }
 )

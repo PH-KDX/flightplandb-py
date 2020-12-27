@@ -34,7 +34,7 @@ class FlightPlanDB:
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
         self.url_base = url_base
 
-    def __call__(self, method: str, path, *args, ignore_statuses=[], **kwargs):
+    def __call__(self, method: str, path, ignore_statuses=[], *args, **kwargs):
         resp = requests.request(
             method,
             urljoin(self.url_base, path),
@@ -47,7 +47,7 @@ class FlightPlanDB:
 
     def __getattr__(self, attr):
         """
-        The api only supports the following http verbs
+        The API only supports the following HTTP verbs
         """
         if attr not in ["get", "post", "patch", "delete"]:
             raise AttributeError(
@@ -57,7 +57,7 @@ class FlightPlanDB:
 
     def _header_value(self, header_key):
         if header_key not in self._header:
-            self.ping()  # Make atleast one request
+            self.ping()  # Make at least one request
         return self._header[header_key]
 
     @property
@@ -142,15 +142,18 @@ class FlightPlanDB:
         return WeatherAPI(self)
 
 
-class PlanAPI():
+class PlanAPI:
+    # TODO: params
+    #   allow flight plan return format to be specified by user
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
-    def __call__(self, id: int) -> Plan:
+    def __call__(self, id_: int) -> Plan:
         """
-        Fetches a flight plan and its by ID and returns it in specified format
+        Fetches a flight plan and its associated attributes by ID.
+        Returns it in specified format.
         """
-        return Plan(**self._fp.get(f"/plan/{id}"))
+        return Plan(**self._fp.get(f"/plan/{id_}"))
 
     def create(self, plan: Plan) -> Plan:
         return Plan(**self._fp.post("/plan", json=asdict(plan)))
@@ -158,8 +161,8 @@ class PlanAPI():
     def edit(self, plan: Plan) -> Plan:
         return Plan(**self._fp.patch(f"/plan/{plan.id}", json=asdict(plan)))
 
-    def delete(self, id: int) -> StatusResponse:
-        return StatusResponse(**self._fp.delete("/plan/{id}"))
+    def delete(self, id_: int) -> StatusResponse:
+        return StatusResponse(**self._fp.delete(f"/plan/{id_}"))
 
     def search(self, plan_query: PlanQuery) -> List[Plan]:
         return list(
@@ -167,17 +170,17 @@ class PlanAPI():
                 lambda p: Plan(**p),
                 self._fp.get("/search/plans", params=plan_query.as_dict())))
 
-    def has_liked(self, id: int) -> bool:
+    def has_liked(self, id_: int) -> bool:
         sr = StatusResponse(
-            **self._fp.get(f"/plan/{id}/like", ignore_statuses=[404]))
+            **self._fp.get(f"/plan/{id_}/like", ignore_statuses=[404]))
         return sr.message != "Not Found"
 
-    def like(self, id: int) -> StatusResponse:
-        return StatusResponse(**self._fp.post(f"/plan/{id}/like"))
+    def like(self, id_: int) -> StatusResponse:
+        return StatusResponse(**self._fp.post(f"/plan/{id_}/like"))
 
-    def unlike(self, id: int) -> bool:
+    def unlike(self, id_: int) -> bool:
         sr = StatusResponse(
-            **self._fp.delete(f"/plan/{id}/like", ignore_statuses=[404]))
+            **self._fp.delete(f"/plan/{id_}/like", ignore_statuses=[404]))
         return sr.message != "Not Found"
 
     def generate(self, gen_query: GenerateQuery) -> Plan:
@@ -190,7 +193,7 @@ class PlanAPI():
             "/auto/decode", json={"route": route}))
 
 
-class UserAPI():
+class UserAPI:
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
@@ -203,9 +206,9 @@ class UserAPI():
 
     def plans(self, username: str) -> List[Plan]:
         # TODO: params
-        # page The page of results to fetch
-        # limit [20] The number of plans to return per page (max 100)
-        # sort The order of the returned plans
+        #   page The page of results to fetch
+        #   limit [20] The number of plans to return per page (max 100)
+        #   sort The order of the returned plans
         return list(
             map(
                 lambda p: Plan(**p),
@@ -213,9 +216,9 @@ class UserAPI():
 
     def likes(self, username: str) -> List[Plan]:
         # TODO: params
-        # page The page of results to fetch
-        # limit [20] The number of plans to return per page (max 100)
-        # sort The order of the returned plans
+        #   page The page of results to fetch
+        #   limit [20] The number of plans to return per page (max 100)
+        #   sort The order of the returned plans
         return list(
             map(
                 lambda p: Plan(**p),
@@ -228,7 +231,7 @@ class UserAPI():
                 self._fp.get("/search/users", {"q": username})))
 
 
-class TagsAPI():
+class TagsAPI:
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
@@ -236,7 +239,7 @@ class TagsAPI():
         return list(map(lambda t: Tag(**t), self._fp.get("/tags")))
 
 
-class NavAPI():
+class NavAPI:
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
@@ -260,7 +263,7 @@ class NavAPI():
             self._fp.get("/search/nav", params=params)))
 
 
-class WeatherAPI():
+class WeatherAPI:
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 

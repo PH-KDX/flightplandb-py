@@ -8,13 +8,13 @@ from enum import Enum, EnumMeta, auto
 
 
 @dataclass
-class StatusResponse():
+class StatusResponse:
     message: str
     errors: Union[List[str], None]
 
 
 @dataclass
-class User():
+class User:
     # Unique user identifier number
     id: int
     # Username
@@ -44,7 +44,7 @@ class User():
 
 
 @dataclass
-class Application():
+class Application:
     # Unique application identifier number
     id: int
     # Application name
@@ -87,7 +87,7 @@ class ViaType(Enum, metaclass=ViaTypeMeta):
 
 
 @dataclass
-class Via():
+class Via:
     ident: str
     type: ViaType
 
@@ -96,7 +96,7 @@ class Via():
 
 
 @dataclass
-class RouteNode():
+class RouteNode:
     # Node navaid identifier
     ident: str
     # Node type.
@@ -118,7 +118,7 @@ class RouteNode():
 
 
 @dataclass
-class Route():
+class Route:
     # An array of route nodes. A route must have at least 2 nodes
     nodes: List[RouteNode]
 
@@ -132,7 +132,7 @@ class Route():
 
 
 @dataclass
-class Cycle():
+class Cycle:
     # FlightPlanDB cycle id
     id: int
     # AIP-style cycle id
@@ -144,7 +144,7 @@ class Cycle():
 
 
 @dataclass
-class Plan():
+class Plan:
     # Unique plan identifier number
     id: int
     # ICAO code of the departure airport
@@ -183,10 +183,9 @@ class Plan():
     user: Optional[Union[User, None]] = None
     # Application associated with the item. Null if no application linked
     application: Optional[Union[Application, None]] = None
-    # The flight plan route.
+    # The flight plan route
     route: Optional[Route] = None
-
-    # TODO: unknown keyword from server response
+    # The navigation data cycle
     cycle: Optional[Cycle] = None
 
     def __post_init__(self):
@@ -207,7 +206,7 @@ class Plan():
 
 
 @dataclass
-class PlanQuery():
+class PlanQuery:
     # Simple search query.
     # Search departure ICAO & name, destination ICAO & name,
     # username, tags and the flight number
@@ -251,7 +250,7 @@ class PlanQuery():
 
 
 @dataclass
-class GenerateQuery():
+class GenerateQuery:
     # Generate plan query.
     # The departure airport ICAO code
     fromICAO: str
@@ -280,7 +279,7 @@ class GenerateQuery():
 
 
 @dataclass
-class Tag():
+class Tag:
     # Tag name
     name: str
     # Description of the tag. Null if no description is available
@@ -292,7 +291,7 @@ class Tag():
 
 
 @dataclass
-class Timezone():
+class Timezone:
     # The IANA timezone the airport is located in. Null if not available
     name: Union[str, None]
     # The number of seconds the airport timezone is currently offset from UTC.
@@ -301,7 +300,7 @@ class Timezone():
 
 
 @dataclass
-class Times():
+class Times:
     # Time of sunrise
     sunrise: datetime
     # time of sunset
@@ -327,7 +326,7 @@ class Times():
 
 
 @dataclass
-class RunwayEnds():
+class RunwayEnds:
     # The identifier of the runway end
     ident: str
     # The latitude of the runway end
@@ -341,7 +340,7 @@ NavaidType.__deepcopy__ = lambda self, memo: self.name  # type: ignore
 
 
 @dataclass
-class Navaid():
+class Navaid:
     # The navaid identifier
     ident: str
     # The navaid type. One of
@@ -372,7 +371,7 @@ class Navaid():
 
 
 @dataclass
-class Runway():
+class Runway:
     # The runway identifier
     ident: str
     # The runway width, with units determined by the X-Units header (length)
@@ -402,7 +401,7 @@ class Runway():
 
 
 @dataclass
-class Frequency():
+class Frequency:
     # The frequency type
     type: str
     # The frequency in Hz
@@ -412,7 +411,7 @@ class Frequency():
 
 
 @dataclass
-class Weather():
+class Weather:
     # Current METAR report for the airport
     METAR: Union[str, None]
     # Current TAF report for the airport
@@ -420,7 +419,7 @@ class Weather():
 
 
 @dataclass
-class Airport():
+class Airport:
     # The airport ICAO code
     ICAO: str
     # The airport IATA code. Null if not available
@@ -461,7 +460,7 @@ class Airport():
 
 
 @dataclass
-class Track():
+class Track:
     # Track identifier
     ident: str
     route: Route

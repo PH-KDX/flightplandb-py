@@ -9,7 +9,7 @@ from requests.auth import HTTPBasicAuth
 from requests.structures import CaseInsensitiveDict
 from urllib.parse import urljoin
 
-from flightplandb.types import (
+from flightplandb.datatypes import (
     StatusResponse,
     PlanQuery, Plan, GenerateQuery,
     User, Tag,
@@ -33,6 +33,12 @@ class FlightPlanDB:
         self.key: str = key
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
         self.url_base = url_base
+
+# Set a "format" argument.
+# This must be converted to the equivalent format string (perhaps in datatypes.py?)
+# It must be added as a header.
+
+# Same goes for pagination. However, this does not need to be defined in datatypes.
 
     def __call__(self, method: str, path, ignore_statuses=[], *args, **kwargs):
         resp = requests.request(
@@ -109,7 +115,7 @@ class FlightPlanDB:
 
     def revoke(self) -> StatusResponse:
         """
-        Revoke the API key in use in the vent it is compromised.
+        Revoke the API key in use in the event it is compromised.
 
         If the HTTP response code is 200 and the status message is "OK", then
         the key has been revoked and any further requests will be rejected.
@@ -142,7 +148,7 @@ class FlightPlanDB:
         return WeatherAPI(self)
 
 
-class PlanAPI:
+class PlanAPI():
     # TODO: params
     #   allow flight plan return format to be specified by user
     def __init__(self, flightplandb: FlightPlanDB):
@@ -276,7 +282,7 @@ def test_run():
     from dotenv import load_dotenv
     load_dotenv()
 
-    token = os.environ["FLIGHT_TOKEN"]
+    token = os.environ["KEY"]
     api = FlightPlanDB(token)
 
     print(api.ping())

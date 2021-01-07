@@ -13,6 +13,7 @@ tmp/
 .python-version
 
 ignore/
+test.txt
 
 _flightplandb.py
 metatest.py

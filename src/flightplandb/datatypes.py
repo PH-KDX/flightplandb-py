@@ -53,46 +53,52 @@ class Application:
     url: Optional[Union[str, None]] = None
 
 
-class RouteNodeType(Enum):
-    UKN = "Unknown"
-    APT = "Airport"
-    NDB = "Non-directional beacon (NDB)"
-    VOR = "VHF omni-directional range (VOR)"
-    FIX = "Navigational fix"
-    DME = "Distance measuring equipment"
-    LATLON = "Latitude/Longitude point"
-
-    def __deepcopy__(self, memo):
-        return self.name
-
-    def __str__(self):
-        return self.value
-
-
 # ViaType = Enum('ViaType', 'SID STAR AWY-HI AWY-LO NAT PACOT')
 # ViaType.__deepcopy__ = lambda self, memo: self.name  # type: ignore
 
-class ViaTypeMeta(EnumMeta):
-    def __getitem__(cls, name):
-        return cls._member_map_[name.replace("-", "_")]
+# class ViaTypeMeta(EnumMeta):
+#     def __getitem__(cls, name):
+#         return cls._member_map_[name.replace("-", "_")]
 
 
-class ViaType(Enum, metaclass=ViaTypeMeta):
-    SID = auto()
-    STAR = auto()
-    AWY_HI = auto()
-    AWY_LO = auto()
-    NAT = auto()
-    PACOT = auto()
+# class ViaType(Enum, metaclass=ViaTypeMeta):
+#     SID = auto()
+#     STAR = auto()
+#     AWY_HI = auto()
+#     AWY_LO = auto()
+#     NAT = auto()
+#     PACOT = auto()
 
 
 @dataclass
 class Via:
     ident: str
-    type: ViaType
+    type: str
 
     def __post_init__(self):
-        self.type = ViaType[self.type]
+        if self.type not in ['SID',
+                             'STAR',
+                             'AWY-HI',
+                             'AWY-LO',
+                             'NAT',
+                             'PACOT']:
+            raise ValueError(f"{self.type} is not a valid Via type")
+
+
+# class RouteNodeType(Enum):
+#     UKN = "Unknown"
+#     APT = "Airport"
+#     NDB = "Non-directional beacon (NDB)"
+#     VOR = "VHF omni-directional range (VOR)"
+#     FIX = "Navigational fix"
+#     DME = "Distance measuring equipment"
+#     LATLON = "Latitude/Longitude point"
+
+#     def __deepcopy__(self, memo):
+#         return self.name
+
+#     def __str__(self):
+#         return self.value
 
 
 @dataclass
@@ -100,7 +106,7 @@ class RouteNode:
     # Node navaid identifier
     ident: str
     # Node type.
-    type: RouteNodeType
+    type: str
     # Node latitude in decimal degrees
     lat: float
     # Node longitude in decimal degrees
@@ -113,7 +119,15 @@ class RouteNode:
     via: Union[Via, None]
 
     def __post_init__(self):
-        self.type = RouteNodeType[self.type]
+        if self.type not in ['UKN',
+                             'APT',
+                             'NDB',
+                             'VOR',
+                             'FIX',
+                             'DME',
+                             'LATLON']:
+            raise ValueError(f"{self.type} is not a valid RouteNode type")
+#         self.type = RouteNodeType[self.type]
         self.via = Via(**self.via) if type(self.via) == dict else self.via
 
 
@@ -335,16 +349,16 @@ class RunwayEnds:
     lon: float
 
 
-NavaidType = Enum('NavaidType', 'LOC-ILS LOC-LOC GS DME')
-NavaidType.__deepcopy__ = lambda self, memo: self.name  # type: ignore
+# NavaidType = Enum('NavaidType', 'LOC-ILS LOC-LOC GS DME')
+# NavaidType.__deepcopy__ = lambda self, memo: self.name  # type: ignore
 
 
 @dataclass
 class Navaid:
     # The navaid identifier
     ident: str
-    # The navaid type. One of
-    type: NavaidType
+    # The navaid type.
+    type: str
     # The navaid latitude
     lat: float
     # The navaid longitude
@@ -367,7 +381,8 @@ class Navaid:
     range: float
 
     def __post_init__(self):
-        self.type = NavaidType[self.type]
+        if self.type not in ['LOC-ILS', 'LOC-LOC', 'GS', 'DME']:
+            raise ValueError(f"{self.type} is not a valid Navaid type")
 
 
 @dataclass
@@ -470,3 +485,80 @@ class Track:
     def __port_init__(self):
         self.validFrom = isoparse(self.validFrom)
         self.validTo = isoparse(self.validTo)
+
+
+@dataclass
+class Pagination:
+    """
+    Total number of pages returned. Not to be edited by user
+    """
+    page_count: int
+
+    """
+    Current page displayed
+    """
+    page: int
+
+    """
+    Maximum items per page
+    """
+    limit: int
+
+    """
+    Sort order for results
+    """
+    sort: int
+
+
+@dataclass
+class Response:
+    """
+    This is the class which the API will return query results in.
+    It is not intended to be directly edited by a user.
+    """
+
+    """
+    Body content returned
+    """
+    content: Union[Plan,
+                   List[Plan],
+                   User,
+                   List[User],
+                   Airport,
+                   List[Track],
+                   List[Navaid],
+                   Weather,
+                   StatusResponse]
+
+    """
+    API version that returned the response
+    """
+    api_version: int
+
+    """
+    The units system used for numeric values.
+    https://flightplandatabase.com/dev/api#units
+    """
+    units: str
+
+    """
+    The number of requests allowed per day, operated on an hourly rolling
+    basis. i.e Requests used between 19:00 and 20:00 will become available
+    again at 19:00 the following day. API key authenticated requests get a
+    higher daily rate limit and can be raised if a compelling
+    use case is presented.
+    """
+    limit_cap: int
+
+    """
+    The number of requests used in the current period
+    by the presented API key or IP address
+    """
+    limit_used: int
+
+    """
+    Some requests will return paginated results.
+    If they are paginated, this field will have further info on pagination.
+    Otherwise, it will be Null.
+    """
+    pagination: Optional[Union[Pagination, None]]

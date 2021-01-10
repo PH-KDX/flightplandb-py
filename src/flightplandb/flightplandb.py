@@ -91,6 +91,7 @@ class FlightPlanDB:
         if resp.status_code not in ignore_statuses:
             resp.raise_for_status()
         self._header = resp.headers
+
         # return resp.json()
         resp_formatted = Response(
                 content=resp.json() if return_format == "dict" else resp.text,
@@ -119,64 +120,11 @@ class FlightPlanDB:
 
         return partial(self, attr)
 
-    def _header_value(self, header_key):
-        if header_key not in self._header:
-            self.ping()  # Make at least one request
-        return self._header[header_key]
-
-    # @property
-    # def api_version(self) -> int:
-    #     """
-    #     Returns:
-    #         int: API version that returned the response
-    #     """
-    #     return int(self._header_value("X-API-Version"))
-
-    # @property
-    # def units(self) -> str:
-    #     """The units system used for numeric values.
-    #     https://flightplandatabase.com/dev/api#units
-
-    #     Returns:
-    #         String: AVIATION, METRIC or SI
-    #     """
-    #     return self._header_value("X-Units")
-
-    # @property
-    # def limit_cap(self) -> int:
-    #     """
-    #     The number of requests allowed per day, operated on an hourly rolling
-    #     basis. i.e Requests used between 19:00 and 20:00 will become available
-    #     again at 19:00 the following day. API key authenticated requests get a
-    #     higher daily rate limit and can be raised if a compelling
-    #     use case is presented.
-    #     Returns:
-    #         int: number of allowed requests per day
-    #     """
-    #     return int(self._header_value("X-Limit-Cap"))
-
-    # @property
-    # def limit_used(self) -> int:
-    #     """
-    #     The number of requests used in the current period
-    #     by the presented API key or IP address
-
-    #     Returns:
-    #         int: number of requests used in period
-    #     """
-    #     return int(self.limit_used)
-
     def ping(self) -> StatusResponse:
         """Checks API status to see if it is up"""
         resp = self.get("")
         resp.content = StatusResponse(**resp.content)
         return(resp)
-
-    # def test(self) -> Response:
-    #     """Checks API status to see if it is up"""
-    #     resp = self.get("")
-    #     resp.content = StatusResponse(**resp.content)
-    #     return(resp)
 
     def revoke(self) -> StatusResponse:
         """
@@ -252,26 +200,31 @@ class PlanAPI():
         return resp
 
     def has_liked(self, id_: int) -> bool:
-        sr = StatusResponse(
-            **self._fp.get(f"/plan/{id_}/like", ignore_statuses=[404]))
-        return sr.message != "Not Found"
+        resp = self._fp.get(f"/plan/{id_}/like", ignore_statuses=[404])
+        # resp.content is still a dict at this point
+        resp.content = (resp.content["message"] != "Not Found")
+        return resp
 
     def like(self, id_: int) -> StatusResponse:
-        return StatusResponse(**self._fp.post(f"/plan/{id_}/like"))
+        resp = self._fp.post(f"/plan/{id_}/like")
+        resp.content = StatusResponse(**resp.content)
+        return resp
 
     def unlike(self, id_: int) -> bool:
-        sr = StatusResponse(
-            **self._fp.delete(f"/plan/{id_}/like", ignore_statuses=[404]))
-        return sr.message != "Not Found"
+        resp = self._fp.get(f"/plan/{id_}/like", ignore_statuses=[404])
+        # resp.content is still a dict at this point
+        resp.content = (resp.content["message"] != "Not Found")
+        return resp
 
     def generate(self, gen_query: GenerateQuery) -> Plan:
-        return Plan(
-            **self._fp.patch(
-                "/auto/generate", json=asdict(gen_query)))
+        resp = self._fp.patch("/auto/generate", json=asdict(gen_query))
+        resp.content = Plan(**resp.content)
+        return resp
 
     def decode(self, route: str) -> Plan:
-        return Plan(**self._fp.post(
-            "/auto/decode", json={"route": route}))
+        resp = self._fp.post("/auto/decode", json={"route": route})
+        resp.content = Plan(**resp.content)
+        return resp
 
 
 class UserAPI:
@@ -280,36 +233,46 @@ class UserAPI:
 
     @property
     def me(self) -> User:
-        return User(**self._fp.get("/me"))
+        resp = self._fp.get("/me")
+        resp.content = User(**resp.content)
+        return resp
 
     def __call__(self, username: str) -> User:
-        return User(**self._fp.get(f"user/{username}"))
+        resp = self._fp.get(f"/user/{username}")
+        resp.content = User(**resp.content)
+        return resp
 
     def plans(self, username: str) -> List[Plan]:
         # TODO: params
         #   page The page of results to fetch
         #   limit [20] The number of plans to return per page (max 100)
         #   sort The order of the returned plans
-        return list(
+        resp = self._fp.get(f"/user/{username}/plans")
+        resp.content = list(
             map(
-                lambda p: Plan(**p),
-                self._fp.get(f"/user/{username}/plans")))
+                lambda u: Plan(**u),
+                resp.content))
+        return resp
 
     def likes(self, username: str) -> List[Plan]:
         # TODO: params
         #   page The page of results to fetch
         #   limit [20] The number of plans to return per page (max 100)
         #   sort The order of the returned plans
-        return list(
+        resp = self._fp.get(f"/user/{username}/likes")
+        resp.content = list(
             map(
-                lambda p: Plan(**p),
-                self._fp.get(f"/user/{username}/likes")))
+                lambda u: Plan(**u),
+                resp.content))
+        return resp
 
     def search(self, username: str) -> List[User]:
-        return list(
+        resp = self._fp.get("/search/users", params={"q": username})
+        resp.content = list(
             map(
                 lambda u: User(**u),
-                self._fp.get("/search/users", {"q": username})))
+                resp.content))
+        return resp
 
 
 class TagsAPI:
@@ -317,7 +280,9 @@ class TagsAPI:
         self._fp = flightplandb
 
     def __call__(self) -> List[Tag]:
-        return list(map(lambda t: Tag(**t), self._fp.get("/tags")))
+        resp = self._fp.get("/tags")
+        resp.content = list(map(lambda t: Tag(**t), resp.content))
+        return resp
 
 
 class NavAPI:
@@ -325,15 +290,19 @@ class NavAPI:
         self._fp = flightplandb
 
     def airport(self, icao) -> Airport:
-        return Airport(**self._fp.get(f"/nav/airport/{icao}"))
+        resp = self._fp.get(f"/nav/airport/{icao}")
+        resp.content = Airport(**resp.content)
+        return resp
 
     def nats(self) -> List[Track]:
-        return list(
-            map(lambda n: Track(**n), self._fp.get("/nav/NATS")))
+        resp = self._fp.get("/nav/NATS")
+        resp.content = list(map(lambda n: Track(**n), resp.content))
+        return resp
 
     def pacots(self) -> List[Track]:
-        return list(
-            map(lambda t: Track(**t), self._fp.get("/nav/PACOTS")))
+        resp = self._fp.get("/nav/PACOTS")
+        resp.content = list(map(lambda n: Track(**n), resp.content))
+        return resp
 
     def search(self, q: str, types: str = None) -> List[Navaid]:
         params = {"q": q}
@@ -349,7 +318,9 @@ class WeatherAPI:
         self._fp = flightplandb
 
     def __call__(self, icao: str) -> Weather:
-        return Weather(**self._fp.get(f"/weather/{icao}"))
+        resp = self._fp.get(f"/weather/{icao}")
+        resp.content = Weather(**resp.content)
+        return resp
 
 
 def test_run():

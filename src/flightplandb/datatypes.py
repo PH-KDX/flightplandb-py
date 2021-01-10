@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from typing import List, Union, Optional
+from typing import List, Dict, Union, Optional
 from dataclasses import dataclass, fields
 from dateutil.parser import isoparse
 from datetime import datetime
@@ -528,7 +528,12 @@ class Response:
                    List[Track],
                    List[Navaid],
                    Weather,
-                   StatusResponse]
+                   StatusResponse,
+                   Dict,
+                   int,
+                   str,
+                   bytes,
+                   None]
 
     """
     API version that returned the response
@@ -562,3 +567,8 @@ class Response:
     Otherwise, it will be Null.
     """
     pagination: Optional[Union[Pagination, None]]
+
+    def __post_init__(self):
+        self.pagination = (Pagination(**self.pagination)
+                           if type(self.pagination) == dict
+                           else self.pagination)

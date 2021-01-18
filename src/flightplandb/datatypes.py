@@ -482,7 +482,7 @@ class Track:
     validFrom: datetime
     validTo: datetime
 
-    def __port_init__(self):
+    def __post_init__(self):
         self.validFrom = isoparse(self.validFrom)
         self.validTo = isoparse(self.validTo)
 
@@ -492,22 +492,29 @@ class Pagination:
     """
     Total number of pages returned. Not to be edited by user
     """
-    page_count: int
+    page_count: Optional[int] = None
 
     """
     Current page displayed
     """
-    page: int
+    page: Optional[int] = None
 
     """
     Maximum items per page
     """
-    limit: int
+    limit: Optional[int] = None
 
     """
     Sort order for results
     """
-    sort: int
+    sort: Optional[int] = None
+
+    def __post_init__(self):
+        if self.sort and self.sort not in ['created',
+                                           'updated',
+                                           'popularity',
+                                           'distance']:
+            raise ValueError(f"'{self.sort}' is not a valid sort order")
 
 
 @dataclass
@@ -566,7 +573,7 @@ class Response:
     If they are paginated, this field will have further info on pagination.
     Otherwise, it will be Null.
     """
-    pagination: Optional[Union[Pagination, None]]
+    pagination: Optional[Pagination] = None
 
     def __post_init__(self):
         self.pagination = (Pagination(**self.pagination)

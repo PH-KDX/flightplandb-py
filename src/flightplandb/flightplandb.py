@@ -42,6 +42,10 @@ format_return_types = {
             "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
             }
 
+# TODO: Replace pagination with iterators
+# https://stackoverflow.com/questions/17777845/python-requests-arguments-dealing-with-api-pagination
+# use a session
+
 
 class FlightPlanDB:
     def __init__(
@@ -59,26 +63,31 @@ class FlightPlanDB:
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
         self.url_base = url_base
 
-# Set a "format" argument.
-# This must be converted to the equivalent format string (perhaps in datatypes.py?)
-# It must be added as a header.
-
-# Same goes for pagination. However, this does not need to be defined in datatypes.
-
     def __call__(self,
                  method: str,
                  path,
                  ignore_statuses=[],
                  return_format="dict",
                  params={},
+                 pagination=None,
                  *args,
                  **kwargs):
+
+        # if request will be paginated, drop the useless page_count attribute
+        # the add the remaining attributes to params
+        if pagination:
+            pagination = asdict(pagination)
+            pagination.pop(page_count)
+            params.update(pagination)
+
+        # convert the API content return format to an HTTP Accept type
         try:
             return_format_encoded = format_return_types[return_format]
         except KeyError:
             raise ValueError(
                 f"'{return_format}' is not a valid data return type option")
 
+        # then add it to the request headers
         params["Accept"] = return_format_encoded
 
         resp = requests.request(
@@ -88,7 +97,9 @@ class FlightPlanDB:
             params=params,
             *args, **kwargs)
 
-        if resp.status_code not in ignore_statuses:
+        if resp.status_code == 429:
+            raise Exception("Maximum number of requests exceeded.")
+        if resp.status_code not in ignore_statuses and resp.status_code != 429:
             resp.raise_for_status()
         self._header = resp.headers
 

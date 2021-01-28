@@ -10,41 +10,12 @@ from requests.structures import CaseInsensitiveDict
 from urllib.parse import urljoin
 
 from flightplandb.datatypes import (
-    StatusResponse, Pagination,
+    StatusResponse,
     PlanQuery, Plan, GenerateQuery,
     User, Tag,
     Airport, Track, Navaid,
-    Weather, Response
+    Weather
 )
-
-
-format_return_types = {
-            # if a dict is requested, the JSON will later be converted to that
-            "dict": "application/json",
-            # otherwise, pure JSON will be returned
-            "json": "application/json",
-            "xml": "application/xml",
-            "csv": "text/csv",
-            "pdf": "application/pdf",
-            "kml": "application/vnd.fpd.export.v1.kml+xml",
-            "xplane": "application/vnd.fpd.export.v1.xplane",
-            "xplane11": "application/vnd.fpd.export.v1.xplane11",
-            "fs9": "application/vnd.fpd.export.v1.fs9",
-            "fsx": "application/vnd.fpd.export.v1.fsx",
-            "squawkbox": "application/vnd.fpd.export.v1.squawkbox",
-            "xfmc": "application/vnd.fpd.export.v1.xfmc",
-            "pmdg": "application/vnd.fpd.export.v1.pmdg",
-            "airbusx": "application/vnd.fpd.export.v1.airbusx",
-            "qualitywings": "application/vnd.fpd.export.v1.qualitywings",
-            "ifly747": "application/vnd.fpd.export.v1.ifly747",
-            "flightgear": "application/vnd.fpd.export.v1.flightgear",
-            "tfdi717": "application/vnd.fpd.export.v1.tfdi717",
-            "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
-            }
-
-# TODO: Replace pagination with iterators
-# https://stackoverflow.com/questions/17777845/python-requests-arguments-dealing-with-api-pagination
-# use a session
 
 
 class FlightPlanDB:
@@ -63,63 +34,22 @@ class FlightPlanDB:
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
         self.url_base = url_base
 
-    def __call__(self,
-                 method: str,
-                 path,
-                 ignore_statuses=[],
-                 return_format="dict",
-                 params={},
-                 pagination=None,
-                 *args,
-                 **kwargs):
+# Set a "format" argument.
+# This must be converted to the equivalent format string (perhaps in datatypes.py?)
+# It must be added as a header.
 
-        # if request will be paginated, drop the useless page_count attribute
-        # the add the remaining attributes to params
-        if pagination:
-            pagination = asdict(pagination)
-            pagination.pop(page_count)
-            params.update(pagination)
+# Same goes for pagination. However, this does not need to be defined in datatypes.
 
-        # convert the API content return format to an HTTP Accept type
-        try:
-            return_format_encoded = format_return_types[return_format]
-        except KeyError:
-            raise ValueError(
-                f"'{return_format}' is not a valid data return type option")
-
-        # then add it to the request headers
-        params["Accept"] = return_format_encoded
-
+    def __call__(self, method: str, path, ignore_statuses=[], *args, **kwargs):
         resp = requests.request(
             method,
             urljoin(self.url_base, path),
             auth=HTTPBasicAuth(self.key, None),
-            params=params,
             *args, **kwargs)
-
-        if resp.status_code == 429:
-            raise Exception("Maximum number of requests exceeded.")
-        if resp.status_code not in ignore_statuses and resp.status_code != 429:
+        if resp.status_code not in ignore_statuses:
             resp.raise_for_status()
         self._header = resp.headers
-
-        # return resp.json()
-        resp_formatted = Response(
-                content=resp.json() if return_format == "dict" else resp.text,
-                api_version=resp.headers["X-API-Version"],
-                units=resp.headers["X-Units"],
-                limit_cap=resp.headers["X-Limit-Cap"],
-                limit_used=resp.headers["X-Limit-Used"],
-                pagination=None)
-
-        if "X-Page-Current" in resp.headers:
-            resp_formatted.pagination = Pagination(
-                    page_count=resp.headers["X-Page-Count"],
-                    page=resp.headers["X-Page-Current"],
-                    limit=resp.headers["X-Page-PerPage"],
-                    sort=resp.headers["X-Sort"])
-
-        return resp_formatted
+        return resp.json()
 
     def __getattr__(self, attr):
         """
@@ -131,15 +61,61 @@ class FlightPlanDB:
 
         return partial(self, attr)
 
+    def _header_value(self, header_key):
+        if header_key not in self._header:
+            self.ping()  # Make at least one request
+        return self._header[header_key]
+
+    @property
+    def api_version(self) -> int:
+        """
+        Returns:
+            int: API version that returned the response
+        """
+        return int(self._header_value("X-API-Version"))
+
+    @property
+    def units(self) -> str:
+        """The units system used for numeric values.
+        https://flightplandatabase.com/dev/api#units
+
+        Returns:
+            String: AVIATION, METRIC or SI
+        """
+        return self._header_value("X-Units")
+
+    @property
+    def limit_cap(self) -> int:
+        """
+        The number of requests allowed per day, operated on an hourly rolling
+        basis. i.e Requests used between 19:00 and 20:00 will become available
+        again at 19:00 the following day. API key authenticated requests get a
+        higher daily rate limit and can be raised if a compelling
+        use case is presented.
+        Returns:
+            int: number of allowed requests per day
+        """
+        return int(self._header_value("X-Limit-Cap"))
+
+    @property
+    def limit_used(self) -> int:
+        """
+        The number of requests used in the current period
+        by the presented API key or IP address
+
+        Returns:
+            int: number of requests used in period
+        """
+        return int(self._header_value("X-Limit-Used"))
+
     def ping(self) -> StatusResponse:
         """Checks API status to see if it is up"""
         resp = self.get("")
-        resp.content = StatusResponse(**resp.content)
-        return(resp)
+        return StatusResponse(**resp)
 
     def revoke(self) -> StatusResponse:
         """
-        Revoke the API key in use in the event that it is compromised.
+        Revoke the API key in use in the event it is compromised.
 
         If the HTTP response code is 200 and the status message is "OK", then
         the key has been revoked and any further requests will be rejected.
@@ -147,8 +123,8 @@ class FlightPlanDB:
         has occurred and the errors array will give further details.
         """
         resp = self.get("/auth/revoke")
-        resp.content = StatusResponse(**resp.content)
-        return(resp)
+        self._header = resp.headers
+        return StatusResponse(**resp.json())
 
     # Sub APIs
     @property
@@ -183,59 +159,44 @@ class PlanAPI():
         Fetches a flight plan and its associated attributes by ID.
         Returns it in specified format.
         """
-        resp = self._fp.get(f"/plan/{id_}")
-        resp.content = Plan(**resp.content)
-        return(resp)
+        return Plan(**self._fp.get(f"/plan/{id_}"))
 
     def create(self, plan: Plan) -> Plan:
-        resp = self._fp.post("/plan", json=asdict(plan))
-        resp.content = Plan(**resp.content)
-        return(resp)
+        return Plan(**self._fp.post("/plan", json=asdict(plan)))
 
     def edit(self, plan: Plan) -> Plan:
-        resp = self._fp.post("/plan", json=asdict(plan))
-        resp.content = Plan(**resp.content)
-        return(resp)
+        return Plan(**self._fp.patch(f"/plan/{plan.id}", json=asdict(plan)))
 
     def delete(self, id_: int) -> StatusResponse:
-        resp = self._fp.post("/plan", json=asdict(plan))
-        resp.content = StatusResponse(**resp.content)
-        return(resp)
+        return StatusResponse(**self._fp.delete(f"/plan/{id_}"))
 
     def search(self, plan_query: PlanQuery) -> List[Plan]:
-        resp = self._fp.get("/search/plans", params=plan_query.as_dict())
-        resp.content = list(
+        return list(
             map(
-                lambda u: Plan(**u),
-                resp.content))
-        return resp
+                lambda p: Plan(**p),
+                self._fp.get("/search/plans", params=plan_query.as_dict())))
 
     def has_liked(self, id_: int) -> bool:
-        resp = self._fp.get(f"/plan/{id_}/like", ignore_statuses=[404])
-        # resp.content is still a dict at this point
-        resp.content = (resp.content["message"] != "Not Found")
-        return resp
+        sr = StatusResponse(
+            **self._fp.get(f"/plan/{id_}/like", ignore_statuses=[404]))
+        return sr.message != "Not Found"
 
     def like(self, id_: int) -> StatusResponse:
-        resp = self._fp.post(f"/plan/{id_}/like")
-        resp.content = StatusResponse(**resp.content)
-        return resp
+        return StatusResponse(**self._fp.post(f"/plan/{id_}/like"))
 
     def unlike(self, id_: int) -> bool:
-        resp = self._fp.get(f"/plan/{id_}/like", ignore_statuses=[404])
-        # resp.content is still a dict at this point
-        resp.content = (resp.content["message"] != "Not Found")
-        return resp
+        sr = StatusResponse(
+            **self._fp.delete(f"/plan/{id_}/like", ignore_statuses=[404]))
+        return sr.message != "Not Found"
 
     def generate(self, gen_query: GenerateQuery) -> Plan:
-        resp = self._fp.patch("/auto/generate", json=asdict(gen_query))
-        resp.content = Plan(**resp.content)
-        return resp
+        return Plan(
+            **self._fp.patch(
+                "/auto/generate", json=asdict(gen_query)))
 
     def decode(self, route: str) -> Plan:
-        resp = self._fp.post("/auto/decode", json={"route": route})
-        resp.content = Plan(**resp.content)
-        return resp
+        return Plan(**self._fp.post(
+            "/auto/decode", json={"route": route}))
 
 
 class UserAPI:
@@ -244,46 +205,36 @@ class UserAPI:
 
     @property
     def me(self) -> User:
-        resp = self._fp.get("/me")
-        resp.content = User(**resp.content)
-        return resp
+        return User(**self._fp.get("/me"))
 
     def __call__(self, username: str) -> User:
-        resp = self._fp.get(f"/user/{username}")
-        resp.content = User(**resp.content)
-        return resp
+        return User(**self._fp.get(f"user/{username}"))
 
     def plans(self, username: str) -> List[Plan]:
         # TODO: params
         #   page The page of results to fetch
         #   limit [20] The number of plans to return per page (max 100)
         #   sort The order of the returned plans
-        resp = self._fp.get(f"/user/{username}/plans")
-        resp.content = list(
+        return list(
             map(
-                lambda u: Plan(**u),
-                resp.content))
-        return resp
+                lambda p: Plan(**p),
+                self._fp.get(f"/user/{username}/plans")))
 
     def likes(self, username: str) -> List[Plan]:
         # TODO: params
         #   page The page of results to fetch
         #   limit [20] The number of plans to return per page (max 100)
         #   sort The order of the returned plans
-        resp = self._fp.get(f"/user/{username}/likes")
-        resp.content = list(
+        return list(
             map(
-                lambda u: Plan(**u),
-                resp.content))
-        return resp
+                lambda p: Plan(**p),
+                self._fp.get(f"/user/{username}/likes")))
 
     def search(self, username: str) -> List[User]:
-        resp = self._fp.get("/search/users", params={"q": username})
-        resp.content = list(
+        return list(
             map(
                 lambda u: User(**u),
-                resp.content))
-        return resp
+                self._fp.get("/search/users", {"q": username})))
 
 
 class TagsAPI:
@@ -291,9 +242,7 @@ class TagsAPI:
         self._fp = flightplandb
 
     def __call__(self) -> List[Tag]:
-        resp = self._fp.get("/tags")
-        resp.content = list(map(lambda t: Tag(**t), resp.content))
-        return resp
+        return list(map(lambda t: Tag(**t), self._fp.get("/tags")))
 
 
 class NavAPI:
@@ -301,19 +250,15 @@ class NavAPI:
         self._fp = flightplandb
 
     def airport(self, icao) -> Airport:
-        resp = self._fp.get(f"/nav/airport/{icao}")
-        resp.content = Airport(**resp.content)
-        return resp
+        return Airport(**self._fp.get(f"/nav/airport/{icao}"))
 
     def nats(self) -> List[Track]:
-        resp = self._fp.get("/nav/NATS")
-        resp.content = list(map(lambda n: Track(**n), resp.content))
-        return resp
+        return list(
+            map(lambda n: Track(**n), self._fp.get("/nav/NATS")))
 
     def pacots(self) -> List[Track]:
-        resp = self._fp.get("/nav/PACOTS")
-        resp.content = list(map(lambda n: Track(**n), resp.content))
-        return resp
+        return list(
+            map(lambda t: Track(**t), self._fp.get("/nav/PACOTS")))
 
     def search(self, q: str, types: str = None) -> List[Navaid]:
         params = {"q": q}
@@ -329,9 +274,7 @@ class WeatherAPI:
         self._fp = flightplandb
 
     def __call__(self, icao: str) -> Weather:
-        resp = self._fp.get(f"/weather/{icao}")
-        resp.content = Weather(**resp.content)
-        return resp
+        return Weather(**self._fp.get(f"/weather/{icao}"))
 
 
 def test_run():

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from typing import List, Dict, Union, Optional
+from typing import List, Union, Optional
 from dataclasses import dataclass, fields
 from dateutil.parser import isoparse
 from datetime import datetime
@@ -482,7 +482,7 @@ class Track:
     validFrom: datetime
     validTo: datetime
 
-    def __post_init__(self):
+    def __port_init__(self):
         self.validFrom = isoparse(self.validFrom)
         self.validTo = isoparse(self.validTo)
 
@@ -492,29 +492,22 @@ class Pagination:
     """
     Total number of pages returned. Not to be edited by user
     """
-    page_count: Optional[int] = None
+    page_count: int
 
     """
     Current page displayed
     """
-    page: Optional[int] = None
+    page: int
 
     """
     Maximum items per page
     """
-    limit: Optional[int] = None
+    limit: int
 
     """
     Sort order for results
     """
-    sort: Optional[int] = None
-
-    def __post_init__(self):
-        if self.sort and self.sort not in ['created',
-                                           'updated',
-                                           'popularity',
-                                           'distance']:
-            raise ValueError(f"'{self.sort}' is not a valid sort order")
+    sort: int
 
 
 @dataclass
@@ -535,12 +528,7 @@ class Response:
                    List[Track],
                    List[Navaid],
                    Weather,
-                   StatusResponse,
-                   Dict,
-                   int,
-                   str,
-                   bytes,
-                   None]
+                   StatusResponse]
 
     """
     API version that returned the response
@@ -573,9 +561,4 @@ class Response:
     If they are paginated, this field will have further info on pagination.
     Otherwise, it will be Null.
     """
-    pagination: Optional[Pagination] = None
-
-    def __post_init__(self):
-        self.pagination = (Pagination(**self.pagination)
-                           if type(self.pagination) == dict
-                           else self.pagination)
+    pagination: Optional[Union[Pagination, None]]

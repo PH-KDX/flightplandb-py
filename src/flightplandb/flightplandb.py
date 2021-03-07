@@ -34,13 +34,13 @@ class FlightPlanDB:
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
         self.url_base = url_base
 
-# Set a "format" argument.
-# This must be converted to the equivalent format string (perhaps in datatypes.py?)
-# It must be added as a header.
+    # Set a "format" argument.
+    # This must be converted to the equivalent format string (perhaps in datatypes.py?)
+    # It must be added as a header.
 
-# Same goes for pagination. However, this does not need to be defined in datatypes.
+    # Same goes for pagination. However, this does not need to be defined in datatypes.
 
-    def __call__(self, method: str, path, ignore_statuses=[], *args, **kwargs):
+    def request(self, method: str, path, ignore_statuses=[], *args, **kwargs):
         resp = requests.request(
             method,
             urljoin(self.url_base, path),
@@ -51,15 +51,55 @@ class FlightPlanDB:
         self._header = resp.headers
         return resp.json()
 
-    def __getattr__(self, attr):
-        """
-        The API only supports the following HTTP verbs
-        """
-        if attr not in ["get", "post", "patch", "delete"]:
-            raise AttributeError(
-                f"'{self.__class__.__name__}' has no attribute '{attr}'")
+    # and here go **all** the HTTP calls
+    def get(self, path, ignore_statuses=[], *args, **kwargs):
+        resp = self.request("get",
+                            path,
+                            ignore_statuses=[],
+                            *args, **kwargs)
+        return resp
 
-        return partial(self, attr)
+    def post(self, path, ignore_statuses=[], *args, **kwargs):
+        resp = self.request("post",
+                            path,
+                            ignore_statuses=[],
+                            *args, **kwargs)
+        return resp
+
+    def patch(self, path, ignore_statuses=[], *args, **kwargs):
+        resp = self.request("patch",
+                            path,
+                            ignore_statuses=[],
+                            *args, **kwargs)
+        return resp
+
+    def delete(self, path, ignore_statuses=[], *args, **kwargs):
+        resp = self.request("delete",
+                            path,
+                            ignore_statuses=[],
+                            *args, **kwargs)
+        return resp
+
+    # with a very special one for iterables
+    def getiter(self, path, ignore_statuses=[], limit=100, *args, **kwargs):
+        session = requests.Session()
+        # initially no results have been fetched yet
+        num_results = 0
+
+        # while page <= num_pages...
+        for page in range(0, num_pages):
+            r_fpdb = session.get(url,
+                                 params=params,
+                                 auth=HTTPBasicAuth(self.key, None),
+                                 *args, **kwargs)
+            # ...keep cycling through pages...
+            for e in r_fpdb.json():
+                # ...and return every dictionary in there...
+                yield e
+                num_results += 1
+                # ...unless the result limit has been reached
+                if num_results == limit:
+                    return
 
     def _header_value(self, header_key):
         if header_key not in self._header:
@@ -154,7 +194,7 @@ class PlanAPI():
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
-    def __call__(self, id_: int) -> Plan:
+    def fetch(self, id_: int) -> Plan:
         """
         Fetches a flight plan and its associated attributes by ID.
         Returns it in specified format.
@@ -207,7 +247,7 @@ class UserAPI:
     def me(self) -> User:
         return User(**self._fp.get("/me"))
 
-    def __call__(self, username: str) -> User:
+    def fetch(self, username: str) -> User:
         return User(**self._fp.get(f"user/{username}"))
 
     def plans(self, username: str) -> List[Plan]:
@@ -241,7 +281,7 @@ class TagsAPI:
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
-    def __call__(self) -> List[Tag]:
+    def fetch(self) -> List[Tag]:
         return list(map(lambda t: Tag(**t), self._fp.get("/tags")))
 
 
@@ -260,10 +300,13 @@ class NavAPI:
         return list(
             map(lambda t: Track(**t), self._fp.get("/nav/PACOTS")))
 
-    def search(self, q: str, types: str = None) -> List[Navaid]:
+    def search(self, q: str, type_: str = None) -> List[Navaid]:
         params = {"q": q}
-        if types:
-            params["types"] = types
+        if type_:
+            if type_ in Navaid.validtypes:
+                params["types"] = type_
+            else:
+                raise ValueError(f"{type_} is not a valid Navaid type")
         return list(map(
             lambda n: Navaid(**n),
             self._fp.get("/search/nav", params=params)))
@@ -273,7 +316,7 @@ class WeatherAPI:
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
-    def __call__(self, icao: str) -> Weather:
+    def fetch(self, icao: str) -> Weather:
         return Weather(**self._fp.get(f"/weather/{icao}"))
 
 

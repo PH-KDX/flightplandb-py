@@ -53,52 +53,16 @@ class Application:
     url: Optional[Union[str, None]] = None
 
 
-# ViaType = Enum('ViaType', 'SID STAR AWY-HI AWY-LO NAT PACOT')
-# ViaType.__deepcopy__ = lambda self, memo: self.name  # type: ignore
-
-# class ViaTypeMeta(EnumMeta):
-#     def __getitem__(cls, name):
-#         return cls._member_map_[name.replace("-", "_")]
-
-
-# class ViaType(Enum, metaclass=ViaTypeMeta):
-#     SID = auto()
-#     STAR = auto()
-#     AWY_HI = auto()
-#     AWY_LO = auto()
-#     NAT = auto()
-#     PACOT = auto()
-
-
 @dataclass
 class Via:
     ident: str
     type: str
 
+    validtypes = ['SID', 'STAR', 'AWY-HI', 'AWY-LO', 'NAT', 'PACOT']
+
     def __post_init__(self):
-        if self.type not in ['SID',
-                             'STAR',
-                             'AWY-HI',
-                             'AWY-LO',
-                             'NAT',
-                             'PACOT']:
+        if self.type not in self.validtypes:
             raise ValueError(f"{self.type} is not a valid Via type")
-
-
-# class RouteNodeType(Enum):
-#     UKN = "Unknown"
-#     APT = "Airport"
-#     NDB = "Non-directional beacon (NDB)"
-#     VOR = "VHF omni-directional range (VOR)"
-#     FIX = "Navigational fix"
-#     DME = "Distance measuring equipment"
-#     LATLON = "Latitude/Longitude point"
-
-#     def __deepcopy__(self, memo):
-#         return self.name
-
-#     def __str__(self):
-#         return self.value
 
 
 @dataclass
@@ -118,14 +82,10 @@ class RouteNode:
     # Route to node.
     via: Union[Via, None]
 
+    validtypes = ['UKN', 'APT', 'NDB', 'VOR', 'FIX', 'DME', 'LATLON']
+
     def __post_init__(self):
-        if self.type not in ['UKN',
-                             'APT',
-                             'NDB',
-                             'VOR',
-                             'FIX',
-                             'DME',
-                             'LATLON']:
+        if self.type not in self.validtypes:
             raise ValueError(f"{self.type} is not a valid RouteNode type")
 #         self.type = RouteNodeType[self.type]
         self.via = Via(**self.via) if type(self.via) == dict else self.via
@@ -380,8 +340,10 @@ class Navaid:
     # The navaid range, with units determined by the X-Units header (distance)
     range: float
 
+    validtypes = ['LOC-ILS', 'LOC-LOC', 'GS', 'DME']
+
     def __post_init__(self):
-        if self.type not in ['LOC-ILS', 'LOC-LOC', 'GS', 'DME']:
+        if self.type not in self.validtypes:
             raise ValueError(f"{self.type} is not a valid Navaid type")
 
 

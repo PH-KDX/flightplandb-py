@@ -3,11 +3,10 @@ from setuptools import setup, find_packages
 
 setup(
     name="flightplandb",
-    version="0.0.1",
+    version="0.3.0",
     package_dir={"": "src"},
     packages=find_packages("src"),
     install_requires=[
-        "docopt==0.6.2",
         "requests==2.24.0",
         "python-dateutil==2.8.1"
     ],

@@ -317,16 +317,15 @@ class NavAPI:
         return list(
             map(lambda t: Track(**t), self._fp.get("/nav/PACOTS")))
 
-    def search(self, q: str, type_: str = None) -> List[Navaid]:
+    def search(self, q: str, type_: str = None) -> Generator[Navaid, None, None]:
         params = {"q": q}
         if type_:
             if type_ in Navaid.validtypes:
                 params["types"] = type_
             else:
                 raise ValueError(f"{type_} is not a valid Navaid type")
-        return list(map(
-            lambda n: Navaid(**n),
-            self._fp.get("/search/nav", params=params)))
+        for i in self._fp.getiter("/search/nav", params=params):
+            yield Navaid(**i)
 
 
 class WeatherAPI:

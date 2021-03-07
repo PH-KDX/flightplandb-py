@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from functools import partial
-from typing import List
+from typing import Generator, List
 from dataclasses import asdict
 
 import requests
@@ -35,10 +35,12 @@ class FlightPlanDB:
         self.url_base = url_base
 
     # Set a "format" argument.
-    # This must be converted to the equivalent format string (perhaps in datatypes.py?)
+    # This must be converted to the equivalent format string
+    # (perhaps in datatypes.py?)
     # It must be added as a header.
 
-    # Same goes for pagination. However, this does not need to be defined in datatypes.
+    # Same goes for pagination.
+    # However, this does not need to be defined in datatypes.
 
     def request(self, method: str, path, ignore_statuses=[], *args, **kwargs):
         resp = requests.request(
@@ -81,16 +83,33 @@ class FlightPlanDB:
         return resp
 
     # with a very special one for iterables
-    def getiter(self, path, ignore_statuses=[], limit=100, *args, **kwargs):
+    def getiter(self, path,
+                ignore_statuses=[],
+                limit=100,
+                params=None,
+                *args, **kwargs):
+        url = urljoin(self.url_base, path)
+        auth = HTTPBasicAuth(self.key, None)
+
         session = requests.Session()
         # initially no results have been fetched yet
         num_results = 0
 
+        r_fpdb = session.get(url, params=params, auth=auth, *args, **kwargs)
+
+        # I detest responses which "may" be paginated
+        # therefore I choose to pretend they are paginated anyway, with 1 page
+        if 'X-Page-Count' in r_fpdb.headers:
+            num_pages = int(r_fpdb.headers['X-Page-Count'])
+        else:
+            num_pages = 1
+
         # while page <= num_pages...
         for page in range(0, num_pages):
+            params['page'] = page
             r_fpdb = session.get(url,
                                  params=params,
-                                 auth=HTTPBasicAuth(self.key, None),
+                                 auth=auth,
                                  *args, **kwargs)
             # ...keep cycling through pages...
             for e in r_fpdb.json():
@@ -210,11 +229,11 @@ class PlanAPI():
     def delete(self, id_: int) -> StatusResponse:
         return StatusResponse(**self._fp.delete(f"/plan/{id_}"))
 
-    def search(self, plan_query: PlanQuery) -> List[Plan]:
-        return list(
-            map(
-                lambda p: Plan(**p),
-                self._fp.get("/search/plans", params=plan_query.as_dict())))
+    def search(self, plan_query: PlanQuery, limit: int = 100) -> Generator[Plan, None, None]:
+        for i in self._fp.getiter("/search/plans",
+                                  params=plan_query.as_dict(),
+                                  limit=limit):
+            yield Plan(**i)
 
     def has_liked(self, id_: int) -> bool:
         sr = StatusResponse(
@@ -250,31 +269,29 @@ class UserAPI:
     def fetch(self, username: str) -> User:
         return User(**self._fp.get(f"user/{username}"))
 
-    def plans(self, username: str) -> List[Plan]:
+    def plans(self, username: str, limit: int = 100) -> Generator[Plan, None, None]:
         # TODO: params
         #   page The page of results to fetch
         #   limit [20] The number of plans to return per page (max 100)
         #   sort The order of the returned plans
-        return list(
-            map(
-                lambda p: Plan(**p),
-                self._fp.get(f"/user/{username}/plans")))
+        for i in self._fp.getiter(f"/user/{username}/plans",
+                                  limit=limit):
+            yield Plan(**i)
 
-    def likes(self, username: str) -> List[Plan]:
+    def likes(self, username: str, limit: int = 100) -> Generator[Plan, None, None]:
         # TODO: params
         #   page The page of results to fetch
         #   limit [20] The number of plans to return per page (max 100)
         #   sort The order of the returned plans
-        return list(
-            map(
-                lambda p: Plan(**p),
-                self._fp.get(f"/user/{username}/likes")))
+        for i in self._fp.getiter(f"/user/{username}/likes",
+                                  limit=limit):
+            yield Plan(**i)
 
-    def search(self, username: str) -> List[User]:
-        return list(
-            map(
-                lambda u: User(**u),
-                self._fp.get("/search/users", {"q": username})))
+    def search(self, username: str) -> Generator[User, None, None]:
+        for i in self._fp.getiter("/search/users",
+                                  limit=limit,
+                                  params={"q": username}):
+            yield User(**i)
 
 
 class TagsAPI:

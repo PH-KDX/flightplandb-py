@@ -444,6 +444,6 @@ class Track:
     validFrom: datetime
     validTo: datetime
 
-    def __port_init__(self):
+    def __post_init__(self):
         self.validFrom = isoparse(self.validFrom)
         self.validTo = isoparse(self.validTo)

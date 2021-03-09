@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from functools import partial
-from typing import Generator, List
+from typing import Generator, List, Union
 from dataclasses import asdict
 
 import requests
@@ -16,6 +16,31 @@ from flightplandb.datatypes import (
     Airport, Track, Navaid,
     Weather
 )
+
+
+format_return_types = {
+            # if a dict is requested, the JSON will later be converted to that
+            "dict": "application/json",
+            # otherwise, pure JSON will be returned
+            "json": "application/json",
+            "xml": "application/xml",
+            "csv": "text/csv",
+            "pdf": "application/pdf",
+            "kml": "application/vnd.fpd.export.v1.kml+xml",
+            "xplane": "application/vnd.fpd.export.v1.xplane",
+            "xplane11": "application/vnd.fpd.export.v1.xplane11",
+            "fs9": "application/vnd.fpd.export.v1.fs9",
+            "fsx": "application/vnd.fpd.export.v1.fsx",
+            "squawkbox": "application/vnd.fpd.export.v1.squawkbox",
+            "xfmc": "application/vnd.fpd.export.v1.xfmc",
+            "pmdg": "application/vnd.fpd.export.v1.pmdg",
+            "airbusx": "application/vnd.fpd.export.v1.airbusx",
+            "qualitywings": "application/vnd.fpd.export.v1.qualitywings",
+            "ifly747": "application/vnd.fpd.export.v1.ifly747",
+            "flightgear": "application/vnd.fpd.export.v1.flightgear",
+            "tfdi717": "application/vnd.fpd.export.v1.tfdi717",
+            "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
+            }
 
 
 class FlightPlanDB:
@@ -34,55 +59,76 @@ class FlightPlanDB:
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
         self.url_base = url_base
 
-    # Set a "format" argument.
-    # This must be converted to the equivalent format string
-    # (perhaps in datatypes.py?)
-    # It must be added as a header.
+    # general HTTP request function for non-paginated results
+    def request(self, method: str,
+                path, ignore_statuses=[],
+                return_format="dict",
+                params={}, *args, **kwargs):
 
-    # Same goes for pagination.
-    # However, this does not need to be defined in datatypes.
+        # convert the API content return format to an HTTP Accept type
+        try:
+            return_format_encoded = format_return_types[return_format]
+        except KeyError:
+            raise ValueError(
+                f"'{return_format}' is not a valid data return type option")
 
-    def request(self, method: str, path, ignore_statuses=[], *args, **kwargs):
+        # then add it to the request headers
+        params["Accept"] = return_format_encoded
+
         resp = requests.request(
             method,
             urljoin(self.url_base, path),
             auth=HTTPBasicAuth(self.key, None),
             *args, **kwargs)
+
         if resp.status_code not in ignore_statuses:
             resp.raise_for_status()
-        self._header = resp.headers
-        return resp.json()
 
-    # and here go **all** the HTTP calls
-    def get(self, path, ignore_statuses=[], *args, **kwargs):
+        self._header = resp.headers
+
+        if return_format == "dict":
+            return resp.json()
+
+        return resp.text  # if the format is not a dict
+
+    # and here go the specific non-paginated HTTP calls
+    def get(self, path, ignore_statuses=[],
+            return_format="dict", *args, **kwargs):
         resp = self.request("get",
                             path,
                             ignore_statuses=[],
+                            return_format="dict",
                             *args, **kwargs)
         return resp
 
-    def post(self, path, ignore_statuses=[], *args, **kwargs):
+    def post(self, path, ignore_statuses=[],
+             return_format="dict", *args, **kwargs):
         resp = self.request("post",
                             path,
                             ignore_statuses=[],
+                            return_format="dict",
                             *args, **kwargs)
         return resp
 
-    def patch(self, path, ignore_statuses=[], *args, **kwargs):
+    def patch(self, path, ignore_statuses=[],
+              return_format="dict", *args, **kwargs):
         resp = self.request("patch",
                             path,
                             ignore_statuses=[],
+                            return_format="dict",
                             *args, **kwargs)
         return resp
 
-    def delete(self, path, ignore_statuses=[], *args, **kwargs):
+    def delete(self, path, ignore_statuses=[],
+               return_format="dict", *args, **kwargs):
         resp = self.request("delete",
                             path,
                             ignore_statuses=[],
+                            return_format="dict",
                             *args, **kwargs)
         return resp
 
-    # with a very special one for iterables
+    # For paginated results, no return format allowed
     def getiter(self, path,
                 ignore_statuses=[],
                 limit=100,
@@ -213,14 +259,19 @@ class PlanAPI():
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
-    def fetch(self, id_: int) -> Plan:
+    def fetch(self, id_: int,
+              return_format: str = "dict") -> Union[Plan, bytes]:
         """
         Fetches a flight plan and its associated attributes by ID.
         Returns it in specified format.
         """
-        return Plan(**self._fp.get(f"/plan/{id_}"))
+        request = self._fp.get(f"/plan/{id_}", return_format=return_format)
+        if return_format == "dict":
+            return Plan(**request)
 
-    def create(self, plan: Plan) -> Plan:
+        return request  # if the format is not a dict
+
+    def create(self, plan: Plan, return_format: str = "dict") -> Plan:
         return Plan(**self._fp.post("/plan", json=asdict(plan)))
 
     def edit(self, plan: Plan) -> Plan:
@@ -229,7 +280,8 @@ class PlanAPI():
     def delete(self, id_: int) -> StatusResponse:
         return StatusResponse(**self._fp.delete(f"/plan/{id_}"))
 
-    def search(self, plan_query: PlanQuery, limit: int = 100) -> Generator[Plan, None, None]:
+    def search(self, plan_query: PlanQuery,
+               limit: int = 100) -> Generator[Plan, None, None]:
         for i in self._fp.getiter("/search/plans",
                                   params=plan_query.as_dict(),
                                   limit=limit):
@@ -269,7 +321,8 @@ class UserAPI:
     def fetch(self, username: str) -> User:
         return User(**self._fp.get(f"user/{username}"))
 
-    def plans(self, username: str, limit: int = 100) -> Generator[Plan, None, None]:
+    def plans(self, username: str,
+              limit: int = 100) -> Generator[Plan, None, None]:
         # TODO: params
         #   page The page of results to fetch
         #   limit [20] The number of plans to return per page (max 100)
@@ -278,7 +331,8 @@ class UserAPI:
                                   limit=limit):
             yield Plan(**i)
 
-    def likes(self, username: str, limit: int = 100) -> Generator[Plan, None, None]:
+    def likes(self, username: str,
+              limit: int = 100) -> Generator[Plan, None, None]:
         # TODO: params
         #   page The page of results to fetch
         #   limit [20] The number of plans to return per page (max 100)
@@ -317,7 +371,8 @@ class NavAPI:
         return list(
             map(lambda t: Track(**t), self._fp.get("/nav/PACOTS")))
 
-    def search(self, q: str, type_: str = None) -> Generator[Navaid, None, None]:
+    def search(self, q: str,
+               type_: str = None) -> Generator[Navaid, None, None]:
         params = {"q": q}
         if type_:
             if type_ in Navaid.validtypes:

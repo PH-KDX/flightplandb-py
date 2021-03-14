@@ -10,12 +10,14 @@ from enum import Enum, EnumMeta, auto
 @dataclass
 class StatusResponse:
     """
+    Returned for some functions to indicate execution status
+
     Attributes
     ----------
     message : str
-        Description of parameter ``message``.
+        The message associated with the status returned
     errors : Union[List[str], None]
-        Description of parameter ``errors``.
+        A list of any errors raised
     """
     message: str
     errors: Union[List[str], None]
@@ -32,7 +34,7 @@ class User:
     username : str
         Username
     location : Optional[Union[str, None]]
-        User provided location information. `None` if not available
+        User provided location information. ``None`` if not available
     gravatarHash : Optional[str]
         Gravatar hash based on user's account email address.
     joined : Optional[datetime] = None
@@ -86,7 +88,7 @@ class Application:
 
 @dataclass
 class Via:
-    """Describes routes to nodes
+    """Describes routes to :class:`RouteNode` s
 
     Attributes
     ----------
@@ -109,7 +111,7 @@ class Via:
 
 @dataclass
 class RouteNode:
-    """Describes nodes in routes
+    """Describes nodes in :class:`Route` s
 
     Attributes
     ----------
@@ -194,11 +196,11 @@ class Plan:
     Attributes
     ----------
     id : int
-        Description of parameter `id`.
+        Unique plan identifier number
     fromICAO : Union[str, None]
-        Description of parameter `fromICAO`.
+        ICAO code of the departure airport
     toICAO : Union[str, None]
-        Description of parameter `toICAO`.
+        ICAO code of the destination airport
     fromName : Union[str, None]
         Name of the departure airport
     toName : Union[str, None]
@@ -226,11 +228,11 @@ class Plan:
     updatedAt : Optional[datetime]
         UTC Date and time of the last flight plan edit
     tags : Optional[List[str]]
-        Array of flight plan tags
+        List of flight plan tags
     user : Optional[Union[User, None]]
-        User associated with the item. None if no user linked
+        User associated with the item. ``None`` if no user linked
     application : Optional[Union[Application, None]]
-        Application associated with the item. Null if no application linked
+        Application associated with the item. ``None`` if no application linked
     route : Optional[Route]
         The flight plan route
     cycle : Optional[Cycle]
@@ -269,8 +271,8 @@ class Plan:
         self.user = User(**self.user) if self.user else self.user
         if self.application:
             self.application = Application(**self.application)
-        self.route = (Route(**self.route)
-                      if type(self.route) == dict else self.route)
+        self.route = (Route(self.route)
+                      if type(self.route) == list else self.route)
         self.cycle = (Cycle(**self.cycle)
                       if type(self.cycle) == dict else self.cycle)
 
@@ -386,7 +388,7 @@ class Tag:
     name : str
         Tag name
     description : Union[str, None]
-        Description of the tag. None if no description is available
+        Description of the tag. ``None`` if no description is available
     planCount : int
         Number of plans with this tag
     popularity: int
@@ -405,12 +407,10 @@ class Timezone:
     Attributes
     ----------
     name : Union[str, None]
-        The IANA timezone the airport is located in. `None` if not available
+        The IANA timezone the airport is located in. ``None`` if not available
     offset : Union[float, None]
         The number of seconds the airport timezone is currently offset from UTC.
-        Positive is ahead of UTC. `None` if not available
-    class Times :
-        Description of parameter `class Times`.
+        Positive is ahead of UTC. ``None`` if not available
     """
     name: Union[str, None]
     offset: Union[float, None]
@@ -488,13 +488,13 @@ class Navaid:
     runway: str
         The runway associated with the navaid
     frequency: Union[float, None]
-        The navaid frequency in Hz. `None` if not available
+        The navaid frequency in Hz. ``None`` if not available
     slope: Union[float, None]
         The navaid slope in degrees from horizontal used for type GS
     bearing: Union[float, None]
-        The navaid bearing in true degrees. `None` if not available
+        The navaid bearing in true degrees. ``None`` if not available
     name: Union[float, None]
-        The navaid name. `None` if not available
+        The navaid name. ``None`` if not available
     elevation: float
         The navaid elevation above mean sea level (elevation)
     range: float
@@ -539,17 +539,17 @@ class Runway:
     surface: str
         The runway surface material
     markings: List[str]
-        Array of strings of runway markings
+        List of strings of runway markings
     lighting: List[str]
-        Array of strings of runway lighting types
+        List of strings of runway lighting types
     thresholdOffset: float
         The distance of the displaced threshold from the runway end (length)
     overrunLength: float
         The runway overrun length, with units determined by the X-Units header
     ends: List[RunwayEnds]
-        Two element array containing the location of the two ends of the runway
+        Two element List containing the location of the two ends of the runway
     navaids: List[Navaid]
-        Array of navaids associated with the current runway
+        List of navaids associated with the current runway
     """
     ident: str
     width: float
@@ -579,7 +579,7 @@ class Frequency:
     frequency : float
         The frequency in Hz
     name : Union[str, None]
-        The frequency name. `None` if not available
+        The frequency name. ``None`` if not available
 
     """
     type: str
@@ -611,12 +611,12 @@ class Airport:
     ICAO: str
         The airport ICAO code
     IATA: Union[str, None]
-        The airport IATA code. `None` if not available
+        The airport IATA code. ``None`` if not available
     name: str
         The airport name
     regionName: Union[str, None]
         The geographical region the airport is located in.
-        `None` if not available
+        ``None`` if not available
     elevation: float
         The airport elevation above mean sea level (elevation)
     lat: float
@@ -633,10 +633,10 @@ class Airport:
     runwayCount: int
         The number of runways at the airport
     runways: List[Runway]
-        Array of runways.
+        List of runways.
         Note: each physical runway will appear twice, once from each end
     frequencies: List[Frequency]
-        Array of frequencies associated with the airport
+        List of frequencies associated with the airport
     weather: Weather
         Airport weather information
     """

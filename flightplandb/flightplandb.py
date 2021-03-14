@@ -27,7 +27,7 @@ class FlightPlanDB:
     Parameters
     ----------
     key : str
-        api token
+        API token
     url_base : str
         The host of the API endpoint URL,
         defaults to https://api.flightplandatabase.com
@@ -54,7 +54,7 @@ class FlightPlanDB:
         path : str
             The endpoint's path to which the request is being made
         return_format : str, optional
-            The API response format, defaults to "dict"
+            The API response format, defaults to ``"dict"``
         ignore_statuses : Optional[List], optional
             Statuses (together with 200 OK) which don't
             raise an HTTPError, defaults to None
@@ -68,7 +68,7 @@ class FlightPlanDB:
         Returns
         -------
         Union[Dict, bytes]
-            A dict if return_format is dict, otherwise bytes
+            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
 
         Raises
         ------
@@ -135,7 +135,7 @@ class FlightPlanDB:
     def get(self, path: str, return_format="dict",
             ignore_statuses: Optional[List] = None,
             params: Optional[Dict] = None,
-            *args, **kwargs) -> Union[Plan]:
+            *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`request()` for get requests.
 
         Parameters
@@ -143,7 +143,7 @@ class FlightPlanDB:
         path : str
             The endpoint's path to which the request is being made
         return_format : str, optional
-            The API response format, defaults to "dict"
+            The API response format, defaults to ``"dict"``
         ignore_statuses : Optional[List], optional
             Statuses (together with 200 OK) which don't
             raise an HTTPError, defaults to None
@@ -156,8 +156,8 @@ class FlightPlanDB:
 
         Returns
         -------
-        Union[Plan]
-            Description
+        Union[Dict, bytes]
+            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
         """
         # I HATE not being able to set empty lists as default arguments
         if not ignore_statuses:
@@ -175,7 +175,7 @@ class FlightPlanDB:
     def post(self, path: str, return_format="dict",
              ignore_statuses: Optional[List] = None,
              params: Optional[Dict] = None,
-             *args, **kwargs) -> Union[Plan]:
+             *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`request()` for post requests.
 
         Parameters
@@ -183,7 +183,7 @@ class FlightPlanDB:
         path : str
             The endpoint's path to which the request is being made
         return_format : str, optional
-            The API response format, defaults to "dict"
+            The API response format, defaults to ``"dict"``
         ignore_statuses : Optional[List], optional
             Statuses (together with 200 OK) which don't
             raise an HTTPError, defaults to None
@@ -196,8 +196,8 @@ class FlightPlanDB:
 
         Returns
         -------
-        Union[Plan]
-            Description
+        Union[Dict, bytes]
+            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
         """
         if not ignore_statuses:
             ignore_statuses = []
@@ -215,7 +215,7 @@ class FlightPlanDB:
     def patch(self, path: str, return_format="dict",
               ignore_statuses: Optional[List] = None,
               params: Optional[Dict] = None,
-              *args, **kwargs) -> Union[Plan]:
+              *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`request()` for patch requests.
 
         Parameters
@@ -223,7 +223,7 @@ class FlightPlanDB:
         path : str
             The endpoint's path to which the request is being made
         return_format : str, optional
-            The API response format, defaults to "dict"
+            The API response format, defaults to ``"dict"``
         ignore_statuses : Optional[List], optional
             Statuses (together with 200 OK) which don't
             raise an HTTPError, defaults to None
@@ -236,8 +236,8 @@ class FlightPlanDB:
 
         Returns
         -------
-        Union[Plan]
-            Description
+        Union[Dict, bytes]
+            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
         """
         if not ignore_statuses:
             ignore_statuses = []
@@ -255,7 +255,7 @@ class FlightPlanDB:
     def delete(self, path: str, return_format="dict",
                ignore_statuses: Optional[List] = None,
                params: Optional[Dict] = None,
-               *args, **kwargs) -> Union[Plan]:
+               *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`request()` for delete requests.
 
         Parameters
@@ -263,7 +263,7 @@ class FlightPlanDB:
         path : str
             The endpoint's path to which the request is being made
         return_format : str, optional
-            The API response format, defaults to "dict"
+            The API response format, defaults to ``"dict"``
         ignore_statuses : Optional[List], optional
             Statuses (together with 200 OK) which don't
             raise an HTTPError, defaults to None
@@ -276,8 +276,8 @@ class FlightPlanDB:
 
         Returns
         -------
-        Union[Plan]
-            Description
+        Union[Dict, bytes]
+            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
         """
         if not ignore_statuses:
             ignore_statuses = []
@@ -317,8 +317,8 @@ class FlightPlanDB:
 
         Returns
         -------
-        TYPE
-            Description
+        Generator[Dict, None, None]
+            A generator of dicts. Return format cannot be specified.
         """
         if not ignore_statuses:
             ignore_statuses = []
@@ -487,74 +487,104 @@ class PlanAPI():
         self._fp = flightplandb
 
     def fetch(self, id_: int,
-              return_format: str = "dict") -> Union[Plan, bytes]:
+              return_format: str = "dict") -> Union[Plan, None, bytes]:
         """Fetches a flight plan and its associated attributes by ID.
         Returns it in specified format.
 
         Parameters
         ----------
-        id_ : int
-            Description of parameter `id_`.
+        id\_ : int
+            The ID of the flight plan to fetch
         return_format : str
-            Description of parameter `return_format`, defaults to "dict"
+            The API response format, defaults to ``"dict"``
 
         Returns
         -------
-        Union[Plan, bytes]
-            Description
+        Union[Plan, None, bytes]
+            :class:`~flightplandb.datatypes.Plan` by default or if ``"dict"``
+            is specified as the ``return_format``.
+
+            ``bytes`` if a different format than ``"dict"`` was specified.
+
+            ``None`` if the plan with that id was not found.
         """
-        request = self._fp.get(f"/plan/{id_}", return_format=return_format)
+        try:
+            request = self._fp.get(f"/plan/{id_}", return_format=return_format)
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                return None
+            else:
+                raise e
+
         if return_format == "dict":
             return Plan(**request)
 
         return request  # if the format is not a dict
 
-    def create(self, plan: Plan, return_format: str = "dict") -> Plan:
+    def create(self, plan: Plan,
+               return_format: str = "dict") -> Union[Plan, bytes]:
         """Creates a new flight plan.
 
         Parameters
         ----------
         plan : Plan
-            Description of parameter `plan`.
+            The Plan object to register on the website
         return_format : str
-            Description of parameter `return_format`, defaults to "dict"
+            The API response format, defaults to ``"dict"``
 
         Returns
         -------
-        Plan
-            Description
-        """
-        return Plan(**self._fp.post("/plan",
-                    return_format=return_format,
-                    json=asdict(plan)))
+        Union[Plan, bytes]
+            :class:`~flightplandb.datatypes.Plan` by default or if ``"dict"``
+            is specified as the ``return_format``.
 
-    def edit(self, plan: Plan) -> Plan:
+            ``bytes`` if a different format than ``"dict"`` was specified.
+        """
+        request = self._fp.post(f"/plan/", return_format=return_format)
+
+        if return_format == "dict":
+            return Plan(**request)
+
+        return request
+
+    def edit(self, plan: Plan,
+             return_format: str = "dict") -> Union[Plan, bytes]:
         """Edits a flight plan linked to your account.
 
         Parameters
         ----------
         plan : Plan
-            Description of parameter `plan`.
+            The new Plan object to replace the old one associated with that ID
+        return_format : str
+            The API response format, defaults to ``"dict"``
 
         Returns
         -------
-        Plan
-            Description
+        Union[Plan, bytes]
+            :class:`~flightplandb.datatypes.Plan` by default or if ``"dict"``
+            is specified as the ``return_format``.
+
+            ``bytes`` if a different format than ``"dict"`` was specified.
         """
-        return Plan(**self._fp.patch(f"/plan/{plan.id}", json=asdict(plan)))
+        request = self._fp.patch(f"/plan/{plan.id}", json=asdict(plan))
+
+        if return_format == "dict":
+            return Plan(**request)
+
+        return request
 
     def delete(self, id_: int) -> StatusResponse:
         """Deletes a flight plan that is linked to your account.
 
         Parameters
         ----------
-        id_ : int
-            Description of parameter `id_`.
+        id\_ : int
+            The ID of the flight plan to delete
 
         Returns
         -------
         StatusResponse
-            Description
+            OK 200 means a successful delete
         """
         return StatusResponse(**self._fp.delete(f"/plan/{id_}"))
 
@@ -567,14 +597,19 @@ class PlanAPI():
         Parameters
         ----------
         plan_query : PlanQuery
-            Description of parameter `plan_query`.
+            A dataclass containing multiple options for plan searches
         limit : int
-            Description of parameter `limit`, defaults to 100
+            Maximum number of plans to return, defaults to 100
 
         Yields
         -------
         Generator[Plan, None, None]
-            Description
+            A generator containing :class:`~flightplandb.datatypes.Plan`
+            objects.
+            Each plan's :py:obj:`~flightplandb.datatypes.Plan.route`
+            will be set to ``None`` unless otherwise specified in the
+            :py:obj:`~flightplandb.datatypes.PlanQuery.includeRoute` parameter
+            of the :class:`~flightplandb.datatypes.PlanQuery` used to request it
         """
         for i in self._fp.getiter("/search/plans",
                                   params=plan_query.as_dict(),
@@ -586,13 +621,13 @@ class PlanAPI():
 
         Parameters
         ----------
-        id_ : int
-            Description of parameter `id_`.
+        id\_ : int
+            ID of the flightplan to be checked
 
         Returns
         -------
         bool
-            Description
+            ``True``/``False`` to indicate that the plan was liked / not liked
         """
         sr = StatusResponse(
             **self._fp.get(f"/plan/{id_}/like", ignore_statuses=[404]))
@@ -603,13 +638,14 @@ class PlanAPI():
 
         Parameters
         ----------
-        id_ : int
-            Description of parameter `id_`.
+        id\_ : int
+            ID of the flightplan to be liked
 
         Returns
         -------
         StatusResponse
-            Description
+            201 means the plan was successfully liked.
+            200 means the plan was already liked.
         """
         return StatusResponse(**self._fp.post(f"/plan/{id_}/like"))
 
@@ -618,33 +654,39 @@ class PlanAPI():
 
         Parameters
         ----------
-        id_ : int
-            Description of parameter `id_`.
+        id\_ : int
+            ID of the flightplan to be unliked
 
         Returns
         -------
         bool
-            Description
+            ``True`` for a successful unlike, ``False`` indicates a failure
         """
         sr = StatusResponse(
             **self._fp.delete(f"/plan/{id_}/like", ignore_statuses=[404]))
         return sr.message != "Not Found"
 
-    def generate(self, gen_query: GenerateQuery) -> Plan:
+    def generate(self, gen_query: GenerateQuery,
+                 return_format: str = "dict") -> Union[Plan, bytes]:
         """Creates a new flight plan using the route generator.
 
         Parameters
         ----------
         gen_query : GenerateQuery
-            Description of parameter `gen_query`.
+            A dataclass with options for flight plan generation
+        return_format : str
+            The API response format, defaults to ``"dict"``
 
         Returns
         -------
-        Plan
-            Description
+        Union[Plan, bytes]
+            Plan by default or if ``"dict"`` is specified as
+            the ``return_format``.
+
+            Bytes if a different format than ``"dict"`` was specified
         """
         return Plan(
-            **self._fp.patch(
+            **self._fp.post(
                 "/auto/generate", json=asdict(gen_query)))
 
     def decode(self, route: str) -> Plan:
@@ -653,12 +695,19 @@ class PlanAPI():
         Parameters
         ----------
         route : str
-            Description of parameter `route`.
+            The route to decode. Use a comma or space separated string of
+            waypoints, beginning and ending with valid airport ICAOs
+            (e.g. KSAN BROWS TRM LRAIN KDEN). Airways are supported if they
+            are preceded and followed by valid waypoints on the airway
+            (e.g. 06TRA UL851 BEGAR). SID and STAR procedures are not
+            currently supported and will be skipped, along with any
+            other unmatched waypoints.
 
         Returns
         -------
         Plan
-            Description
+            The registered flight plan created on flight plan database,
+            corresponding to the decoded route
         """
         return Plan(**self._fp.post(
             "/auto/decode", json={"route": route}))
@@ -678,13 +727,13 @@ class UserAPI:
         Returns
         -------
         User
-            Description
+            The User object of the currently authenticated user
         """
         return User(**self._fp.get("/me"))
 
     def key_revoke(self) -> StatusResponse:
         """Use this endpoint to manually revoke an API key if it is compromised.
-        If the HTTP response code is 200 and the status message is "OK",
+        If the HTTP response code is ``200`` and the status message is ``"OK"``,
         then the key has been revoked; any further requests will be rejected.
         Any other status code or message indicates an error has occurred.
         In that case, the errors array will give further details.
@@ -692,7 +741,7 @@ class UserAPI:
         Returns
         -------
         StatusResponse
-            Description
+            200 OK for a successful key revoke
         """
         return StatusResponse(**self._fp.get("/auth/revoke"))
 
@@ -702,12 +751,12 @@ class UserAPI:
         Parameters
         ----------
         username : str
-            Description of parameter `username`.
+            Username of the registered User
 
         Returns
         -------
         User
-            Description
+            The User object of the user associated with the username
         """
         return User(**self._fp.get(f"user/{username}"))
 
@@ -718,14 +767,15 @@ class UserAPI:
         Parameters
         ----------
         username : str
-            Description of parameter `username`.
+            Username of the user who created the flight plans
         limit: int
-            defaults to 100
+            Maximum number of plans to fetch, defaults to ``100``
 
         Yields
         -------
         Generator[Plan, None, None]
-            Description
+            A generator with all the flight plans a user created,
+            limited by ``limit``
         """
         # TODO: params
         #   sort The order of the returned plans
@@ -735,19 +785,20 @@ class UserAPI:
 
     def likes(self, username: str,
               limit: int = 100) -> Generator[Plan, None, None]:
-        """Fetches flight plans created by a user.
+        """Fetches flight plans liked by a user.
 
         Parameters
         ----------
         username : str
-            Description of parameter `username`.
+            Username of the user who liked the flight plans
         limit : int
-            defaults to 100
+            Maximum number of plans to fetch, defaults to ``100``
 
         Yields
         -------
         Generator[Plan, None, None]
-            Description
+            A generator with all the flight plans a user liked,
+            limited by ``limit``
         """
         # TODO: params
         #   sort The order of the returned plans
@@ -756,19 +807,21 @@ class UserAPI:
             yield Plan(**i)
 
     def search(self, username: str, limit=100) -> Generator[User, None, None]:
-        """Searches for users by username.
+        """Searches for users by username. For more detailed info on a
+        specific user, use :meth:`fetch`
 
         Parameters
         ----------
         username : str
-            Description of parameter `username`.
+            Username to search user database for
         limit : type
-            Description of parameter `limit`, defaults to 100
+            Maximum number of users to fetch, defaults to ``100``
 
         Yields
         -------
         Generator[User, None, None]
-            Description
+            A generator with a list of users approximately matching
+            ``username``, limited by ``limit``
         """
         for i in self._fp.getiter("/search/users",
                                   limit=limit,
@@ -803,12 +856,13 @@ class NavAPI:
         Parameters
         ----------
         icao : type
-            Description of parameter `icao`.
+            The airport ICAO to fetch information for
 
         Returns
         -------
         Airport
-            Description
+            An oversized dataclass with more information than you'd
+            need in 500 years.
         """
         return Airport(**self._fp.get(f"/nav/airport/{icao}"))
 
@@ -818,7 +872,7 @@ class NavAPI:
         Returns
         -------
         List[Track]
-            Description
+            List of NATs
         """
         return list(
             map(lambda n: Track(**n), self._fp.get("/nav/NATS")))
@@ -829,7 +883,7 @@ class NavAPI:
         Returns
         -------
         List[Track]
-            Description
+            List of PACOTs
         """
         return list(
             map(lambda t: Track(**t), self._fp.get("/nav/PACOTS")))
@@ -841,14 +895,17 @@ class NavAPI:
         Parameters
         ----------
         query : str
-            Description of parameter `query`, defaults to None
+            The search query. Searches the navaid identifier and navaid name
         type_ : str
-            Description of parameter `type_`.
+            Navaid type.
+            Must be either ``None`` (default value, returns all types) or one
+            of :py:obj:`~flightplandb.datatypes.Navaid.validtypes`
 
         Yields
         -------
         Generator[Navaid, None, None]
-            Description
+            A generator of navaids with either a name or ident
+            matching the ``query``
         """
         params = {"q": query}
         if type_:
@@ -874,11 +931,11 @@ class WeatherAPI:
         Parameters
         ----------
         icao : str
-            Description
+            ICAO code of the airport for which the weather will be fetched
 
         Returns
         -------
         Weather
-            Description
+            METAR and TAF for an airport
         """
         return Weather(**self._fp.get(f"/weather/{icao}"))

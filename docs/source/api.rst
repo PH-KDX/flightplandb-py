@@ -1,4 +1,4 @@
-flightplandb package
+API docs
 ====================
 
 .. automodule:: flightplandb
@@ -6,18 +6,15 @@ flightplandb package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
-
-flightplandb.datatypes module
------------------------------
-
-.. automodule:: flightplandb.datatypes
-   :members:
-
 flightplandb.flightplandb module
 --------------------------------
 
 .. automodule:: flightplandb.flightplandb
    :members:
    :undoc-members:
+
+flightplandb.datatypes module
+-----------------------------
+
+.. automodule:: flightplandb.datatypes
+   :members:

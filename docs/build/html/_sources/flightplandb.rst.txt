@@ -14,7 +14,6 @@ flightplandb.datatypes module
 
 .. automodule:: flightplandb.datatypes
    :members:
-   :undoc-members:
 
 flightplandb.flightplandb module
 --------------------------------

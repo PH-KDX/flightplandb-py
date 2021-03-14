@@ -9,31 +9,54 @@ from enum import Enum, EnumMeta, auto
 
 @dataclass
 class StatusResponse:
+    """
+    Attributes
+    ----------
+    message : str
+        Description of parameter ``message``.
+    errors : Union[List[str], None]
+        Description of parameter ``errors``.
+    """
     message: str
     errors: Union[List[str], None]
 
 
 @dataclass
 class User:
-    # Unique user identifier number
+    """Describes users registered on the website
+
+    Attributes
+    ----------
+    id : int
+        Unique user identifier number
+    username : str
+        Username
+    location : Optional[Union[str, None]]
+        User provided location information. `None` if not available
+    gravatarHash : Optional[str]
+        Gravatar hash based on user's account email address.
+    joined : Optional[datetime] = None
+        UTC Date and time of user registration
+    lastSeen : Optional[datetime] = None
+        UTC Date and time the user was last connected
+    plansCount : Optional[int]
+        Number of flight plans created by the user
+    plansDistance : Optional[float]
+        Total distance of all user's flight plans
+    plansDownloads : Optional[int]
+        Total download count of all user's plans
+    plansLikes : Optional[int]
+        Total like count of all user's plans
+    """
     id: int
-    # Username
     username: str
-    # User provided location information. Null if not available
     location: Optional[Union[str, None]] = None
-    # Gravatar hash based on user's account email address.
     gravatarHash: Optional[str] = None
-    # UTC Date and time of user registration
     joined: Optional[datetime] = None
-    # UTC Date and time the user was last connected
     lastSeen: Optional[datetime] = None
-    # Number of flight plans created by the user
     plansCount: Optional[int] = 0
-    # Total distance of all user's flight plans
     plansDistance: Optional[float] = 0.0
-    # Total download count of all user's plans
     plansDownloads: Optional[int] = 0
-    # Total like count of all user's plans
     plansLikes: Optional[int] = 0
 
     def __post_init__(self):
@@ -45,16 +68,35 @@ class User:
 
 @dataclass
 class Application:
-    # Unique application identifier number
+    """Describes application associated with a flight plan
+
+    Attributes
+    ----------
+    id : int
+        Unique application identifier number
+    name : Optional[Union[str, None]]
+        Application name
+    url : Optional[Union[str, None]]
+        Application URL
+    """
     id: int
-    # Application name
     name: Optional[Union[str, None]] = None
-    # Application URL
     url: Optional[Union[str, None]] = None
 
 
 @dataclass
 class Via:
+    """Describes routes to nodes
+
+    Attributes
+    ----------
+    ident : str
+        desc
+    type : str
+        Type of Via; must be one of :py:obj:`Via.validtypes`
+    validtypes : List[str]
+        Do not change. Valid Via types.
+    """
     ident: str
     type: str
 
@@ -67,19 +109,33 @@ class Via:
 
 @dataclass
 class RouteNode:
-    # Node navaid identifier
+    """Describes nodes in routes
+
+    Attributes
+    ----------
+    ident : str
+        Node navaid identifier
+    type : str
+        Type of RouteNode; must be one of :py:obj:`RouteNode.validtypes`
+    lat : float
+        Node latitude in decimal degrees
+    lon : float
+        Node longitude in decimal degrees
+    alt : float
+        Suggested altitude at node
+    name : Union[str, None]
+        Node name.
+    via : Union[Via, None]
+        Route to node.
+    validtypes : List[str]
+        Do not change. Valid RouteNode types.
+    """
     ident: str
-    # Node type.
     type: str
-    # Node latitude in decimal degrees
     lat: float
-    # Node longitude in decimal degrees
     lon: float
-    # Suggested altitude at node
     alt: float
-    # Node name.
     name: Union[str, None]
-    # Route to node.
     via: Union[Via, None]
 
     validtypes = ['UKN', 'APT', 'NDB', 'VOR', 'FIX', 'DME', 'LATLON']
@@ -87,13 +143,18 @@ class RouteNode:
     def __post_init__(self):
         if self.type not in self.validtypes:
             raise ValueError(f"{self.type} is not a valid RouteNode type")
-#         self.type = RouteNodeType[self.type]
         self.via = Via(**self.via) if type(self.via) == dict else self.via
 
 
 @dataclass
 class Route:
-    # An array of route nodes. A route must have at least 2 nodes
+    """Describes the route of a :class:`Plan`
+
+    Attributes
+    ----------
+    nodes : List[RouteNode]
+        A list of :class:`RouteNode` s. A route must have at least 2 nodes.
+    """
     nodes: List[RouteNode]
 
     def __post_init__(self):
@@ -107,59 +168,94 @@ class Route:
 
 @dataclass
 class Cycle:
-    # FlightPlanDB cycle id
+    """Navdata cycle
+
+    Attributes
+    ----------
+    id : int
+        FlightPlanDB cycle id
+    ident : str
+        AIP-style cycle id
+    year : int
+        Last two digits of cycle year
+    release : int
+        Cycle release
+    """
     id: int
-    # AIP-style cycle id
     ident: str
-    # last two digits of cycle year
     year: int
-    # cycle release
     release: int
 
 
 @dataclass
 class Plan:
-    # Unique plan identifier number
+    """A flight plan; the thing this whole API revolves around
+
+    Attributes
+    ----------
+    id : int
+        Description of parameter `id`.
+    fromICAO : Union[str, None]
+        Description of parameter `fromICAO`.
+    toICAO : Union[str, None]
+        Description of parameter `toICAO`.
+    fromName : Union[str, None]
+        Name of the departure airport
+    toName : Union[str, None]
+        Name of the destination airport
+    flightNumber : Optional[Union[str, None]]
+        Flight number of the flight plan
+    distance : Optional[float]
+        Total distance of the flight plan route
+    maxAltitude : Optional[float]
+        Maximum altitude of the flight plan route
+    waypoints : Optional[int]
+        Number of nodes in the flight plan route
+    likes : Optional[int]
+        Number of times the flight plan has been liked
+    downloads : Optional[int]
+        Number of times the flight plan has been downloaded
+    popularity : Optional[int]
+        Relative popularity of the plan based on downloads and likes
+    notes : Optional[str]
+        Extra information about the flight plan
+    encodedPolyline : Optional[str]
+        Encoded polyline of route, which can be used for quickly drawing maps
+    createdAt : Optional[datetime]
+        UTC Date and time of flight plan creation
+    updatedAt : Optional[datetime]
+        UTC Date and time of the last flight plan edit
+    tags : Optional[List[str]]
+        Array of flight plan tags
+    user : Optional[Union[User, None]]
+        User associated with the item. None if no user linked
+    application : Optional[Union[Application, None]]
+        Application associated with the item. Null if no application linked
+    route : Optional[Route]
+        The flight plan route
+    cycle : Optional[Cycle]
+        The navigation data cycle
+    """
     id: int
-    # ICAO code of the departure airport
     fromICAO: Union[str, None]
-    # ICAO code of the destination airport
     toICAO: Union[str, None]
-    # Name of the departure airport
     fromName: Union[str, None]
-    # Name of the destination airport
     toName: Union[str, None]
-    # Flight number of the flight plan
     flightNumber: Optional[Union[str, None]] = None
-    # Total distance of the flight plan route
     distance: Optional[float] = None
-    # Maximum altitude of the flight plan route
     maxAltitude: Optional[float] = None
-    # Number of nodes in the flight plan route
     waypoints: Optional[int] = None
-    # Number of times the flight plan has been liked
     likes: Optional[int] = None
-    # Number of times the flight plan has been downloaded
     downloads: Optional[int] = None
-    # Relative popularity of the plan based on downloads and likes
     popularity: Optional[int] = None
-    # Extra information about the flight plan
     notes: Optional[str] = None
-    # Encoded polyline of the route, which can be used for quickly drawing maps
     encodedPolyline: Optional[str] = None
-    # UTC Date and time of flight plan creation
     createdAt: Optional[datetime] = None
-    # UTC Date and time of the last flight plan edit
     updatedAt: Optional[datetime] = None
-    # Array of flight plan tags
     tags: Optional[List[str]] = None
-    # User associated with the item. Null if no user linked
     user: Optional[Union[User, None]] = None
-    # Application associated with the item. Null if no application linked
     application: Optional[Union[Application, None]] = None
-    # The flight plan route
     route: Optional[Route] = None
-    # The navigation data cycle
     cycle: Optional[Cycle] = None
 
     def __post_init__(self):
@@ -181,38 +277,51 @@ class Plan:
 
 @dataclass
 class PlanQuery:
-    # Simple search query.
-    # Search departure ICAO & name, destination ICAO & name,
-    # username, tags and the flight number
+    """Simple search query.
+
+    Attributes
+    ----------
+    q : Optional[str]
+        Username, tags and the flight number
+    From : Optional[str]
+        From search query. Search departure ICAO & name
+    to : Optional[str]
+        To search query. Search departure ICAO & name
+    fromICAO : Optional[str]
+        Matches departure airport ICAO
+    toICAO : Optional[str]
+        Matches destination airport ICAO
+    fromName : Optional[str]
+        Matches departure airport name
+    toName : Optional[str]
+        Matches destination airport name
+    flightNumber : Optional[str]
+        Matches flight number
+    distanceMin : Optional[str]
+        Minimum route distance
+    distanceMax : Optional[str]
+        Maximum route distance, with units determined by the X-Units header
+    tags : Optional[str]
+        Tag names to search, comma separated
+    includeRoute : Optional[str]
+        Include route objects for each plan in the response.
+        Setting to true requires the request be authenticated with an API key
+    sort : Optional[str]
+        The order of the returned plans. See Pagination for more options
+    """
     q: Optional[str] = None
-    # From search query. Search departure ICAO & name
     From: Optional[str] = None
-    # To search query. Search departure ICAO & name
     to: Optional[str] = None
-    # Matches departure airport ICAO
     fromICAO: Optional[str] = None
-    # Matches destination airport ICAO
     toICAO: Optional[str] = None
-    # Matches departure airport name
     fromName: Optional[str] = None
-    # Matches destination airport name
     toName: Optional[str] = None
-    # Matches flight number
     flightNumber: Optional[str] = None
-    # Minimum route distance
     distanceMin: Optional[str] = None
-    # Maximum route distance, with units determined by the X-Units header
     distanceMax: Optional[str] = None
-    # Tag names to search, comma separated
     tags: Optional[str] = None
-    # Include route objects for each plan in the response.
-    # Setting to true requires the request be authenticated with an API key
     includeRoute: Optional[str] = None
-    # The page of results to fetch
-    page: Optional[str] = None
-    # The number of plans to return per page (max 100)
     limit: Optional[int] = None
-    # The order of the returned plans. See Pagination for more options
     sort: Optional[str] = None
 
     def as_dict(self):
@@ -225,63 +334,106 @@ class PlanQuery:
 
 @dataclass
 class GenerateQuery:
-    # Generate plan query.
-    # The departure airport ICAO code
+    """Generate plan query.
+
+    Attributes
+    ----------
+    fromICAO : str
+        The departure airport ICAO code
+    toICAO : str
+        The destination airport ICAO code
+    useNAT : Optional[bool]
+        Use Pacific Organized Track System tracks in the route generation
+    usePACOT : Optional[bool]
+        Use Pacific Organized Track System tracks in the route generation
+    useAWYLO : Optional[bool]
+        Use low-level airways in the route generation
+    useAWYHI : Optional[bool]
+        Use high-level airways in the route generation
+    cruiseAlt : Optional[float]
+        Basic flight profile cruise altitude (altitude)
+    cruiseSpeed : Optional[float]
+        Basic flight profile cruise speed (speed)
+    ascentRate : Optional[float]
+        Basic flight profile ascent rate (climb rate)
+    ascentSpeed : Optional[float]
+        Basic flight profile ascent speed (speed)
+    descentRate : Optional[float]
+        Basic flight profile descent rate (climb rate)
+    descentSpeed : Optional[float]
+        Basic flight profile descent speed (speed)
+    """
     fromICAO: str
-    # The destination airport ICAO code
     toICAO: str
-    # Use North Atlantic Tracks in the route generation
     useNAT: Optional[bool] = True
-    # Use Pacific Organized Track System tracks in the route generation
     usePACOT: Optional[bool] = True
-    # Use low-level airways in the route generation
     useAWYLO: Optional[bool] = True
-    # Use high-level airways in the route generation
     useAWYHI: Optional[bool] = True
-    # Basic flight profile cruise altitude (altitude)
     cruiseAlt: Optional[float] = 35000
-    # Basic flight profile cruise speed (speed)
     cruiseSpeed: Optional[float] = 420
-    # Basic flight profile ascent rate (climb rate)
     ascentRate: Optional[float] = 2500
-    # Basic flight profile ascent speed (speed)
     ascentSpeed: Optional[float] = 250
-    # Basic flight profile descent rate (climb rate)
     descentRate: Optional[float] = 1500
-    # Basic flight profile descent speed (speed)
     descentSpeed: Optional[float] = 250
 
 
 @dataclass
 class Tag:
-    # Tag name
+    """Flight plan tag
+
+    Attributes
+    ----------
+    name : str
+        Tag name
+    description : Union[str, None]
+        Description of the tag. None if no description is available
+    planCount : int
+        Number of plans with this tag
+    popularity: int
+        Popularity index of the tag
+    """
     name: str
-    # Description of the tag. Null if no description is available
     description: Union[str, None]
-    # Number of plans with this tag
     planCount: int
-    # Popularity index of the tag
     popularity: int
 
 
 @dataclass
 class Timezone:
-    # The IANA timezone the airport is located in. Null if not available
+    """Contains timezone information
+
+    Attributes
+    ----------
+    name : Union[str, None]
+        The IANA timezone the airport is located in. `None` if not available
+    offset : Union[float, None]
+        The number of seconds the airport timezone is currently offset from UTC.
+        Positive is ahead of UTC. `None` if not available
+    class Times :
+        Description of parameter `class Times`.
+    """
     name: Union[str, None]
-    # The number of seconds the airport timezone is currently offset from UTC.
-    # Positive is ahead of UTC. Null if not available
     offset: Union[float, None]
 
 
 @dataclass
 class Times:
-    # Time of sunrise
+    """Contains relevant times information
+
+    Attributes
+    ----------
+    sunrise : datetime
+        Time of sunrise
+    sunset : datetime
+        Time of sunset
+    dawn : datetime
+        Time of dawn
+    dusk : datetime
+        Time of dusk
+    """
     sunrise: datetime
-    # time of sunset
     sunset: datetime
-    # time of dawn
     dawn: datetime
-    # time of dusk
     dusk: datetime
 
     def __post_init__(self):
@@ -301,43 +453,66 @@ class Times:
 
 @dataclass
 class RunwayEnds:
-    # The identifier of the runway end
+    """Ends of :class:`Runway` . No duh.
+
+    Attributes
+    ----------
+    ident : str
+        The identifier of the runway end
+    lat : float
+        The latitude of the runway end
+    lon : float
+        The longitude of the runway end
+    """
     ident: str
-    # The latitude of the runway end
     lat: float
-    # The longitude of the runway end
     lon: float
-
-
-# NavaidType = Enum('NavaidType', 'LOC-ILS LOC-LOC GS DME')
-# NavaidType.__deepcopy__ = lambda self, memo: self.name  # type: ignore
 
 
 @dataclass
 class Navaid:
-    # The navaid identifier
+    """Describes a navigational aid
+
+    Attributes
+    ----------
     ident: str
-    # The navaid type.
+        The navaid identifier
     type: str
-    # The navaid latitude
+        The navaid type. Must be one of :py:obj:`Navaid.validtypes`
     lat: float
-    # The navaid longitude
+        The navaid latitude
     lon: float
-    # The airport associated with the navaid
+        The navaid longitude
     airport: str
-    # The runway associated with the navaid
+        The airport associated with the navaid
     runway: str
-    # The navaid frequency in Hz. Null if not available
+        The runway associated with the navaid
     frequency: Union[float, None]
-    # The navaid slope in degrees from horizontal used for type GS
+        The navaid frequency in Hz. `None` if not available
     slope: Union[float, None]
-    # The navaid bearing in true degrees. Null if not available
+        The navaid slope in degrees from horizontal used for type GS
     bearing: Union[float, None]
-    # The navaid name. Null if not available
+        The navaid bearing in true degrees. `None` if not available
     name: Union[float, None]
-    # The navaid elevation above mean sea level (elevation)
+        The navaid name. `None` if not available
     elevation: float
-    # The navaid range, with units determined by the X-Units header (distance)
+        The navaid elevation above mean sea level (elevation)
+    range: float
+        The navaid range, with units determined by the X-Units header (distance)
+    validtypes : List[str]
+        Do not change. Valid Navaid types.
+    """
+    ident: str
+    type: str
+    lat: float
+    lon: float
+    airport: str
+    runway: str
+    frequency: Union[float, None]
+    slope: Union[float, None]
+    bearing: Union[float, None]
+    name: Union[float, None]
+    elevation: float
     range: float
 
     validtypes = ['LOC-ILS', 'LOC-LOC', 'GS', 'DME']
@@ -349,27 +524,43 @@ class Navaid:
 
 @dataclass
 class Runway:
-    # The runway identifier
+    """Describes a runway at an :class:`Airport`
+
+    Attributes
+    ----------
     ident: str
-    # The runway width, with units determined by the X-Units header (length)
+        The runway identifier
     width: float
-    # The runway length, with units determined by the X-Units header (length)
+        The runway width, with units determined by the X-Units header (length)
     length: float
-    # The runway bearing in true degrees
+        The runway length, with units determined by the X-Units header (length)
     bearing: float
-    # The runway surface material
+        The runway bearing in true degrees
     surface: str
-    # Array of strings of runway markings
+        The runway surface material
     markings: List[str]
-    # Array of strings of runway lighting types
+        Array of strings of runway markings
     lighting: List[str]
-    # The distance of the displaced threshold from the runway end (length)
+        Array of strings of runway lighting types
     thresholdOffset: float
-    # The runway overrun length, with units determined by the X-Units header
+        The distance of the displaced threshold from the runway end (length)
     overrunLength: float
-    # Two element array containing the location of the two ends of the runway
+        The runway overrun length, with units determined by the X-Units header
     ends: List[RunwayEnds]
-    # Array of navaids associated with the current runway
+        Two element array containing the location of the two ends of the runway
+    navaids: List[Navaid]
+        Array of navaids associated with the current runway
+    """
+    ident: str
+    width: float
+    length: float
+    bearing: float
+    surface: str
+    markings: List[str]
+    lighting: List[str]
+    thresholdOffset: float
+    overrunLength: float
+    ends: List[RunwayEnds]
     navaids: List[Navaid]
 
     def __post_init__(self):
@@ -379,53 +570,89 @@ class Runway:
 
 @dataclass
 class Frequency:
-    # The frequency type
+    """Holds frequency information
+
+    Attributes
+    ----------
+    type : str
+        The frequency type
+    frequency : float
+        The frequency in Hz
+    name : Union[str, None]
+        The frequency name. `None` if not available
+
+    """
     type: str
-    # The frequency in Hz
     frequency: float
-    # The frequency name. Null if not available
     name: Union[str, None]
 
 
 @dataclass
 class Weather:
-    # Current METAR report for the airport
+    """Contains weather reports and predictions
+
+    Attributes
+    ----------
+    METAR : Union[str, None]
+        Current METAR report for the airport
+    TAF : Union[str, None]
+        Current TAF report for the airport
+    """
     METAR: Union[str, None]
-    # Current TAF report for the airport
     TAF: Union[str, None]
 
 
 @dataclass
 class Airport:
-    # The airport ICAO code
+    """Describes an airport
+
+    Attributes
+    ----------
     ICAO: str
-    # The airport IATA code. Null if not available
+        The airport ICAO code
     IATA: Union[str, None]
-    # The airport name
+        The airport IATA code. `None` if not available
     name: str
-    # The geographical region the airport is located in. Null if not available
+        The airport name
     regionName: Union[str, None]
-    # The airport elevation above mean sea level (elevation)
+        The geographical region the airport is located in.
+        `None` if not available
     elevation: float
-    # The airport latitude in degrees
+        The airport elevation above mean sea level (elevation)
     lat: float
-    # The airport longitude in degrees
+        The airport latitude in degrees
     lon: float
-    # The current magnetic variation/declination at the airport,
-    # based on the World Magnetic Model
+        The airport longitude in degrees
     magneticVariation: float
-    # The airport timezone information
+        The current magnetic variation/declination at the airport,
+        based on the World Magnetic Model
     timezone: Timezone
-    # Relevant times at the airport
+        The airport timezone information
     times: Times
-    # The number of runways at the airport
+        Relevant times at the airport
     runwayCount: int
-    # Array of runways.
-    # Note: each physical runway will appear twice, once from each end
+        The number of runways at the airport
     runways: List[Runway]
-    # Array of frequencies associated with the airport
+        Array of runways.
+        Note: each physical runway will appear twice, once from each end
     frequencies: List[Frequency]
-    # Airport weather information
+        Array of frequencies associated with the airport
+    weather: Weather
+        Airport weather information
+    """
+    ICAO: str
+    IATA: Union[str, None]
+    name: str
+    regionName: Union[str, None]
+    elevation: float
+    lat: float
+    lon: float
+    magneticVariation: float
+    timezone: Timezone
+    times: Times
+    runwayCount: int
+    runways: List[Runway]
+    frequencies: List[Frequency]
     weather: Weather
 
     def __post_init__(self):
@@ -438,7 +665,19 @@ class Airport:
 
 @dataclass
 class Track:
-    # Track identifier
+    """Used for NATS and PACOTS tracks
+
+    Attributes
+    ----------
+    ident : str
+        Track identifier
+    route : Route
+        Route of the track
+    validFrom : datetime
+        UTC datetime the track is valid from
+    validTo : datetime
+        UTC datetime the track is valid to
+    """
     ident: str
     route: Route
     validFrom: datetime

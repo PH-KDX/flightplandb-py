@@ -488,7 +488,10 @@ class PlanAPI():
 
     def fetch(self, id_: int,
               return_format: str = "dict") -> Union[Plan, None, bytes]:
-        """Fetches a flight plan and its associated attributes by ID.
+        # Underscore for id_ must be escaped as id\_ so sphinx shows the _.
+        # However, this would raise W605. To fix this, a raw string is used.
+        r"""
+        Fetches a flight plan and its associated attributes by ID.
         Returns it in specified format.
 
         Parameters
@@ -574,7 +577,7 @@ class PlanAPI():
         return request
 
     def delete(self, id_: int) -> StatusResponse:
-        """Deletes a flight plan that is linked to your account.
+        r"""Deletes a flight plan that is linked to your account.
 
         Parameters
         ----------
@@ -617,7 +620,7 @@ class PlanAPI():
             yield Plan(**i)
 
     def has_liked(self, id_: int) -> bool:
-        """Fetches your like status for a flight plan.
+        r"""Fetches your like status for a flight plan.
 
         Parameters
         ----------
@@ -634,7 +637,7 @@ class PlanAPI():
         return sr.message != "Not Found"
 
     def like(self, id_: int) -> StatusResponse:
-        """Likes a flight plan.
+        r"""Likes a flight plan.
 
         Parameters
         ----------
@@ -650,7 +653,7 @@ class PlanAPI():
         return StatusResponse(**self._fp.post(f"/plan/{id_}/like"))
 
     def unlike(self, id_: int) -> bool:
-        """Removes a flight plan like.
+        r"""Removes a flight plan like.
 
         Parameters
         ----------

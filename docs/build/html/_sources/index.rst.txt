@@ -10,9 +10,9 @@ Welcome to FlightplanDB-python's documentation!
    :maxdepth: 3
    :caption: Contents:
 
-   api
-
    userdocs
+
+   api
 
 
 

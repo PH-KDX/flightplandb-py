@@ -14,9 +14,8 @@ setup(
     ],
     extras_require={
         "dev": [
-            "flake8==3.8.4",
-            "mypy==0.790",
-            "python-dotenv==0.14.0"
+            "Sphinx==3.5.2",
+            "sphinx-rtd-theme==0.5.1"
         ]
     }
 )

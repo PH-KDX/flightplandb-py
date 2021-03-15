@@ -69,6 +69,27 @@ class User:
 
 
 @dataclass
+class UserSmall:
+    """Describes users registered on the website, with far less info
+
+    Attributes
+    ----------
+    id : int
+        Unique user identifier number
+    username : str
+        Username
+    location : Optional[Union[str, None]]
+        User provided location information. ``None`` if not available
+    gravatarHash : Optional[str]
+        Gravatar hash based on user's account email address.
+    """
+    id: int
+    username: str
+    location: Optional[Union[str, None]] = None
+    gravatarHash: Optional[str] = None
+
+
+@dataclass
 class Application:
     """Describes application associated with a flight plan
 

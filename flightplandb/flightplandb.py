@@ -11,7 +11,7 @@ from requests.structures import CaseInsensitiveDict
 from flightplandb.datatypes import (
     StatusResponse,
     PlanQuery, Plan, GenerateQuery,
-    User, Tag,
+    User, UserSmall, Tag,
     Airport, Track, Navaid,
     Weather
 )
@@ -26,15 +26,15 @@ class FlightPlanDB:
 
     Parameters
     ----------
-    key : str
-        API token
+    key : Optional[str]
+        API token, defaults to None (which makes it unauthenticated)
     url_base : str
         The host of the API endpoint URL,
         defaults to https://api.flightplandatabase.com
     """
 
     def __init__(
-            self, key: str,
+            self, key: Optional[str] = None,
             url_base: str = "https://api.flightplandatabase.com"):
         self.key: str = key
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
@@ -376,7 +376,7 @@ class FlightPlanDB:
         return self._header[header_key]
 
     @property
-    def api_version(self) -> int:
+    def version(self) -> int:
         """API version that returned the response
 
         Returns
@@ -809,7 +809,8 @@ class UserAPI:
                                   limit=limit):
             yield Plan(**i)
 
-    def search(self, username: str, limit=100) -> Generator[User, None, None]:
+    def search(self, username: str,
+               limit=100) -> Generator[UserSmall, None, None]:
         """Searches for users by username. For more detailed info on a
         specific user, use :meth:`fetch`
 
@@ -822,14 +823,15 @@ class UserAPI:
 
         Yields
         -------
-        Generator[User, None, None]
+        Generator[UserSmall, None, None]
             A generator with a list of users approximately matching
-            ``username``, limited by ``limit``
+            ``username``, limited by ``limit``. UserSmall is used instead of
+            User, because less info is returned.
         """
         for i in self._fp.getiter("/search/users",
                                   limit=limit,
                                   params={"q": username}):
-            yield User(**i)
+            yield UserSmall(**i)
 
 
 class TagsAPI:

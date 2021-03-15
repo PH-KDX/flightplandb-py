@@ -19,6 +19,6 @@ test.txt
 
 _flightplandb.py
 metatest.py
-test.py
+tests/temp.py
 
 venv

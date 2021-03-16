@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Introduction &mdash; FlightplanDB-python 0.3.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quickstart" href="quickstart.html" />
+    <link rel="prev" title="User docs" href="userdocs.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> FlightplanDB-python
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Docs</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="userdocs.html">User docs</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#virtual-environments">Virtual Environments</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#authentication">Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#further-information">Further information</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API docs</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FlightplanDB-python</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="userdocs.html">User docs</a> &raquo;</li>
+        
+      <li>Introduction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/user/introduction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>FlightPlanDB-python works with Python 3.6 or higher. Python 3.5 or
+lower is not supported due to f-strings, which were introduced with
+<a class="reference external" href="https://www.python.org/dev/peps/pep-0498/">PEP498</a>, being used in the library.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Currently, the only way the library can be installed is from the
+<a class="reference external" href="https://github.com/PH-KDX/flightplandb-python">GitHub page</a>.
+It's recommended to install the devel branch, which is reasonably up-to-date and relatively stable.
+On Linux, this looks somewhat as follows; precise steps will differ for other configurations.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git clone -b devel https://github.com/PH-KDX/flightplandb-python.git
+<span class="gp">$ </span><span class="nb">cd</span> flightplandb-python
+<span class="gp">$ </span>pip install .
+</pre></div>
+</div>
+<p>after which the package and its dependencies are installed.</p>
+<div class="section" id="virtual-environments">
+<h3>Virtual Environments<a class="headerlink" href="#virtual-environments" title="Permalink to this headline">¶</a></h3>
+<p>It is, of course, possible to install the library in a virtual environment.
+After <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code> ing the library as described under <a class="reference internal" href="#installation">Installation</a>, go to
+your project's working directory.
+Create a virtual environment called <code class="docutils literal notranslate"><span class="pre">foo</span></code> as follows:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3 -m venv foo
+</pre></div>
+</div>
+<p>then, when you want to use it, activate it with</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">source</span> foo/activate/bin
+</pre></div>
+</div>
+<p>after which you can <code class="docutils literal notranslate"><span class="pre">cd</span></code> back into the directory you downloaded the repo to and
+install it using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code></p>
+</div>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p>To test if the package has correctly installed, open a Python shell
+(note: if you're using a virtual environment, make sure you activate it first) and run</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">flightplandb</span>
+<span class="n">api</span> <span class="o">=</span> <span class="n">flightplandb</span><span class="o">.</span><span class="n">FlightPlanDB</span><span class="p">(</span><span class="s2">&quot;placeholder&quot;</span><span class="p">)</span>
+<span class="n">api</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>which should return
+<code class="docutils literal notranslate"><span class="pre">StatusResponse(message='OK',</span> <span class="pre">errors=None)</span></code>
+if all has gone well</p>
+</div>
+<div class="section" id="authentication">
+<h2>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h2>
+<p>Whilst many parts of the API are publicly accessible, some endpoints require
+authentication with an API access key, which is an alphanumeric string such as
+<code class="docutils literal notranslate"><span class="pre">VtF93tXp5IUZE307kPjijoGCUtBq4INmNTS4wlRG</span></code>. If provided, this key must be
+specified when initiating a <a class="reference internal" href="../api.html#flightplandb.flightplandb.FlightPlanDB" title="flightplandb.flightplandb.FlightPlanDB"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FlightPlanDB()</span></code></a> class instance,
+using the <code class="docutils literal notranslate"><span class="pre">key</span></code> argument.</p>
+<p>To get an API key, visit your <a class="reference external" href="https://flightplandatabase.com/settings">account settings</a> page.
+Your account will need a verified email address to add an API key.</p>
+<p>Endpoints that require authentication are marked as such below. Failing to
+provide valid authentication credentials on these endpoints will result in a
+401 HTTPError being raised. You are responsible for maintaining the security
+of your private API key, which gives near full access to your Flight Plan
+Database account. If your key is exposed, please use
+<a class="reference internal" href="../api.html#flightplandb.flightplandb.FlightPlanDB.revoke" title="flightplandb.flightplandb.FlightPlanDB.revoke"><code class="xref py py-meth docutils literal notranslate"><span class="pre">revoke()</span></code></a> to revoke your key manually.</p>
+</div>
+<div class="section" id="further-information">
+<h2>Further information<a class="headerlink" href="#further-information" title="Permalink to this headline">¶</a></h2>
+<p>A good video on the usage of the library can be found <a class="reference external" href="https://youtu.be/dQw4w9WgXcQ">here</a>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="quickstart.html" class="btn btn-neutral float-right" title="Quickstart" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="userdocs.html" class="btn btn-neutral float-left" title="User docs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, PH-KDX.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

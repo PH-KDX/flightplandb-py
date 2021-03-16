@@ -6,11 +6,15 @@
 Welcome to FlightplanDB-python's documentation!
 ===============================================
 
-.. toctree::
-   :maxdepth: 3
-   :caption: Contents:
+Welcome
+------------------
+If you're new, check out the :doc:`user/introduction` or :doc:`user/quickstart` sections.
 
-   userdocs
+.. toctree::
+   :maxdepth: 4
+   :caption: Docs
+
+   user/userdocs
 
    api
 

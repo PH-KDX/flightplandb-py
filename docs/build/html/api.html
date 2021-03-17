@@ -414,6 +414,7 @@ by the presented API key or IP address</p>
 <dt id="flightplandb.flightplandb.FlightPlanDB.revoke">
 <code class="sig-name descname"><span class="pre">revoke</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#flightplandb.datatypes.StatusResponse" title="flightplandb.datatypes.StatusResponse"><span class="pre">flightplandb.datatypes.StatusResponse</span></a><a class="headerlink" href="#flightplandb.flightplandb.FlightPlanDB.revoke" title="Permalink to this definition">¶</a></dt>
 <dd><p>Revoke the API key in use in the event it is compromised.</p>
+<p>Requires authentication.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>If the HTTP response code is 200 and the status message is &quot;OK&quot;,
@@ -493,6 +494,7 @@ is specified as the <code class="docutils literal notranslate"><span class="pre"
 <dt id="flightplandb.flightplandb.PlanAPI.create">
 <code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plan</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_format</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'dict'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.PlanAPI.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new flight plan.</p>
+<p>Requires authentication.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -516,6 +518,7 @@ is specified as the <code class="docutils literal notranslate"><span class="pre"
 <dt id="flightplandb.flightplandb.PlanAPI.edit">
 <code class="sig-name descname"><span class="pre">edit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plan</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_format</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'dict'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.PlanAPI.edit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Edits a flight plan linked to your account.</p>
+<p>Requires authentication.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -539,6 +542,7 @@ is specified as the <code class="docutils literal notranslate"><span class="pre"
 <dt id="flightplandb.flightplandb.PlanAPI.delete">
 <code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#flightplandb.datatypes.StatusResponse" title="flightplandb.datatypes.StatusResponse"><span class="pre">flightplandb.datatypes.StatusResponse</span></a><a class="headerlink" href="#flightplandb.flightplandb.PlanAPI.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes a flight plan that is linked to your account.</p>
+<p>Requires authentication.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>id_</strong> (<em>int</em>) -- The ID of the flight plan to delete</p>
@@ -580,6 +584,7 @@ of the <a class="reference internal" href="#flightplandb.datatypes.PlanQuery" ti
 <dt id="flightplandb.flightplandb.PlanAPI.has_liked">
 <code class="sig-name descname"><span class="pre">has_liked</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#flightplandb.flightplandb.PlanAPI.has_liked" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetches your like status for a flight plan.</p>
+<p>Requires authentication.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>id_</strong> (<em>int</em>) -- ID of the flightplan to be checked</p>
@@ -597,6 +602,7 @@ of the <a class="reference internal" href="#flightplandb.datatypes.PlanQuery" ti
 <dt id="flightplandb.flightplandb.PlanAPI.like">
 <code class="sig-name descname"><span class="pre">like</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#flightplandb.datatypes.StatusResponse" title="flightplandb.datatypes.StatusResponse"><span class="pre">flightplandb.datatypes.StatusResponse</span></a><a class="headerlink" href="#flightplandb.flightplandb.PlanAPI.like" title="Permalink to this definition">¶</a></dt>
 <dd><p>Likes a flight plan.</p>
+<p>Requires authentication.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>id_</strong> (<em>int</em>) -- ID of the flightplan to be liked</p>
@@ -615,6 +621,7 @@ of the <a class="reference internal" href="#flightplandb.datatypes.PlanQuery" ti
 <dt id="flightplandb.flightplandb.PlanAPI.unlike">
 <code class="sig-name descname"><span class="pre">unlike</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#flightplandb.flightplandb.PlanAPI.unlike" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes a flight plan like.</p>
+<p>Requires authentication.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>id_</strong> (<em>int</em>) -- ID of the flightplan to be unliked</p>
@@ -632,6 +639,7 @@ of the <a class="reference internal" href="#flightplandb.datatypes.PlanQuery" ti
 <dt id="flightplandb.flightplandb.PlanAPI.generate">
 <code class="sig-name descname"><span class="pre">generate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_query</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#flightplandb.datatypes.GenerateQuery" title="flightplandb.datatypes.GenerateQuery"><span class="pre">flightplandb.datatypes.GenerateQuery</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_format</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'dict'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.PlanAPI.generate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new flight plan using the route generator.</p>
+<p>Requires authentication.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -655,6 +663,7 @@ the <code class="docutils literal notranslate"><span class="pre">return_format</
 <dt id="flightplandb.flightplandb.PlanAPI.decode">
 <code class="sig-name descname"><span class="pre">decode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a><a class="headerlink" href="#flightplandb.flightplandb.PlanAPI.decode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new flight plan using the route decoder.</p>
+<p>Requires authentication.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>route</strong> (<em>str</em>) -- The route to decode. Use a comma or space separated string of
@@ -685,30 +694,13 @@ corresponding to the decoded route</p>
 <dt id="flightplandb.flightplandb.UserAPI.me">
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">me</span></code><a class="headerlink" href="#flightplandb.flightplandb.UserAPI.me" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetches profile information for the currently authenticated user.</p>
+<p>Requires authentication.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The User object of the currently authenticated user</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="#flightplandb.datatypes.User" title="flightplandb.datatypes.User">User</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="flightplandb.flightplandb.UserAPI.key_revoke">
-<code class="sig-name descname"><span class="pre">key_revoke</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#flightplandb.datatypes.StatusResponse" title="flightplandb.datatypes.StatusResponse"><span class="pre">flightplandb.datatypes.StatusResponse</span></a><a class="headerlink" href="#flightplandb.flightplandb.UserAPI.key_revoke" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use this endpoint to manually revoke an API key if it is compromised.
-If the HTTP response code is <code class="docutils literal notranslate"><span class="pre">200</span></code> and the status message is <code class="docutils literal notranslate"><span class="pre">&quot;OK&quot;</span></code>,
-then the key has been revoked; any further requests will be rejected.
-Any other status code or message indicates an error has occurred.
-In that case, the errors array will give further details.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>200 OK for a successful key revoke</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#flightplandb.datatypes.StatusResponse" title="flightplandb.datatypes.StatusResponse">StatusResponse</a></p>
 </dd>
 </dl>
 </dd></dl>

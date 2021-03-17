@@ -75,7 +75,7 @@ using the ``key`` argument.
 To get an API key, visit your `account settings <https://flightplandatabase.com/settings>`_ page.
 Your account will need a verified email address to add an API key.
 
-Endpoints that require authentication are marked as such below. Failing to
+Endpoints that require authentication are marked as such in the API docs. Failing to
 provide valid authentication credentials on these endpoints will result in a
 401 HTTPError being raised. You are responsible for maintaining the security
 of your private API key, which gives near full access to your Flight Plan

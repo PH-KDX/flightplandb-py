@@ -439,6 +439,8 @@ class FlightPlanDB:
     def revoke(self) -> StatusResponse:
         """Revoke the API key in use in the event it is compromised.
 
+        Requires authentication.
+
         Returns
         -------
         StatusResponse
@@ -528,6 +530,8 @@ class PlanAPI():
                return_format: str = "dict") -> Union[Plan, bytes]:
         """Creates a new flight plan.
 
+        Requires authentication.
+
         Parameters
         ----------
         plan : Plan
@@ -554,6 +558,8 @@ class PlanAPI():
              return_format: str = "dict") -> Union[Plan, bytes]:
         """Edits a flight plan linked to your account.
 
+        Requires authentication.
+
         Parameters
         ----------
         plan : Plan
@@ -578,6 +584,8 @@ class PlanAPI():
 
     def delete(self, id_: int) -> StatusResponse:
         r"""Deletes a flight plan that is linked to your account.
+
+        Requires authentication.
 
         Parameters
         ----------
@@ -622,6 +630,8 @@ class PlanAPI():
     def has_liked(self, id_: int) -> bool:
         r"""Fetches your like status for a flight plan.
 
+        Requires authentication.
+
         Parameters
         ----------
         id\_ : int
@@ -639,6 +649,8 @@ class PlanAPI():
     def like(self, id_: int) -> StatusResponse:
         r"""Likes a flight plan.
 
+        Requires authentication.
+
         Parameters
         ----------
         id\_ : int
@@ -654,6 +666,8 @@ class PlanAPI():
 
     def unlike(self, id_: int) -> bool:
         r"""Removes a flight plan like.
+
+        Requires authentication.
 
         Parameters
         ----------
@@ -672,6 +686,8 @@ class PlanAPI():
     def generate(self, gen_query: GenerateQuery,
                  return_format: str = "dict") -> Union[Plan, bytes]:
         """Creates a new flight plan using the route generator.
+
+        Requires authentication.
 
         Parameters
         ----------
@@ -694,6 +710,8 @@ class PlanAPI():
 
     def decode(self, route: str) -> Plan:
         """Creates a new flight plan using the route decoder.
+
+        Requires authentication.
 
         Parameters
         ----------
@@ -727,26 +745,14 @@ class UserAPI:
     def me(self) -> User:
         """Fetches profile information for the currently authenticated user.
 
+        Requires authentication.
+
         Returns
         -------
         User
             The User object of the currently authenticated user
         """
         return User(**self._fp.get("/me"))
-
-    def key_revoke(self) -> StatusResponse:
-        """Use this endpoint to manually revoke an API key if it is compromised.
-        If the HTTP response code is ``200`` and the status message is ``"OK"``,
-        then the key has been revoked; any further requests will be rejected.
-        Any other status code or message indicates an error has occurred.
-        In that case, the errors array will give further details.
-
-        Returns
-        -------
-        StatusResponse
-            200 OK for a successful key revoke
-        """
-        return StatusResponse(**self._fp.get("/auth/revoke"))
 
     def fetch(self, username: str) -> User:
         """Fetches profile information for any registered user

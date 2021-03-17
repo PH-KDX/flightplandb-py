@@ -182,30 +182,31 @@ lower is not supported due to f-strings, which were introduced with
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>Currently, the only way the library can be installed is from the
-<a class="reference external" href="https://github.com/PH-KDX/flightplandb-python">GitHub page</a>.
+<a class="reference external" href="https://github.com/PH-KDX/flightplandb-python">GitHub repository</a>.
 It's recommended to install the devel branch, which is reasonably up-to-date and relatively stable.
-On Linux, this looks somewhat as follows; precise steps will differ for other configurations.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git clone -b devel https://github.com/PH-KDX/flightplandb-python.git
-<span class="gp">$ </span><span class="nb">cd</span> flightplandb-python
-<span class="gp">$ </span>pip install .
+This looks as follows:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip install https://github.com/PH-KDX/flightplandb-python/archive/devel.zip
 </pre></div>
 </div>
 <p>after which the package and its dependencies are installed.</p>
+<p>Once the package is published on PyPi, the only thing you'll need to do will be</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip install flightplandb-python
+</pre></div>
+</div>
 <div class="section" id="virtual-environments">
 <h3>Virtual Environments<a class="headerlink" href="#virtual-environments" title="Permalink to this headline">¶</a></h3>
 <p>It is, of course, possible to install the library in a virtual environment.
-After <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code> ing the library as described under <a class="reference internal" href="#installation">Installation</a>, go to
+Start by going to
 your project's working directory.
-Create a virtual environment called <code class="docutils literal notranslate"><span class="pre">foo</span></code> as follows:</p>
+Create a virtual environment called, for example, <code class="docutils literal notranslate"><span class="pre">foo</span></code> as follows:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3 -m venv foo
 </pre></div>
 </div>
-<p>then, when you want to use it, activate it with</p>
+<p>then when you want to use it, activate it with</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">source</span> foo/activate/bin
 </pre></div>
 </div>
-<p>after which you can <code class="docutils literal notranslate"><span class="pre">cd</span></code> back into the directory you downloaded the repo to and
-install it using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code></p>
+<p>after which you can install the library as described in <a class="reference external" href="#installation">Installation</a>.</p>
 </div>
 </div>
 <div class="section" id="testing">

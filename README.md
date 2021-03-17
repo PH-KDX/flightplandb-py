@@ -26,12 +26,11 @@ with FlightplanDB-python.  If not, see <https://www.gnu.org/licenses/>.
 <!-- /TOC -->
 
 ## Introduction
-This is a Python client for the [ Flight plan db ]( https://flightplandatabase.com/dev/api ).
+This is a Python client for the [Flight Plan Database](https://flightplandatabase.com/dev/api) API.
 
 ## API
-All api can be found in under the FlightPlanDB class, it is organized in sub sections as specified in the api docs. 
-i.e. `FlightPlanDB().plan` has all the plan api.
+All the API commands can be found in under the `FlightPlanDB` class.
+It is organized in sub sections as specified in the docs; i.e. `FlightPlanDB.plan` has all the plan API commands.
 
 ## Data Types
-All datatypes can be found in FlightPlanDb.types
-
+All datatypes can be found in `FlightPlanDB.datatypes`.

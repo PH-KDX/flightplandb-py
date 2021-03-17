@@ -15,10 +15,5 @@ tmp/
 .docblock.json
 
 ignore/
-test.txt
-
-_flightplandb.py
-metatest.py
-tests/temp.py
 
 venv

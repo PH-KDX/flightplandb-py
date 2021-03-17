@@ -12,37 +12,40 @@ lower is not supported due to f-strings, which were introduced with
 Installation
 ^^^^^^^^^^^^^^^^^^^^
 Currently, the only way the library can be installed is from the
-`GitHub page <https://github.com/PH-KDX/flightplandb-python>`_.
+`GitHub repository <https://github.com/PH-KDX/flightplandb-python>`_.
 It's recommended to install the devel branch, which is reasonably up-to-date and relatively stable.
-On Linux, this looks somewhat as follows; precise steps will differ for other configurations.
+This looks as follows:
 
 .. code-block:: console
 
-  $ git clone -b devel https://github.com/PH-KDX/flightplandb-python.git
-  $ cd flightplandb-python
-  $ pip install .
+  $ pip install https://github.com/PH-KDX/flightplandb-python/archive/devel.zip
 
 after which the package and its dependencies are installed.
+
+Once the package is published on PyPi, the only thing you'll need to do will be
+
+.. code-block:: console
+
+  $ pip install flightplandb-python
 
 Virtual Environments
 """"""""""""""""""""
 It is, of course, possible to install the library in a virtual environment.
-After ``git clone`` ing the library as described under `Installation`_, go to
+Start by going to
 your project's working directory.
-Create a virtual environment called ``foo`` as follows:
+Create a virtual environment called, for example, ``foo`` as follows:
 
 .. code-block:: console
 
   $ python3 -m venv foo
 
-then, when you want to use it, activate it with
+then when you want to use it, activate it with
 
 .. code-block:: console
 
   $ source foo/activate/bin
 
-after which you can ``cd`` back into the directory you downloaded the repo to and
-install it using ``pip install .``
+after which you can install the library as described in `Installation <#installation>`_.
 
 
 Testing

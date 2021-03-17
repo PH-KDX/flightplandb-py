@@ -34,3 +34,6 @@ It is organized into subsections as specified in the docs; i.e. `FlightPlanDB.pl
 
 ## Data Types
 All datatypes can be found in `FlightPlanDB.datatypes`.
+
+## Documentation
+The documentation for this project can be found [here](https://flightplandb-python.readthedocs.io/).

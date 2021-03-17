@@ -30,7 +30,7 @@ This is a Python client for the [Flight Plan Database](https://flightplandatabas
 
 ## API
 All the API commands can be found in under the `FlightPlanDB` class.
-It is organized in sub sections as specified in the docs; i.e. `FlightPlanDB.plan` has all the plan API commands.
+It is organized into subsections as specified in the docs; i.e. `FlightPlanDB.plan` has all the plan API commands.
 
 ## Data Types
 All datatypes can be found in `FlightPlanDB.datatypes`.

@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('../../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'FlightplanDB-python'
+project = 'FlightplanDB-py'
 copyright = '2021, PH-KDX'
 author = 'PH-KDX'
 

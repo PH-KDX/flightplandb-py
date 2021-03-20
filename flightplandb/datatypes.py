@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 
 # Copyright 2021 PH-KDX
-# This file is part of FlightplanDB-python.
+# This file is part of FlightplanDB-py.
 
-# FlightplanDB-python is free software: you can redistribute it and/or
+# FlightplanDB-py is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# FlightplanDB-python is distributed in the hope that it will be useful,
+# FlightplanDB-py is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License along
-# with FlightplanDB-python.  If not, see <https://www.gnu.org/licenses/>.
+# with FlightplanDB-py.  If not, see <https://www.gnu.org/licenses/>.
 
 
 from typing import List, Union, Optional

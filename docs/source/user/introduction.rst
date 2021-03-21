@@ -56,12 +56,11 @@ To test if the package has correctly installed, open a Python shell
 .. code-block:: python3
 
    import flightplandb
-   api = flightplandb.FlightPlanDB()
-   api.ping()
+   flightplandb.FlightPlanDB().ping()
 
 which should return
 ``StatusResponse(message='OK', errors=None)``
-if all has gone well
+if all has gone well.
 
 
 Authentication

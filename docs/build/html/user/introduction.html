@@ -214,13 +214,12 @@ Create a virtual environment called, for example, <code class="docutils literal 
 <p>To test if the package has correctly installed, open a Python shell
 (note: if you're using a virtual environment, make sure you activate it first) and run</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">flightplandb</span>
-<span class="n">api</span> <span class="o">=</span> <span class="n">flightplandb</span><span class="o">.</span><span class="n">FlightPlanDB</span><span class="p">()</span>
-<span class="n">api</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
+<span class="n">flightplandb</span><span class="o">.</span><span class="n">FlightPlanDB</span><span class="p">()</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>which should return
 <code class="docutils literal notranslate"><span class="pre">StatusResponse(message='OK',</span> <span class="pre">errors=None)</span></code>
-if all has gone well</p>
+if all has gone well.</p>
 </div>
 <div class="section" id="authentication">
 <h2>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h2>

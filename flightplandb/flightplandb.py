@@ -37,9 +37,9 @@ from flightplandb.datatypes import (
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directive-autoclass
 class FlightPlanDB:
 
-    """Base functions called by other parts of the API.
-    All of the functions in here are for internal use only, except for
-    :meth:`ping()`, :meth:`revoke()` and the properties.
+    """This class mostly contains internal functions called by the API.
+    However, the internal functions are hidden, so unless you look at
+    the source code, you're unlikely to see them.
 
     Parameters
     ----------
@@ -57,11 +57,11 @@ class FlightPlanDB:
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
         self.url_base = url_base
 
-    def request(self, method: str,
-                path: str, return_format="dict",
-                ignore_statuses: Optional[List] = None,
-                params: Optional[Dict] = None,
-                *args, **kwargs) -> Union[Dict, bytes]:
+    def _request(self, method: str,
+                 path: str, return_format="dict",
+                 ignore_statuses: Optional[List] = None,
+                 params: Optional[Dict] = None,
+                 *args, **kwargs) -> Union[Dict, bytes]:
         """General HTTP requests function for non-paginated results.
 
         Parameters
@@ -94,6 +94,7 @@ class FlightPlanDB:
         HTTPError
             Invalid HTTP status in response
         """
+
         format_return_types = {
             # if a dict is requested, the JSON will later be converted to that
             "dict": "application/json",
@@ -149,11 +150,11 @@ class FlightPlanDB:
         return resp.text  # if the format is not a dict
 
     # and here go the specific non-paginated HTTP calls
-    def get(self, path: str, return_format="dict",
-            ignore_statuses: Optional[List] = None,
-            params: Optional[Dict] = None,
-            *args, **kwargs) -> Union[Dict, bytes]:
-        """Calls :meth:`request()` for get requests.
+    def _get(self, path: str, return_format="dict",
+             ignore_statuses: Optional[List] = None,
+             params: Optional[Dict] = None,
+             *args, **kwargs) -> Union[Dict, bytes]:
+        """Calls :meth:`_request()` for get requests.
 
         Parameters
         ----------
@@ -176,64 +177,25 @@ class FlightPlanDB:
         Union[Dict, bytes]
             A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
         """
+
         # I HATE not being able to set empty lists as default arguments
         if not ignore_statuses:
             ignore_statuses = []
         if not params:
             params = {}
 
-        resp = self.request("get", path,
-                            return_format,
-                            ignore_statuses,
-                            params,
-                            *args, **kwargs)
+        resp = self._request("get", path,
+                             return_format,
+                             ignore_statuses,
+                             params,
+                             *args, **kwargs)
         return resp
 
-    def post(self, path: str, return_format="dict",
-             ignore_statuses: Optional[List] = None,
-             params: Optional[Dict] = None,
-             *args, **kwargs) -> Union[Dict, bytes]:
-        """Calls :meth:`request()` for post requests.
-
-        Parameters
-        ----------
-        path : str
-            The endpoint's path to which the request is being made
-        return_format : str, optional
-            The API response format, defaults to ``"dict"``
-        ignore_statuses : Optional[List], optional
-            Statuses (together with 200 OK) which don't
-            raise an HTTPError, defaults to None
-        params : Optional[Dict], optional
-            Any other HTTP request parameters, defaults to None
-        *args
-            Variable length argument list.
-        **kwargs
-            Arbitrary keyword arguments.
-
-        Returns
-        -------
-        Union[Dict, bytes]
-            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
-        """
-        if not ignore_statuses:
-            ignore_statuses = []
-        if not params:
-            params = {}
-
-        resp = self.request("post",
-                            path,
-                            return_format,
-                            ignore_statuses,
-                            params,
-                            *args, **kwargs)
-        return resp
-
-    def patch(self, path: str, return_format="dict",
+    def _post(self, path: str, return_format="dict",
               ignore_statuses: Optional[List] = None,
               params: Optional[Dict] = None,
               *args, **kwargs) -> Union[Dict, bytes]:
-        """Calls :meth:`request()` for patch requests.
+        """Calls :meth:`_request()` for post requests.
 
         Parameters
         ----------
@@ -261,19 +223,19 @@ class FlightPlanDB:
         if not params:
             params = {}
 
-        resp = self.request("patch",
-                            path,
-                            return_format,
-                            ignore_statuses,
-                            params,
-                            *args, **kwargs)
+        resp = self._request("post",
+                             path,
+                             return_format,
+                             ignore_statuses,
+                             params,
+                             *args, **kwargs)
         return resp
 
-    def delete(self, path: str, return_format="dict",
+    def _patch(self, path: str, return_format="dict",
                ignore_statuses: Optional[List] = None,
                params: Optional[Dict] = None,
                *args, **kwargs) -> Union[Dict, bytes]:
-        """Calls :meth:`request()` for delete requests.
+        """Calls :meth:`_request()` for patch requests.
 
         Parameters
         ----------
@@ -296,25 +258,68 @@ class FlightPlanDB:
         Union[Dict, bytes]
             A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
         """
+
         if not ignore_statuses:
             ignore_statuses = []
         if not params:
             params = {}
 
-        resp = self.request("delete",
-                            path,
-                            return_format,
-                            ignore_statuses,
-                            params,
-                            *args, **kwargs)
+        resp = self._request("patch",
+                             path,
+                             return_format,
+                             ignore_statuses,
+                             params,
+                             *args, **kwargs)
         return resp
 
-    def getiter(self, path: str,
-                limit=100,
+    def _delete(self, path: str, return_format="dict",
                 ignore_statuses: Optional[List] = None,
                 params: Optional[Dict] = None,
-                *args, **kwargs) -> Generator[Dict, None, None]:
-        """Get :meth:`request()` for paginated results.
+                *args, **kwargs) -> Union[Dict, bytes]:
+        """Calls :meth:`_request()` for delete requests.
+
+        Parameters
+        ----------
+        path : str
+            The endpoint's path to which the request is being made
+        return_format : str, optional
+            The API response format, defaults to ``"dict"``
+        ignore_statuses : Optional[List], optional
+            Statuses (together with 200 OK) which don't
+            raise an HTTPError, defaults to None
+        params : Optional[Dict], optional
+            Any other HTTP request parameters, defaults to None
+        *args
+            Variable length argument list.
+        **kwargs
+            Arbitrary keyword arguments.
+
+        Returns
+        -------
+        Union[Dict, bytes]
+            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
+        """
+
+        if not ignore_statuses:
+            ignore_statuses = []
+        if not params:
+            params = {}
+
+        resp = self._request("delete",
+                             path,
+                             return_format,
+                             ignore_statuses,
+                             params,
+                             *args, **kwargs)
+        return resp
+
+    def _getiter(self, path: str,
+                 limit: int = 100,
+                 sort: str = "created",
+                 ignore_statuses: Optional[List] = None,
+                 params: Optional[Dict] = None,
+                 *args, **kwargs) -> Generator[Dict, None, None]:
+        """Get :meth:`_request()` for paginated results.
 
         Parameters
         ----------
@@ -322,6 +327,9 @@ class FlightPlanDB:
             The endpoint's path to which the request is being made
         limit : int, optional
             Maximum number of results to return, defaults to 100
+        sort : str, optional
+            Sort order to return results in. Valid sort orders are
+            created, updated, popularity, and distance
         ignore_statuses : Optional[List], optional
             Statuses (together with 200 OK) which don't
             raise an HTTPError, defaults to None
@@ -337,10 +345,18 @@ class FlightPlanDB:
         Generator[Dict, None, None]
             A generator of dicts. Return format cannot be specified.
         """
+
         if not ignore_statuses:
             ignore_statuses = []
         if not params:
             params = {}
+
+        sort_orders = ["created", "updated", "popularity", "distance"]
+        if sort not in valid_sort_orders:
+            raise ValueError(
+                f"sort argument must be one of {', '.join(sort_orders)}")
+        else:
+            params["sort"] = sort
 
         url = urljoin(self.url_base, path)
         auth = HTTPBasicAuth(self.key, None)
@@ -388,6 +404,7 @@ class FlightPlanDB:
         str
             The value corresponding to the passed key
         """
+
         if header_key not in self._header:
             self.ping()  # Make at least one request
         return self._header[header_key]
@@ -401,6 +418,7 @@ class FlightPlanDB:
         int
             API version
         """
+
         return int(self._header_value("X-API-Version"))
 
     @property
@@ -413,6 +431,7 @@ class FlightPlanDB:
         str
             AVIATION, METRIC or SI
         """
+
         return self._header_value("X-Units")
 
     @property
@@ -428,6 +447,7 @@ class FlightPlanDB:
         int
             number of allowed requests per day
         """
+
         return int(self._header_value("X-Limit-Cap"))
 
     @property
@@ -440,6 +460,7 @@ class FlightPlanDB:
         int
             number of requests used in period
         """
+
         return int(self._header_value("X-Limit-Used"))
 
     def ping(self) -> StatusResponse:
@@ -450,7 +471,8 @@ class FlightPlanDB:
         StatusResponse
             OK 200 means the service is up and running.
         """
-        resp = self.get("")
+
+        resp = self._get("")
         return StatusResponse(**resp)
 
     def revoke(self) -> StatusResponse:
@@ -467,7 +489,8 @@ class FlightPlanDB:
             Any other status code or message indicates an error has
             occurred and the errors array will give further details.
         """
-        resp = self.get("/auth/revoke")
+
+        resp = self._get("/auth/revoke")
         self._header = resp.headers
         return StatusResponse(**resp.json())
 
@@ -530,8 +553,9 @@ class PlanAPI():
 
             ``None`` if the plan with that id was not found.
         """
+
         try:
-            request = self._fp.get(f"/plan/{id_}", return_format=return_format)
+            request = self._fp._get(f"/plan/{id_}", return_format=return_format)
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
                 return None
@@ -564,7 +588,8 @@ class PlanAPI():
 
             ``bytes`` if a different format than ``"dict"`` was specified.
         """
-        request = self._fp.post(f"/plan/", return_format=return_format)
+
+        request = self._fp._post(f"/plan/", return_format=return_format)
 
         if return_format == "dict":
             return Plan(**request)
@@ -592,7 +617,8 @@ class PlanAPI():
 
             ``bytes`` if a different format than ``"dict"`` was specified.
         """
-        request = self._fp.patch(f"/plan/{plan.id}", json=asdict(plan))
+
+        request = self._fp._patch(f"/plan/{plan.id}", json=asdict(plan))
 
         if return_format == "dict":
             return Plan(**request)
@@ -614,9 +640,10 @@ class PlanAPI():
         StatusResponse
             OK 200 means a successful delete
         """
-        return StatusResponse(**self._fp.delete(f"/plan/{id_}"))
 
-    def search(self, plan_query: PlanQuery,
+        return StatusResponse(**self._fp._delete(f"/plan/{id_}"))
+
+    def search(self, plan_query: PlanQuery, sort: str = "created",
                limit: int = 100) -> Generator[Plan, None, None]:
         """Searches for flight plans.
         A number of search parameters are available.
@@ -626,6 +653,9 @@ class PlanAPI():
         ----------
         plan_query : PlanQuery
             A dataclass containing multiple options for plan searches
+        sort : str, optional
+            Sort order to return results in. Valid sort orders are
+            created, updated, popularity, and distance
         limit : int
             Maximum number of plans to return, defaults to 100
 
@@ -639,9 +669,11 @@ class PlanAPI():
             :py:obj:`~flightplandb.datatypes.PlanQuery.includeRoute` parameter
             of the :class:`~flightplandb.datatypes.PlanQuery` used to request it
         """
-        for i in self._fp.getiter("/search/plans",
-                                  params=plan_query.as_dict(),
-                                  limit=limit):
+
+        for i in self._fp._getiter("/search/plans",
+                                   sort=sort,
+                                   params=plan_query.as_dict(),
+                                   limit=limit):
             yield Plan(**i)
 
     def has_liked(self, id_: int) -> bool:
@@ -659,8 +691,9 @@ class PlanAPI():
         bool
             ``True``/``False`` to indicate that the plan was liked / not liked
         """
+
         sr = StatusResponse(
-            **self._fp.get(f"/plan/{id_}/like", ignore_statuses=[404]))
+            **self._fp._get(f"/plan/{id_}/like", ignore_statuses=[404]))
         return sr.message != "Not Found"
 
     def like(self, id_: int) -> StatusResponse:
@@ -679,7 +712,8 @@ class PlanAPI():
             201 means the plan was successfully liked.
             200 means the plan was already liked.
         """
-        return StatusResponse(**self._fp.post(f"/plan/{id_}/like"))
+
+        return StatusResponse(**self._fp._post(f"/plan/{id_}/like"))
 
     def unlike(self, id_: int) -> bool:
         r"""Removes a flight plan like.
@@ -696,8 +730,9 @@ class PlanAPI():
         bool
             ``True`` for a successful unlike, ``False`` indicates a failure
         """
+
         sr = StatusResponse(
-            **self._fp.delete(f"/plan/{id_}/like", ignore_statuses=[404]))
+            **self._fp._delete(f"/plan/{id_}/like", ignore_statuses=[404]))
         return sr.message != "Not Found"
 
     def generate(self, gen_query: GenerateQuery,
@@ -721,8 +756,9 @@ class PlanAPI():
 
             Bytes if a different format than ``"dict"`` was specified
         """
+
         return Plan(
-            **self._fp.post(
+            **self._fp._post(
                 "/auto/generate", json=asdict(gen_query)))
 
     def decode(self, route: str) -> Plan:
@@ -747,7 +783,8 @@ class PlanAPI():
             The registered flight plan created on flight plan database,
             corresponding to the decoded route
         """
-        return Plan(**self._fp.post(
+
+        return Plan(**self._fp._post(
             "/auto/decode", json={"route": route}))
 
 
@@ -769,7 +806,8 @@ class UserAPI:
         User
             The User object of the currently authenticated user
         """
-        return User(**self._fp.get("/me"))
+
+        return User(**self._fp._get("/me"))
 
     def fetch(self, username: str) -> User:
         """Fetches profile information for any registered user
@@ -784,9 +822,10 @@ class UserAPI:
         User
             The User object of the user associated with the username
         """
-        return User(**self._fp.get(f"user/{username}"))
 
-    def plans(self, username: str,
+        return User(**self._fp._get(f"user/{username}"))
+
+    def plans(self, username: str, sort: str = "created",
               limit: int = 100) -> Generator[Plan, None, None]:
         """Fetches flight plans created by a user.
 
@@ -794,6 +833,9 @@ class UserAPI:
         ----------
         username : str
             Username of the user who created the flight plans
+        sort : str, optional
+            Sort order to return results in. Valid sort orders are
+            created, updated, popularity, and distance
         limit: int
             Maximum number of plans to fetch, defaults to ``100``
 
@@ -803,13 +845,13 @@ class UserAPI:
             A generator with all the flight plans a user created,
             limited by ``limit``
         """
-        # TODO: params
-        #   sort The order of the returned plans
-        for i in self._fp.getiter(f"/user/{username}/plans",
-                                  limit=limit):
+
+        for i in self._fp._getiter(f"/user/{username}/plans",
+                                   sort=sort,
+                                   limit=limit):
             yield Plan(**i)
 
-    def likes(self, username: str,
+    def likes(self, username: str, sort: str = "created",
               limit: int = 100) -> Generator[Plan, None, None]:
         """Fetches flight plans liked by a user.
 
@@ -817,6 +859,9 @@ class UserAPI:
         ----------
         username : str
             Username of the user who liked the flight plans
+        sort : str, optional
+            Sort order to return results in. Valid sort orders are
+            created, updated, popularity, and distance
         limit : int
             Maximum number of plans to fetch, defaults to ``100``
 
@@ -826,10 +871,10 @@ class UserAPI:
             A generator with all the flight plans a user liked,
             limited by ``limit``
         """
-        # TODO: params
-        #   sort The order of the returned plans
-        for i in self._fp.getiter(f"/user/{username}/likes",
-                                  limit=limit):
+
+        for i in self._fp._getiter(f"/user/{username}/likes",
+                                   sort=sort,
+                                   limit=limit):
             yield Plan(**i)
 
     def search(self, username: str,
@@ -851,9 +896,10 @@ class UserAPI:
             ``username``, limited by ``limit``. UserSmall is used instead of
             User, because less info is returned.
         """
-        for i in self._fp.getiter("/search/users",
-                                  limit=limit,
-                                  params={"q": username}):
+
+        for i in self._fp._getiter("/search/users",
+                                   limit=limit,
+                                   params={"q": username}):
             yield UserSmall(**i)
 
 
@@ -873,7 +919,8 @@ class TagsAPI:
         List[Tag]
             A list of the current popular tags.
         """
-        return list(map(lambda t: Tag(**t), self._fp.get("/tags")))
+
+        return list(map(lambda t: Tag(**t), self._fp._get("/tags")))
 
 
 class NavAPI:
@@ -897,7 +944,8 @@ class NavAPI:
             An oversized dataclass with more information than you'd
             need in 500 years.
         """
-        return Airport(**self._fp.get(f"/nav/airport/{icao}"))
+
+        return Airport(**self._fp._get(f"/nav/airport/{icao}"))
 
     def nats(self) -> List[Track]:
         """Fetches current North Atlantic Tracks.
@@ -907,8 +955,9 @@ class NavAPI:
         List[Track]
             List of NATs
         """
+
         return list(
-            map(lambda n: Track(**n), self._fp.get("/nav/NATS")))
+            map(lambda n: Track(**n), self._fp._get("/nav/NATS")))
 
     def pacots(self) -> List[Track]:
         """Fetches current Pacific Organized Track System tracks.
@@ -918,8 +967,9 @@ class NavAPI:
         List[Track]
             List of PACOTs
         """
+
         return list(
-            map(lambda t: Track(**t), self._fp.get("/nav/PACOTS")))
+            map(lambda t: Track(**t), self._fp._get("/nav/PACOTS")))
 
     def search(self, query: str,
                type_: str = None) -> Generator[Navaid, None, None]:
@@ -940,13 +990,14 @@ class NavAPI:
             A generator of navaids with either a name or ident
             matching the ``query``
         """
+
         params = {"q": query}
         if type_:
             if type_ in Navaid.validtypes:
                 params["types"] = type_
             else:
                 raise ValueError(f"{type_} is not a valid Navaid type")
-        for i in self._fp.getiter("/search/nav", params=params):
+        for i in self._fp._getiter("/search/nav", params=params):
             yield Navaid(**i)
 
 
@@ -971,4 +1022,5 @@ class WeatherAPI:
         Weather
             METAR and TAF for an airport
         """
-        return Weather(**self._fp.get(f"/weather/{icao}"))
+
+        return Weather(**self._fp._get(f"/weather/{icao}"))

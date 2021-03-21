@@ -165,9 +165,9 @@
 <dl class="py class">
 <dt id="flightplandb.flightplandb.FlightPlanDB">
 <em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">FlightPlanDB</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url_base</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'https://api.flightplandatabase.com'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flightplandb.flightplandb.FlightPlanDB" title="Permalink to this definition">¶</a></dt>
-<dd><p>Base functions called by other parts of the API.
-All of the functions in here are for internal use only, except for
-<a class="reference internal" href="#flightplandb.flightplandb.FlightPlanDB.ping" title="flightplandb.flightplandb.FlightPlanDB.ping"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ping()</span></code></a>, <a class="reference internal" href="#flightplandb.flightplandb.FlightPlanDB.revoke" title="flightplandb.flightplandb.FlightPlanDB.revoke"><code class="xref py py-meth docutils literal notranslate"><span class="pre">revoke()</span></code></a> and the properties.</p>
+<dd><p>This class mostly contains internal functions called by the API.
+However, the internal functions are hidden, so unless you look at
+the source code, you're unlikely to see them.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -177,163 +177,6 @@ defaults to <a class="reference external" href="https://api.flightplandatabase.c
 </ul>
 </dd>
 </dl>
-<dl class="py method">
-<dt id="flightplandb.flightplandb.FlightPlanDB.request">
-<code class="sig-name descname"><span class="pre">request</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dict'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_statuses</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.FlightPlanDB.request" title="Permalink to this definition">¶</a></dt>
-<dd><p>General HTTP requests function for non-paginated results.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>method</strong> (<em>str</em>) -- An HTTP request type. One of GET, POST, PATCH, or DELETE</p></li>
-<li><p><strong>path</strong> (<em>str</em>) -- The endpoint's path to which the request is being made</p></li>
-<li><p><strong>return_format</strong> (<em>str</em><em>, </em><em>optional</em>) -- The API response format, defaults to <code class="docutils literal notranslate"><span class="pre">&quot;dict&quot;</span></code></p></li>
-<li><p><strong>ignore_statuses</strong> (<em>Optional</em><em>[</em><em>List</em><em>]</em><em>, </em><em>optional</em>) -- Statuses (together with 200 OK) which don't
-raise an HTTPError, defaults to None</p></li>
-<li><p><strong>params</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) -- Any other HTTP request parameters, defaults to None</p></li>
-<li><p><strong>*args</strong> -- Variable length argument list.</p></li>
-<li><p><strong>**kwargs</strong> -- Arbitrary keyword arguments.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">dict</span></code> if <code class="docutils literal notranslate"><span class="pre">return_format</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;dict&quot;</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">bytes</span></code></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Union[Dict, bytes]</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> -- Invalid return_format option</p></li>
-<li><p><strong>HTTPError</strong> -- Invalid HTTP status in response</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="flightplandb.flightplandb.FlightPlanDB.get">
-<code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dict'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_statuses</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.FlightPlanDB.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls <a class="reference internal" href="#flightplandb.flightplandb.FlightPlanDB.request" title="flightplandb.flightplandb.FlightPlanDB.request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">request()</span></code></a> for get requests.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) -- The endpoint's path to which the request is being made</p></li>
-<li><p><strong>return_format</strong> (<em>str</em><em>, </em><em>optional</em>) -- The API response format, defaults to <code class="docutils literal notranslate"><span class="pre">&quot;dict&quot;</span></code></p></li>
-<li><p><strong>ignore_statuses</strong> (<em>Optional</em><em>[</em><em>List</em><em>]</em><em>, </em><em>optional</em>) -- Statuses (together with 200 OK) which don't
-raise an HTTPError, defaults to None</p></li>
-<li><p><strong>params</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) -- Any other HTTP request parameters, defaults to None</p></li>
-<li><p><strong>*args</strong> -- Variable length argument list.</p></li>
-<li><p><strong>**kwargs</strong> -- Arbitrary keyword arguments.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">dict</span></code> if <code class="docutils literal notranslate"><span class="pre">return_format</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;dict&quot;</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">bytes</span></code></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Union[Dict, bytes]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="flightplandb.flightplandb.FlightPlanDB.post">
-<code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dict'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_statuses</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.FlightPlanDB.post" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls <a class="reference internal" href="#flightplandb.flightplandb.FlightPlanDB.request" title="flightplandb.flightplandb.FlightPlanDB.request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">request()</span></code></a> for post requests.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) -- The endpoint's path to which the request is being made</p></li>
-<li><p><strong>return_format</strong> (<em>str</em><em>, </em><em>optional</em>) -- The API response format, defaults to <code class="docutils literal notranslate"><span class="pre">&quot;dict&quot;</span></code></p></li>
-<li><p><strong>ignore_statuses</strong> (<em>Optional</em><em>[</em><em>List</em><em>]</em><em>, </em><em>optional</em>) -- Statuses (together with 200 OK) which don't
-raise an HTTPError, defaults to None</p></li>
-<li><p><strong>params</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) -- Any other HTTP request parameters, defaults to None</p></li>
-<li><p><strong>*args</strong> -- Variable length argument list.</p></li>
-<li><p><strong>**kwargs</strong> -- Arbitrary keyword arguments.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">dict</span></code> if <code class="docutils literal notranslate"><span class="pre">return_format</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;dict&quot;</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">bytes</span></code></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Union[Dict, bytes]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="flightplandb.flightplandb.FlightPlanDB.patch">
-<code class="sig-name descname"><span class="pre">patch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dict'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_statuses</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.FlightPlanDB.patch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls <a class="reference internal" href="#flightplandb.flightplandb.FlightPlanDB.request" title="flightplandb.flightplandb.FlightPlanDB.request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">request()</span></code></a> for patch requests.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) -- The endpoint's path to which the request is being made</p></li>
-<li><p><strong>return_format</strong> (<em>str</em><em>, </em><em>optional</em>) -- The API response format, defaults to <code class="docutils literal notranslate"><span class="pre">&quot;dict&quot;</span></code></p></li>
-<li><p><strong>ignore_statuses</strong> (<em>Optional</em><em>[</em><em>List</em><em>]</em><em>, </em><em>optional</em>) -- Statuses (together with 200 OK) which don't
-raise an HTTPError, defaults to None</p></li>
-<li><p><strong>params</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) -- Any other HTTP request parameters, defaults to None</p></li>
-<li><p><strong>*args</strong> -- Variable length argument list.</p></li>
-<li><p><strong>**kwargs</strong> -- Arbitrary keyword arguments.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">dict</span></code> if <code class="docutils literal notranslate"><span class="pre">return_format</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;dict&quot;</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">bytes</span></code></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Union[Dict, bytes]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="flightplandb.flightplandb.FlightPlanDB.delete">
-<code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dict'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_statuses</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.FlightPlanDB.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls <a class="reference internal" href="#flightplandb.flightplandb.FlightPlanDB.request" title="flightplandb.flightplandb.FlightPlanDB.request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">request()</span></code></a> for delete requests.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) -- The endpoint's path to which the request is being made</p></li>
-<li><p><strong>return_format</strong> (<em>str</em><em>, </em><em>optional</em>) -- The API response format, defaults to <code class="docutils literal notranslate"><span class="pre">&quot;dict&quot;</span></code></p></li>
-<li><p><strong>ignore_statuses</strong> (<em>Optional</em><em>[</em><em>List</em><em>]</em><em>, </em><em>optional</em>) -- Statuses (together with 200 OK) which don't
-raise an HTTPError, defaults to None</p></li>
-<li><p><strong>params</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) -- Any other HTTP request parameters, defaults to None</p></li>
-<li><p><strong>*args</strong> -- Variable length argument list.</p></li>
-<li><p><strong>**kwargs</strong> -- Arbitrary keyword arguments.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">dict</span></code> if <code class="docutils literal notranslate"><span class="pre">return_format</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;dict&quot;</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">bytes</span></code></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Union[Dict, bytes]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="flightplandb.flightplandb.FlightPlanDB.getiter">
-<code class="sig-name descname"><span class="pre">getiter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_statuses</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.FlightPlanDB.getiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get <a class="reference internal" href="#flightplandb.flightplandb.FlightPlanDB.request" title="flightplandb.flightplandb.FlightPlanDB.request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">request()</span></code></a> for paginated results.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) -- The endpoint's path to which the request is being made</p></li>
-<li><p><strong>limit</strong> (<em>int</em><em>, </em><em>optional</em>) -- Maximum number of results to return, defaults to 100</p></li>
-<li><p><strong>ignore_statuses</strong> (<em>Optional</em><em>[</em><em>List</em><em>]</em><em>, </em><em>optional</em>) -- Statuses (together with 200 OK) which don't
-raise an HTTPError, defaults to None</p></li>
-<li><p><strong>params</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) -- Any other HTTP request parameters, defaults to None</p></li>
-<li><p><strong>*args</strong> -- Variable length argument list.</p></li>
-<li><p><strong>**kwargs</strong> -- Arbitrary keyword arguments.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A generator of dicts. Return format cannot be specified.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Generator[Dict, None, None]</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt id="flightplandb.flightplandb.FlightPlanDB.version">
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">version</span></code><a class="headerlink" href="#flightplandb.flightplandb.FlightPlanDB.version" title="Permalink to this definition">¶</a></dt>
@@ -558,7 +401,7 @@ is specified as the <code class="docutils literal notranslate"><span class="pre"
 
 <dl class="py method">
 <dt id="flightplandb.flightplandb.PlanAPI.search">
-<code class="sig-name descname"><span class="pre">search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plan_query</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#flightplandb.datatypes.PlanQuery" title="flightplandb.datatypes.PlanQuery"><span class="pre">flightplandb.datatypes.PlanQuery</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.PlanAPI.search" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plan_query</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#flightplandb.datatypes.PlanQuery" title="flightplandb.datatypes.PlanQuery"><span class="pre">flightplandb.datatypes.PlanQuery</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'created'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.PlanAPI.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Searches for flight plans.
 A number of search parameters are available.
 They will be combined to form a search request.</p>
@@ -566,6 +409,8 @@ They will be combined to form a search request.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>plan_query</strong> (<a class="reference internal" href="#flightplandb.datatypes.PlanQuery" title="flightplandb.datatypes.PlanQuery"><em>PlanQuery</em></a>) -- A dataclass containing multiple options for plan searches</p></li>
+<li><p><strong>sort</strong> (<em>str</em><em>, </em><em>optional</em>) -- Sort order to return results in. Valid sort orders are
+created, updated, popularity, and distance</p></li>
 <li><p><strong>limit</strong> (<em>int</em>) -- Maximum number of plans to return, defaults to 100</p></li>
 </ul>
 </dd>
@@ -724,12 +569,14 @@ corresponding to the decoded route</p>
 
 <dl class="py method">
 <dt id="flightplandb.flightplandb.UserAPI.plans">
-<code class="sig-name descname"><span class="pre">plans</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.UserAPI.plans" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">plans</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'created'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.UserAPI.plans" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetches flight plans created by a user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>username</strong> (<em>str</em>) -- Username of the user who created the flight plans</p></li>
+<li><p><strong>sort</strong> (<em>str</em><em>, </em><em>optional</em>) -- Sort order to return results in. Valid sort orders are
+created, updated, popularity, and distance</p></li>
 <li><p><strong>limit</strong> (<em>int</em>) -- Maximum number of plans to fetch, defaults to <code class="docutils literal notranslate"><span class="pre">100</span></code></p></li>
 </ul>
 </dd>
@@ -742,12 +589,14 @@ limited by <code class="docutils literal notranslate"><span class="pre">limit</s
 
 <dl class="py method">
 <dt id="flightplandb.flightplandb.UserAPI.likes">
-<code class="sig-name descname"><span class="pre">likes</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.UserAPI.likes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">likes</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'created'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><span class="pre">flightplandb.datatypes.Plan</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.flightplandb.UserAPI.likes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetches flight plans liked by a user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>username</strong> (<em>str</em>) -- Username of the user who liked the flight plans</p></li>
+<li><p><strong>sort</strong> (<em>str</em><em>, </em><em>optional</em>) -- Sort order to return results in. Valid sort orders are
+created, updated, popularity, and distance</p></li>
 <li><p><strong>limit</strong> (<em>int</em>) -- Maximum number of plans to fetch, defaults to <code class="docutils literal notranslate"><span class="pre">100</span></code></p></li>
 </ul>
 </dd>

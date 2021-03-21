@@ -56,7 +56,7 @@ To test if the package has correctly installed, open a Python shell
 .. code-block:: python3
 
    import flightplandb
-   api = flightplandb.FlightPlanDB("placeholder")
+   api = flightplandb.FlightPlanDB()
    api.ping()
 
 which should return

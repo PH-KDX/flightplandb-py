@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License along
 # with FlightplanDB-py.  If not, see <https://www.gnu.org/licenses/>.
 
-
 from typing import Generator, List, Dict, Union, Optional
 from dataclasses import asdict
 
@@ -351,10 +350,10 @@ class FlightPlanDB:
         if not params:
             params = {}
 
-        sort_orders = ["created", "updated", "popularity", "distance"]
+        valid_sort_orders = ["created", "updated", "popularity", "distance"]
         if sort not in valid_sort_orders:
             raise ValueError(
-                f"sort argument must be one of {', '.join(sort_orders)}")
+                f"sort argument must be one of {', '.join(valid_sort_orders)}")
         else:
             params["sort"] = sort
 
@@ -365,6 +364,7 @@ class FlightPlanDB:
         # initially no results have been fetched yet
         num_results = 0
 
+        # TODO check status returned as done with nonitered results
         r_fpdb = session.get(url, params=params, auth=auth, *args, **kwargs)
 
         # I detest responses which "may" be paginated
@@ -555,7 +555,8 @@ class PlanAPI():
         """
 
         try:
-            request = self._fp._get(f"/plan/{id_}", return_format=return_format)
+            request = self._fp._get(f"/plan/{id_}",
+                                    return_format=return_format)
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
                 return None
@@ -589,7 +590,7 @@ class PlanAPI():
             ``bytes`` if a different format than ``"dict"`` was specified.
         """
 
-        request = self._fp._post(f"/plan/", return_format=return_format)
+        request = self._fp._post("/plan/", return_format=return_format)
 
         if return_format == "dict":
             return Plan(**request)
@@ -649,6 +650,8 @@ class PlanAPI():
         A number of search parameters are available.
         They will be combined to form a search request.
 
+        Requires authentication if route is included in results
+
         Parameters
         ----------
         plan_query : PlanQuery
@@ -667,12 +670,13 @@ class PlanAPI():
             Each plan's :py:obj:`~flightplandb.datatypes.Plan.route`
             will be set to ``None`` unless otherwise specified in the
             :py:obj:`~flightplandb.datatypes.PlanQuery.includeRoute` parameter
-            of the :class:`~flightplandb.datatypes.PlanQuery` used to request it
+            of the :class:`~flightplandb.datatypes.PlanQuery` used
+            to request it
         """
 
         for i in self._fp._getiter("/search/plans",
                                    sort=sort,
-                                   params=plan_query.as_dict(),
+                                   params=plan_query._as_json_compat(),
                                    limit=limit):
             yield Plan(**i)
 
@@ -759,7 +763,7 @@ class PlanAPI():
 
         return Plan(
             **self._fp._post(
-                "/auto/generate", json=asdict(gen_query)))
+                "/auto/generate", json=gen_query._as_json_compat()))
 
     def decode(self, route: str) -> Plan:
         """Creates a new flight plan using the route decoder.

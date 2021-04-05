@@ -17,11 +17,11 @@
 # with FlightplanDB-py.  If not, see <https://www.gnu.org/licenses/>.
 
 
+import json
 from typing import List, Union, Optional
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, asdict
 from dateutil.parser import isoparse
 from datetime import datetime
-from enum import Enum, EnumMeta, auto
 
 
 @dataclass
@@ -309,8 +309,8 @@ class Plan:
         self.user = User(**self.user) if self.user else self.user
         if self.application:
             self.application = Application(**self.application)
-        self.route = (Route(self.route)
-                      if type(self.route) == list else self.route)
+        # self.route = (Route(self.route)
+        # if type(self.route) == list else self.route)
         self.cycle = (Cycle(**self.cycle)
                       if type(self.cycle) == dict else self.cycle)
 
@@ -343,11 +343,9 @@ class PlanQuery:
         Maximum route distance, with units determined by the X-Units header
     tags : Optional[str]
         Tag names to search, comma separated
-    includeRoute : Optional[str]
+    includeRoute : Optional[bool]
         Include route objects for each plan in the response.
         Setting to true requires the request be authenticated with an API key
-    sort : Optional[str]
-        The order of the returned plans. See Pagination for more options
     """
     q: Optional[str] = None
     From: Optional[str] = None
@@ -360,16 +358,17 @@ class PlanQuery:
     distanceMin: Optional[str] = None
     distanceMax: Optional[str] = None
     tags: Optional[str] = None
-    includeRoute: Optional[str] = None
+    includeRoute: Optional[bool] = None
     limit: Optional[int] = None
-    sort: Optional[str] = None
 
-    def as_dict(self):
-        return {
-            f.name[0].lower()+f.name[1:]: getattr(self, f.name)
-            for f in fields(self)
-            if getattr(self, f.name)
-        }
+    # the API only takes "true" or "false", not True or False
+    # the same approach is used in GenerateQuery
+    def _as_json_compat(self):
+        json_dict = asdict(self)
+        for k, v in json_dict.items():
+            if v in (True, False):
+                json_dict[k] = json.dumps(v)
+        return json_dict
 
 
 @dataclass
@@ -416,6 +415,14 @@ class GenerateQuery:
     descentRate: Optional[float] = 1500
     descentSpeed: Optional[float] = 250
 
+    # see the comment on the same function in PlanQuery
+    def _as_json_compat(self):
+        json_dict = asdict(self)
+        for k, v in json_dict.items():
+            if v in (True, False):
+                json_dict[k] = json.dumps(v)
+        return json_dict
+
 
 @dataclass
 class Tag:
@@ -447,8 +454,8 @@ class Timezone:
     name : Union[str, None]
         The IANA timezone the airport is located in. ``None`` if not available
     offset : Union[float, None]
-        The number of seconds the airport timezone is currently offset from UTC.
-        Positive is ahead of UTC. ``None`` if not available
+        The number of seconds the airport timezone is currently
+        offset from UTC. Positive is ahead of UTC. ``None`` if not available
     """
     name: Union[str, None]
     offset: Union[float, None]
@@ -536,7 +543,7 @@ class Navaid:
     elevation: float
         The navaid elevation above mean sea level (elevation)
     range: float
-        The navaid range, with units determined by the X-Units header (distance)
+        The navaid range; units determined by the X-Units header (distance)
     validtypes : List[str]
         Do not change. Valid Navaid types.
     """

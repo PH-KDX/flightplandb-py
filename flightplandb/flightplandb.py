@@ -376,7 +376,6 @@ class FlightPlanDB:
         # initially no results have been fetched yet
         num_results = 0
 
-        # TODO check status returned as done with nonitered results
         r_fpdb = session.get(url, params=params, auth=auth, *args, **kwargs)
 
         # I detest responses which "may" be paginated

@@ -24,6 +24,8 @@ import requests
 from requests.auth import HTTPBasicAuth
 from requests.structures import CaseInsensitiveDict
 
+import json
+
 from flightplandb.datatypes import (
     StatusResponse,
     PlanQuery, Plan, GenerateQuery,
@@ -122,6 +124,11 @@ class FlightPlanDB:
             ignore_statuses = []
         if not params:
             params = {}
+
+        # the API only takes "true" or "false", not True or False
+        for k, v in params.items():
+            if v in (True, False):
+                params[k] = json.dumps(v)
 
         # convert the API content return_format to an HTTP Accept type
         try:
@@ -349,6 +356,11 @@ class FlightPlanDB:
             ignore_statuses = []
         if not params:
             params = {}
+
+        # the API only takes "true" or "false", not True or False
+        for k, v in params.items():
+            if v in (True, False):
+                params[k] = json.dumps(v)
 
         valid_sort_orders = ["created", "updated", "popularity", "distance"]
         if sort not in valid_sort_orders:
@@ -676,7 +688,7 @@ class PlanAPI():
 
         for i in self._fp._getiter("/search/plans",
                                    sort=sort,
-                                   params=plan_query._as_json_compat(),
+                                   params=asdict(plan_query),
                                    limit=limit):
             yield Plan(**i)
 
@@ -763,7 +775,7 @@ class PlanAPI():
 
         return Plan(
             **self._fp._post(
-                "/auto/generate", json=gen_query._as_json_compat()))
+                "/auto/generate", json=asdict(gen_query)))
 
     def decode(self, route: str) -> Plan:
         """Creates a new flight plan using the route decoder.
@@ -934,7 +946,7 @@ class NavAPI:
     def __init__(self, flightplandb: FlightPlanDB):
         self._fp = flightplandb
 
-    def airport(self, icao) -> Airport:
+    def airport(self, icao) -> Union[Airport, None]:
         """Fetches information about an airport.
 
         Parameters
@@ -944,12 +956,19 @@ class NavAPI:
 
         Returns
         -------
-        Airport
-            An oversized dataclass with more information than you'd
-            need in 500 years.
+        Union[Airport, None]
+
+            :class:`~flightplandb.datatypes.Airport` if the airport was found.
+            ``None`` if it was not.
+
         """
 
-        return Airport(**self._fp._get(f"/nav/airport/{icao}"))
+        resp = self._fp._get(f"/nav/airport/{icao}", ignore_statuses=[404])
+        if "message" in resp and resp["message"] == "Not Found":
+            response = None
+        else:
+            response = Airport(**resp)
+        return response
 
     def nats(self) -> List[Track]:
         """Fetches current North Atlantic Tracks.

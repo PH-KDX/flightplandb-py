@@ -17,9 +17,8 @@
 # with FlightplanDB-py.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import json
 from typing import List, Union, Optional
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from dateutil.parser import isoparse
 from datetime import datetime
 
@@ -361,15 +360,6 @@ class PlanQuery:
     includeRoute: Optional[bool] = None
     limit: Optional[int] = None
 
-    # the API only takes "true" or "false", not True or False
-    # the same approach is used in GenerateQuery
-    def _as_json_compat(self):
-        json_dict = asdict(self)
-        for k, v in json_dict.items():
-            if v in (True, False):
-                json_dict[k] = json.dumps(v)
-        return json_dict
-
 
 @dataclass
 class GenerateQuery:
@@ -414,14 +404,6 @@ class GenerateQuery:
     ascentSpeed: Optional[float] = 250
     descentRate: Optional[float] = 1500
     descentSpeed: Optional[float] = 250
-
-    # see the comment on the same function in PlanQuery
-    def _as_json_compat(self):
-        json_dict = asdict(self)
-        for k, v in json_dict.items():
-            if v in (True, False):
-                json_dict[k] = json.dumps(v)
-        return json_dict
 
 
 @dataclass
@@ -649,7 +631,8 @@ class Weather:
 
 @dataclass
 class Airport:
-    """Describes an airport
+    """Describes an airport.
+    An oversized dataclass with more information than you'd need in 500 years.
 
     Attributes
     ----------

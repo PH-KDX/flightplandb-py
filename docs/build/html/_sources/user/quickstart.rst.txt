@@ -29,6 +29,6 @@ This is a small example program which demonstrates basic usage of the library.
       print(plan)
 
 Try saving it in a file called ``test.py`` in your project directory and running it.
-Experiment around to see what works out!
+Experiment around to see what works!
 
-For specific commands, check out the :doc:`../api`.
+For specific commands, check out the :doc:`../api/api`.

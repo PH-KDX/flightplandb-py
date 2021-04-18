@@ -9,12 +9,15 @@ API docs
 flightplandb.flightplandb module
 --------------------------------
 
-.. automodule:: flightplandb.flightplandb
-   :members:
-   :undoc-members:
+.. toctree::
+   :maxdepth: 4
+
+   flightplandb
 
 flightplandb.datatypes module
------------------------------
+--------------------------------
 
-.. automodule:: flightplandb.datatypes
-   :members:
+.. toctree::
+   :maxdepth: 4
+
+   datatypes

@@ -31,8 +31,12 @@ release = '0.3.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 
-extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.napoleon']
+extensions = ['sphinx.ext.autodoc',  # HTML generation from docstrings
+              'sphinx.ext.napoleon',  # Read NumPy style docstrings
+              'sphinx.ext.autosummary',  # Create neat summary tables
+              ]
+
+autosummary_generate = True  # Turn on sphinx.ext.autosummary
 
 autodoc_member_order = 'bysource'
 

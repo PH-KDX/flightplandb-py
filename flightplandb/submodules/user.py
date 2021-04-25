@@ -39,7 +39,7 @@ class UserAPI:
             The User object of the user associated with the username
         """
 
-        return User(**self._fp._get(f"user/{username}"))
+        return User(**self._fp._get(f"/user/{username}"))
 
     def plans(self, username: str, sort: str = "created",
               limit: int = 100) -> Generator[Plan, None, None]:
@@ -61,7 +61,6 @@ class UserAPI:
             A generator with all the flight plans a user created,
             limited by ``limit``
         """
-
         for i in self._fp._getiter(f"/user/{username}/plans",
                                    sort=sort,
                                    limit=limit):

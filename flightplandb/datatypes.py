@@ -78,10 +78,10 @@ class User:
     plansLikes: Optional[int] = 0
 
     def __post_init__(self):
-        self.joined = isoparse(self.joined) \
-            if self.joined else self.joined
-        self.lastSeen = isoparse(self.lastSeen) \
-            if self.lastSeen else self.lastSeen
+        if self.joined and isinstance(self.joined, str):
+            self.joined = isoparse(self.joined)
+        if self.lastSeen and isinstance(self.lastSeen, str):
+            self.lastSeen = isoparse(self.lastSeen)
 
 
 @dataclass
@@ -305,7 +305,8 @@ class Plan:
                           if type(self.updatedAt) != datetime
                           else self.updatedAt)
 
-        self.user = User(**self.user) if self.user else self.user
+        if self.user and isinstance(self.user, dict):
+            self.user = User(**self.user)
         if self.application:
             self.application = Application(**self.application)
         # self.route = (Route(self.route)

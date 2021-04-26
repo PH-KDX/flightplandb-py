@@ -691,6 +691,7 @@ class Airport:
 
     def __post_init__(self):
         self.timezone = Timezone(**self.timezone)
+        self.times = Times(**self.times)
         self.runways = list(map(lambda rw: Runway(**rw), self.runways))
         self.frequencies = list(
             map(lambda rw: Frequency(**rw), self.frequencies))

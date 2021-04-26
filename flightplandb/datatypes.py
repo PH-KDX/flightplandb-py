@@ -304,15 +304,20 @@ class Plan:
         self.updatedAt = (isoparse(self.updatedAt)
                           if type(self.updatedAt) != datetime
                           else self.updatedAt)
-
+        
         if self.user and isinstance(self.user, dict):
             self.user = User(**self.user)
-        if self.application:
+            
+        if self.application and isinstance(self.application, dict):
             self.application = Application(**self.application)
-        # self.route = (Route(self.route)
-        # if type(self.route) == list else self.route)
-        self.cycle = (Cycle(**self.cycle)
-                      if type(self.cycle) == dict else self.cycle)
+            
+        if self.route and isinstance(self.route,dict):
+            self.route = Route(**self.route)
+        
+        if self.cycle and isinstance(self.cycle, dict):
+            self.cycle = Cycle(**self.cycle)
+            
+        
 
 
 @dataclass

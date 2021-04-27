@@ -298,13 +298,13 @@ class Plan:
     cycle: Optional[Cycle] = None
 
     def __post_init__(self):
-        self.createdAt = (isoparse(self.createdAt)
-                          if type(self.createdAt) != datetime
-                          else self.createdAt)
-        self.updatedAt = (isoparse(self.updatedAt)
-                          if type(self.updatedAt) != datetime
-                          else self.updatedAt)
-
+        
+        if self.createdAt and type(self.createdAt) != datetime:
+            self.createdAt = (isoparse(self.createdAt))
+                              
+        if self.updatedAt and type(self.updatedAt) != datetime:
+            self.updatedAt = (isoparse(self.updatedAt))
+        
         if self.user and isinstance(self.user, dict):
             self.user = User(**self.user)
 

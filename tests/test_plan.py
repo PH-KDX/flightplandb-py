@@ -1,7 +1,7 @@
 from unittest import TestCase, main
 from unittest.mock import patch, call
 from flightplandb.submodules.plan import PlanAPI
-from flightplandb.datatypes import Plan, PlanQuery, User, Application, Route, RouteNode, Via, Cycle
+from flightplandb.datatypes import Plan, PlanQuery, User, Application, Route, RouteNode, Via, Cycle, StatusResponse
 import datetime
 from dateutil.tz import tzutc
 
@@ -194,6 +194,58 @@ class PlanTest(TestCase):
                                                          'includeRoute': None, 
                                                          'limit': None}, 
                                                      limit=2)])
+        
+    def test_plan_like(self):
+        with patch("flightplandb.flightplandb.FlightPlanDB",
+                   autospec=True) as MockClass:
+            instance = MockClass.return_value
+            instance._post.return_value = {"message":"Not Found",
+                                          "errors":None}
+            
+            sub_instance = PlanAPI(instance)
+            response = sub_instance.like(42)
+            
+            # check PlanAPI method made the correct request of FlightPlanDB
+            instance.assert_has_calls([call._post('/plan/42/like')])
+           
+            correct_response = StatusResponse(message='Not Found', errors=None)
+            
+            # check PlanAPI method decoded data correctly for given response
+            assert response == correct_response
+    
+    def test_plan_unlike(self):
+        with patch("flightplandb.flightplandb.FlightPlanDB",
+                   autospec=True) as MockClass:
+            instance = MockClass.return_value
+            instance._delete.return_value = {"message":"Not Found",
+                                          "errors":None}
+            
+            sub_instance = PlanAPI(instance)
+            response = sub_instance.unlike(42)
+            # check PlanAPI method made the correct request of FlightPlanDB
+            instance.assert_has_calls([call._delete('/plan/42/like', ignore_statuses=[404])])
+           
+            correct_response = False
+            
+            # check PlanAPI method decoded data correctly for given response
+            assert response == correct_response
+            
+    def test_plan_has_liked(self):
+        with patch("flightplandb.flightplandb.FlightPlanDB",
+                   autospec=True) as MockClass:
+            instance = MockClass.return_value
+            instance._get.return_value = {"message": "OK",
+                                          "errors": None}
+            
+            sub_instance = PlanAPI(instance)
+            response = sub_instance.has_liked(42)
+            # check PlanAPI method made the correct request of FlightPlanDB
+            instance.assert_has_calls([call._get('/plan/42/like', ignore_statuses=[404])])
+           
+            correct_response = True
+            
+            # check PlanAPI method decoded data correctly for given response
+            assert response == correct_response     
             
             
 if __name__ == "__main__":

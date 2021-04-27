@@ -23,6 +23,10 @@ from dateutil.parser import isoparse
 from datetime import datetime
 
 
+def _datetime_to_iso(timestamp: datetime):
+    return timestamp.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+
+
 @dataclass
 class StatusResponse:
     """
@@ -37,6 +41,9 @@ class StatusResponse:
     """
     message: str
     errors: Union[List[str], None]
+
+    def _to_api_dict(self):
+        return self.__dict__
 
 
 @dataclass
@@ -83,6 +90,14 @@ class User:
         if self.lastSeen and isinstance(self.lastSeen, str):
             self.lastSeen = isoparse(self.lastSeen)
 
+    def _to_api_dict(self):
+        resp_dict = self.__dict__
+        if isinstance(resp_dict["joined"], datetime):
+            resp_dict["joined"] = _datetime_to_iso(resp_dict["joined"])
+        if isinstance(resp_dict["lastSeen"], datetime):
+            resp_dict["lastSeen"] = _datetime_to_iso(resp_dict["lastSeen"])
+        return resp_dict
+
 
 @dataclass
 class UserSmall:
@@ -104,6 +119,9 @@ class UserSmall:
     location: Optional[Union[str, None]] = None
     gravatarHash: Optional[str] = None
 
+    def _to_api_dict(self):
+        return self.__dict__
+
 
 @dataclass
 class Application:
@@ -121,6 +139,9 @@ class Application:
     id: int
     name: Optional[Union[str, None]] = None
     url: Optional[Union[str, None]] = None
+
+    def _to_api_dict(self):
+        return self.__dict__
 
 
 @dataclass
@@ -144,6 +165,9 @@ class Via:
     def __post_init__(self):
         if self.type not in self.validtypes:
             raise ValueError(f"{self.type} is not a valid Via type")
+
+    def _to_api_dict(self):
+        return self.__dict__
 
 
 @dataclass
@@ -184,6 +208,12 @@ class RouteNode:
             raise ValueError(f"{self.type} is not a valid RouteNode type")
         self.via = Via(**self.via) if type(self.via) == dict else self.via
 
+    def _to_api_dict(self):
+        resp_dict = self.__dict__
+        if resp_dict["via"] and isinstance(resp_dict["via"], Via):
+            resp_dict["via"] = resp_dict["via"]._to_api_dict()
+        return resp_dict
+
 
 @dataclass
 class Route:
@@ -197,12 +227,15 @@ class Route:
     nodes: List[RouteNode]
 
     def __post_init__(self):
-        self.nodes = list(
-            map(
-                lambda x: RouteNode(**x) if type(x) == dict else x,
-                self.nodes
-                )
-            )
+        self.nodes = list(map(
+            lambda node: (RouteNode(**node) if (type(node) == dict) else node),
+            self.nodes))
+
+    def _to_api_dict(self):
+        resp_dict = self.__dict__
+        resp_dict["nodes"] = list(map(
+            lambda node: node._to_api_dict(), resp_dict["nodes"]))
+        return resp_dict
 
 
 @dataclass
@@ -224,6 +257,9 @@ class Cycle:
     ident: str
     year: int
     release: int
+
+    def _to_api_dict(self):
+        return self.__dict__
 
 
 @dataclass
@@ -298,13 +334,13 @@ class Plan:
     cycle: Optional[Cycle] = None
 
     def __post_init__(self):
-        
+
         if self.createdAt and type(self.createdAt) != datetime:
             self.createdAt = (isoparse(self.createdAt))
-                              
+
         if self.updatedAt and type(self.updatedAt) != datetime:
             self.updatedAt = (isoparse(self.updatedAt))
-        
+
         if self.user and isinstance(self.user, dict):
             self.user = User(**self.user)
 
@@ -316,6 +352,18 @@ class Plan:
 
         if self.cycle and isinstance(self.cycle, dict):
             self.cycle = Cycle(**self.cycle)
+
+    def _to_api_dict(self):
+        plan_dict = self.__dict__
+        if type(plan_dict["createdAt"]) == datetime:
+            plan_dict["createdAt"] = _datetime_to_iso(plan_dict["createdAt"])
+        if type(plan_dict["updatedAt"]) == datetime:
+            plan_dict["updatedAt"] = _datetime_to_iso(plan_dict["updatedAt"])
+        if type(plan_dict["user"]) == User:
+            plan_dict["user"] = plan_dict["user"]._to_api_dict()
+        if type(plan_dict["route"]) == Route:
+            plan_dict["route"] = plan_dict["route"]._to_api_dict()
+        return plan_dict
 
 
 @dataclass
@@ -364,6 +412,9 @@ class PlanQuery:
     includeRoute: Optional[bool] = None
     limit: Optional[int] = None
 
+    def _to_api_dict(self):
+        return self.__dict__
+
 
 @dataclass
 class GenerateQuery:
@@ -409,6 +460,9 @@ class GenerateQuery:
     descentRate: Optional[float] = 1500
     descentSpeed: Optional[float] = 250
 
+    def _to_api_dict(self):
+        return self.__dict__
+
 
 @dataclass
 class Tag:
@@ -430,6 +484,9 @@ class Tag:
     planCount: int
     popularity: int
 
+    def _to_api_dict(self):
+        return self.__dict__
+
 
 @dataclass
 class Timezone:
@@ -445,6 +502,9 @@ class Timezone:
     """
     name: Union[str, None]
     offset: Union[float, None]
+
+    def _to_api_dict(self):
+        return self.__dict__
 
 
 @dataclass
@@ -481,6 +541,14 @@ class Times:
                      if type(self.dusk) != datetime
                      else self.dusk)
 
+    def _to_api_dict(self):
+        plan_dict = self.__dict__
+        plan_dict["sunrise"] = _datetime_to_iso(plan_dict["sunrise"])
+        plan_dict["sunset"] = _datetime_to_iso(plan_dict["sunset"])
+        plan_dict["dawn"] = _datetime_to_iso(plan_dict["dawn"])
+        plan_dict["dusk"] = _datetime_to_iso(plan_dict["dusk"])
+        return plan_dict
+
 
 @dataclass
 class RunwayEnds:
@@ -498,6 +566,9 @@ class RunwayEnds:
     ident: str
     lat: float
     lon: float
+
+    def _to_api_dict(self):
+        return self.__dict__
 
 
 @dataclass
@@ -552,6 +623,9 @@ class Navaid:
         if self.type not in self.validtypes:
             raise ValueError(f"{self.type} is not a valid Navaid type")
 
+    def _to_api_dict(self):
+        return self.__dict__
+
 
 @dataclass
 class Runway:
@@ -600,6 +674,14 @@ class Runway:
         if self.navaids and (isinstance(self.navaids[0], dict)):
             self.navaids = list(map(lambda n: Navaid(**n), self.navaids))
 
+    def _to_api_dict(self):
+        resp_dict = self.__dict__
+        resp_dict["ends"] = list(map(lambda end: end._to_api_dict(),
+                                     resp_dict["ends"]))
+        resp_dict["navaids"] = list(map(lambda aid: aid._to_api_dict(),
+                                        resp_dict["navaids"]))
+        return resp_dict
+
 
 @dataclass
 class Frequency:
@@ -619,6 +701,9 @@ class Frequency:
     frequency: float
     name: Union[str, None]
 
+    def _to_api_dict(self):
+        return self.__dict__
+
 
 @dataclass
 class Weather:
@@ -633,6 +718,9 @@ class Weather:
     """
     METAR: Union[str, None]
     TAF: Union[str, None]
+
+    def _to_api_dict(self):
+        return self.__dict__
 
 
 @dataclass
@@ -706,6 +794,17 @@ class Airport:
         if self.weather and isinstance(self.weather, dict):
             self.weather = Weather(**self.weather)
 
+    def _to_api_dict(self):
+        resp_dict = self.__dict__
+        resp_dict["timezone"] = resp_dict["timezone"]._to_api_dict()
+        resp_dict["times"] = resp_dict["times"]._to_api_dict()
+        resp_dict["runways"] = list(map(lambda rwy: rwy._to_api_dict(),
+                                        resp_dict["runways"]))
+        resp_dict["frequencies"] = list(map(lambda freq: freq._to_api_dict(),
+                                            resp_dict["frequencies"]))
+        resp_dict["weather"] = resp_dict["weather"]._to_api_dict()
+        return resp_dict
+
 
 @dataclass
 class Track:
@@ -730,3 +829,11 @@ class Track:
     def __post_init__(self):
         self.validFrom = isoparse(self.validFrom)
         self.validTo = isoparse(self.validTo)
+
+    def _to_api_dict(self):
+        resp_dict = self.__dict__
+        if type(resp_dict["validFrom"]) == datetime:
+            resp_dict["validFrom"] = _datetime_to_iso(resp_dict["validFrom"])
+        if type(resp_dict["validTo"]) == datetime:
+            resp_dict["validTo"] = _datetime_to_iso(resp_dict["validTo"])
+        return resp_dict

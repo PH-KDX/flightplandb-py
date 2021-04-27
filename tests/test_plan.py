@@ -38,12 +38,12 @@ class PlanTest(TestCase):
                     "location": None
                 }
             }
-           
+
             sub_instance = PlanAPI(instance)
             response = sub_instance.fetch(62373)
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls([call._get('/plan/62373', return_format='dict')])
-           
+
             correct_response = Plan(id=62373,
                 fromICAO="KLAS",
                 toICAO="KLAX",
@@ -70,11 +70,11 @@ class PlanTest(TestCase):
                         location=None
                         )
                 )
-            
-                     
+
+
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
-    
+
     def test_plan_create(self):
         with patch("flightplandb.flightplandb.FlightPlanDB",
                    autospec=True) as MockClass:
@@ -138,7 +138,7 @@ class PlanTest(TestCase):
                 ))
             #check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls([call._post('/plan/', return_format='dict')])
-           
+
             correct_response = Plan(id=None,
                 fromICAO="EHAM",
                 toICAO="KJFK",
@@ -166,27 +166,28 @@ class PlanTest(TestCase):
                         })
                 ])
                 )
-                     
+
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
-            
+
     def test_plan_delete(self):
         with patch("flightplandb.flightplandb.FlightPlanDB",
                    autospec=True) as MockClass:
             instance = MockClass.return_value
             instance._delete.return_value = {"message": "OK",
-                                            "errors": None}
-           
+                                             "errors": None}
+
             sub_instance = PlanAPI(instance)
             response = sub_instance.delete(62493)
             # check PlanAPI method made the correct request of FlightPlanDB
-            instance.assert_has_calls([call._delete('/plan/62493')])
-           
+            instance.assert_has_calls([call._delete('/plan/62493',
+                                      ignore_statuses=[404])])
+
             correct_response = StatusResponse(message="OK", errors=None)
-            
+
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
-            
+
     def test_plan_edit(self):
         with patch("flightplandb.flightplandb.FlightPlanDB",
                    autospec=True) as MockClass:
@@ -249,37 +250,37 @@ class PlanTest(TestCase):
                 ])
                 ))
             #check PlanAPI method made the correct request of FlightPlanDB
-            instance.assert_has_calls([call._patch('/plan/None', 
-                                                   json={'id': None, 
-                                                         'fromICAO': 'EHAM', 
-                                                         'toICAO': 'KJFK', 
-                                                         'fromName': 'Schiphol', 
-                                                         'toName': 'John F Kennedy Intl', 
-                                                         'flightNumber': None, 
-                                                         'distance': None, 
-                                                         'maxAltitude': None, 
-                                                         'waypoints': None, 
-                                                         'likes': None, 
-                                                         'downloads': None, 
-                                                         'popularity': None, 
-                                                         'notes': None, 
-                                                         'encodedPolyline': None, 
-                                                         'createdAt': None, 
-                                                         'updatedAt': None, 
-                                                         'tags': None, 
-                                                         'user': None, 
-                                                         'application': None, 
+            instance.assert_has_calls([call._patch('/plan/None',
+                                                   json={'id': None,
+                                                         'fromICAO': 'EHAM',
+                                                         'toICAO': 'KJFK',
+                                                         'fromName': 'Schiphol',
+                                                         'toName': 'John F Kennedy Intl',
+                                                         'flightNumber': None,
+                                                         'distance': None,
+                                                         'maxAltitude': None,
+                                                         'waypoints': None,
+                                                         'likes': None,
+                                                         'downloads': None,
+                                                         'popularity': None,
+                                                         'notes': None,
+                                                         'encodedPolyline': None,
+                                                         'createdAt': None,
+                                                         'updatedAt': None,
+                                                         'tags': None,
+                                                         'user': None,
+                                                         'application': None,
                                                          'route': {'nodes': [
-                                                             {'ident': 'EHAM', 'type': 'APT', 
-                                                              'lat': 52.31485, 'lon': 4.75812, 
+                                                             {'ident': 'EHAM', 'type': 'APT',
+                                                              'lat': 52.31485, 'lon': 4.75812,
                                                               'alt': 0, 'name': 'Schiphol', 'via': None},
-                                                             {'ident': 'KJFK', 'type': 'APT', 
-                                                              'lat': 40.6399, 'lon': -73.77666, 'alt': 0, 
+                                                             {'ident': 'KJFK', 'type': 'APT',
+                                                              'lat': 40.6399, 'lon': -73.77666, 'alt': 0,
                                                               'name': 'John F Kennedy Intl', 'via': None}]}, 'cycle': None}
                                                    )
                                        ])
-        
-            
+
+
             correct_response = Plan(id=None,
                 fromICAO="EHAM",
                 toICAO="KJFK",
@@ -307,11 +308,11 @@ class PlanTest(TestCase):
                         })
                 ])
                 )
-                     
+
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
     def test_plan_search(self):
-    
+
         with patch("flightplandb.flightplandb.FlightPlanDB",
                    autospec=True) as MockClass:
             instance = MockClass.return_value
@@ -336,7 +337,7 @@ class PlanTest(TestCase):
                 'updatedAt': '2020-09-30T21:22:37.000Z',
                 'user': None,
                 'waypoints': 3},
-                
+
                 {'application': None,
                 'createdAt': '2018-09-08T12:23:04.000Z',
                 'cycle': {'id': 5, 'ident': 'FPD1809', 'release': 9, 'year': 18},
@@ -364,123 +365,123 @@ class PlanTest(TestCase):
             response = sub_instance.search(PlanQuery(fromICAO="EHAM", toICAO="EHAL"), limit=2)
 
             correct_response_list = [
-                Plan(id=3491827, 
-                    fromICAO='EHAM', 
-                    toICAO='EHAL', 
-                    fromName='Amsterdam Schiphol', 
-                    toName='Ameland', 
-                    flightNumber=None, 
-                    distance=76.676565810015, 
-                    maxAltitude=9600, 
-                    waypoints=3, 
-                    likes=0, 
-                    downloads=2, 
-                    popularity=1601846557, 
-                    notes='foo', 
-                    encodedPolyline='slg~Haoa\\_fiA{xlAkotC{xcB', 
-                    createdAt=datetime.datetime(2020, 9, 30, 21, 22, 37, tzinfo=tzutc()), 
-                    updatedAt=datetime.datetime(2020, 9, 30, 21, 22, 37, tzinfo=tzutc()),
-                    tags=['generated'], user=None, application=None, 
-                    route=None, 
-                    cycle=Cycle(id=31, ident='FPD2009', year=20, release=9)),
-                
-                Plan(id=1295630, 
-                    fromICAO='EHAM', 
-                    toICAO='EHAL', 
-                    fromName='Amsterdam Schiphol Airport', 
-                    toName='Ameland', 
-                    flightNumber=None, 
-                    distance=76.44654421193701, 
-                    maxAltitude=7700, 
-                    waypoints=3, 
-                    likes=0, 
-                    downloads=0, 
-                    popularity=1536409384, 
+                Plan(id=3491827,
+                    fromICAO='EHAM',
+                    toICAO='EHAL',
+                    fromName='Amsterdam Schiphol',
+                    toName='Ameland',
+                    flightNumber=None,
+                    distance=76.676565810015,
+                    maxAltitude=9600,
+                    waypoints=3,
+                    likes=0,
+                    downloads=2,
+                    popularity=1601846557,
                     notes='foo',
-                    encodedPolyline='slg~Haoa\\{hlC}|xBolqAytw@', 
-                    createdAt=datetime.datetime(2018, 9, 8, 12, 23, 4, tzinfo=tzutc()), 
-                    updatedAt=datetime.datetime(2018, 9, 8, 12, 23, 4, tzinfo=tzutc()), 
-                    tags=['generated'], 
-                    user=None, 
-                    application=None, 
-                    route=None, 
+                    encodedPolyline='slg~Haoa\\_fiA{xlAkotC{xcB',
+                    createdAt=datetime.datetime(2020, 9, 30, 21, 22, 37, tzinfo=tzutc()),
+                    updatedAt=datetime.datetime(2020, 9, 30, 21, 22, 37, tzinfo=tzutc()),
+                    tags=['generated'], user=None, application=None,
+                    route=None,
+                    cycle=Cycle(id=31, ident='FPD2009', year=20, release=9)),
+
+                Plan(id=1295630,
+                    fromICAO='EHAM',
+                    toICAO='EHAL',
+                    fromName='Amsterdam Schiphol Airport',
+                    toName='Ameland',
+                    flightNumber=None,
+                    distance=76.44654421193701,
+                    maxAltitude=7700,
+                    waypoints=3,
+                    likes=0,
+                    downloads=0,
+                    popularity=1536409384,
+                    notes='foo',
+                    encodedPolyline='slg~Haoa\\{hlC}|xBolqAytw@',
+                    createdAt=datetime.datetime(2018, 9, 8, 12, 23, 4, tzinfo=tzutc()),
+                    updatedAt=datetime.datetime(2018, 9, 8, 12, 23, 4, tzinfo=tzutc()),
+                    tags=['generated'],
+                    user=None,
+                    application=None,
+                    route=None,
                     cycle=Cycle(id=5, ident='FPD1809', year=18, release=9))
-               
+
             ]
-            
+
             # check PlanAPI method decoded data correctly for given response
             assert list(i for i in response) == correct_response_list
             # check that PlanAPI method made the correct request of FlightPlanDB
-            
-            instance.assert_has_calls([call._getiter('/search/plans', sort='created', 
+
+            instance.assert_has_calls([call._getiter('/search/plans', sort='created',
                                                      params={
-                                                         'q': None, 
-                                                         'From': None, 
-                                                         'to': None, 
-                                                         'fromICAO': 'EHAM', 
-                                                         'toICAO': 'EHAL', 
-                                                         'fromName': None, 
-                                                         'toName': None, 
-                                                         'flightNumber': None, 
-                                                         'distanceMin': None, 
-                                                         'distanceMax': None, 
-                                                         'tags': None, 
-                                                         'includeRoute': None, 
-                                                         'limit': None}, 
+                                                         'q': None,
+                                                         'From': None,
+                                                         'to': None,
+                                                         'fromICAO': 'EHAM',
+                                                         'toICAO': 'EHAL',
+                                                         'fromName': None,
+                                                         'toName': None,
+                                                         'flightNumber': None,
+                                                         'distanceMin': None,
+                                                         'distanceMax': None,
+                                                         'tags': None,
+                                                         'includeRoute': None,
+                                                         'limit': None},
                                                      limit=2)])
-        
+
     def test_plan_like(self):
         with patch("flightplandb.flightplandb.FlightPlanDB",
                    autospec=True) as MockClass:
             instance = MockClass.return_value
             instance._post.return_value = {"message":"Not Found",
                                           "errors":None}
-            
+
             sub_instance = PlanAPI(instance)
             response = sub_instance.like(42)
-            
+
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls([call._post('/plan/42/like')])
-           
+
             correct_response = StatusResponse(message='Not Found', errors=None)
-            
+
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
-    
+
     def test_plan_unlike(self):
         with patch("flightplandb.flightplandb.FlightPlanDB",
                    autospec=True) as MockClass:
             instance = MockClass.return_value
             instance._delete.return_value = {"message":"Not Found",
                                           "errors":None}
-            
+
             sub_instance = PlanAPI(instance)
             response = sub_instance.unlike(42)
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls([call._delete('/plan/42/like', ignore_statuses=[404])])
-           
+
             correct_response = False
-            
+
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
-            
+
     def test_plan_has_liked(self):
         with patch("flightplandb.flightplandb.FlightPlanDB",
                    autospec=True) as MockClass:
             instance = MockClass.return_value
             instance._get.return_value = {"message": "OK",
                                           "errors": None}
-            
+
             sub_instance = PlanAPI(instance)
             response = sub_instance.has_liked(42)
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls([call._get('/plan/42/like', ignore_statuses=[404])])
-           
+
             correct_response = True
-            
+
             # check PlanAPI method decoded data correctly for given response
-            assert response == correct_response     
-            
-            
+            assert response == correct_response
+
+
 if __name__ == "__main__":
     main()

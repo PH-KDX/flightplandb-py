@@ -1,5 +1,5 @@
 from typing import Generator, Union
-from dataclasses import asdict
+# from dataclasses import asdict
 import requests
 from flightplandb.datatypes import (
     StatusResponse, PlanQuery,
@@ -108,7 +108,8 @@ class PlanAPI():
             ``bytes`` if a different format than ``"dict"`` was specified.
         """
 
-        request = self._fp._patch(f"/plan/{plan.id}", json=asdict(plan))
+        plan_data = plan._to_api_dict()
+        request = self._fp._patch(f"/plan/{plan_data['id']}", json=plan_data)
 
         if return_format == "dict":
             return Plan(**request)
@@ -131,7 +132,8 @@ class PlanAPI():
             OK 200 means a successful delete
         """
 
-        return StatusResponse(**self._fp._delete(f"/plan/{id_}"))
+        resp = self._fp._delete(f"/plan/{id_}", ignore_statuses=[404])
+        return(StatusResponse(**resp))
 
     def search(self, plan_query: PlanQuery, sort: str = "created",
                limit: int = 100) -> Generator[Plan, None, None]:
@@ -165,7 +167,7 @@ class PlanAPI():
 
         for i in self._fp._getiter("/search/plans",
                                    sort=sort,
-                                   params=asdict(plan_query),
+                                   params=plan_query._to_api_dict(),
                                    limit=limit):
             yield Plan(**i)
 
@@ -252,7 +254,7 @@ class PlanAPI():
 
         return Plan(
             **self._fp._post(
-                "/auto/generate", json=asdict(gen_query)))
+                "/auto/generate", json=gen_query._to_api_dict()))
 
     def decode(self, route: str) -> Plan:
         """Creates a new flight plan using the route decoder.

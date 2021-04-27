@@ -1,5 +1,4 @@
 from typing import Generator, Union
-# from dataclasses import asdict
 import requests
 from flightplandb.datatypes import (
     StatusResponse, PlanQuery,

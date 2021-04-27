@@ -7,7 +7,6 @@ from dateutil.tz import tzutc
 
 class PlanTest(TestCase):
     def test_plan_fetch(self):
-
         with patch("flightplandb.flightplandb.FlightPlanDB",
                    autospec=True) as MockClass:
             instance = MockClass.return_value
@@ -75,7 +74,242 @@ class PlanTest(TestCase):
                      
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
-
+    
+    def test_plan_create(self):
+        with patch("flightplandb.flightplandb.FlightPlanDB",
+                   autospec=True) as MockClass:
+            instance = MockClass.return_value
+            instance._post.return_value = {
+                "id":None,
+                "fromICAO":"EHAM",
+                "toICAO":"KJFK",
+                "fromName":"Schiphol",
+                "toName":"John F Kennedy Intl",
+                "route":{
+                    "nodes":[
+                        {
+                            "ident":"EHAM",
+                            "type":"APT",
+                            "lat":52.31485,
+                            "lon":4.75812,
+                            "alt":0,
+                            "name":"Schiphol",
+                            "via":None
+                        },
+                        {
+                            "ident":"KJFK",
+                            "type":"APT",
+                            "lat":40.63990,
+                            "lon":-73.77666,
+                            "alt":0,
+                            "name":"John F Kennedy Intl",
+                            "via":None
+                        }
+                    ]
+                }
+            }
+            sub_instance = PlanAPI(instance)
+            response = sub_instance.create(Plan(id=None,
+                fromICAO="EHAM",
+                toICAO="KJFK",
+                fromName="Schiphol",
+                toName="John F Kennedy Intl",
+                user=None,
+                route = Route([
+                    RouteNode(**{
+                            "ident":"EHAM",
+                            "type":"APT",
+                            "lat":52.31485,
+                            "lon":4.75812,
+                            "alt":0,
+                            "name":"Schiphol",
+                            "via":None
+                        }),
+                    RouteNode(**{
+                            "ident":"KJFK",
+                            "type":"APT",
+                            "lat":40.63990,
+                            "lon":-73.77666,
+                            "alt":0,
+                            "name":"John F Kennedy Intl",
+                            "via":None
+                        })
+                ])
+                ))
+            #check PlanAPI method made the correct request of FlightPlanDB
+            instance.assert_has_calls([call._post('/plan/', return_format='dict')])
+           
+            correct_response = Plan(id=None,
+                fromICAO="EHAM",
+                toICAO="KJFK",
+                fromName="Schiphol",
+                toName="John F Kennedy Intl",
+                user=None,
+                route = Route([
+                    RouteNode(**{
+                            "ident":"EHAM",
+                            "type":"APT",
+                            "lat":52.31485,
+                            "lon":4.75812,
+                            "alt":0,
+                            "name":"Schiphol",
+                            "via":None
+                        }),
+                    RouteNode(**{
+                            "ident":"KJFK",
+                            "type":"APT",
+                            "lat":40.63990,
+                            "lon":-73.77666,
+                            "alt":0,
+                            "name":"John F Kennedy Intl",
+                            "via":None
+                        })
+                ])
+                )
+                     
+            # check PlanAPI method decoded data correctly for given response
+            assert response == correct_response
+            
+    def test_plan_delete(self):
+        with patch("flightplandb.flightplandb.FlightPlanDB",
+                   autospec=True) as MockClass:
+            instance = MockClass.return_value
+            instance._delete.return_value = {"message": "OK",
+                                            "errors": None}
+           
+            sub_instance = PlanAPI(instance)
+            response = sub_instance.delete(62493)
+            # check PlanAPI method made the correct request of FlightPlanDB
+            instance.assert_has_calls([call._delete('/plan/62493')])
+           
+            correct_response = StatusResponse(message="OK", errors=None)
+            
+            # check PlanAPI method decoded data correctly for given response
+            assert response == correct_response
+            
+    def test_plan_edit(self):
+        with patch("flightplandb.flightplandb.FlightPlanDB",
+                   autospec=True) as MockClass:
+            instance = MockClass.return_value
+            instance._patch.return_value = {
+                "id":None,
+                "fromICAO":"EHAM",
+                "toICAO":"KJFK",
+                "fromName":"Schiphol",
+                "toName":"John F Kennedy Intl",
+                "route":{
+                    "nodes":[
+                        {
+                            "ident":"EHAM",
+                            "type":"APT",
+                            "lat":52.31485,
+                            "lon":4.75812,
+                            "alt":0,
+                            "name":"Schiphol",
+                            "via":None
+                        },
+                        {
+                            "ident":"KJFK",
+                            "type":"APT",
+                            "lat":40.63990,
+                            "lon":-73.77666,
+                            "alt":0,
+                            "name":"John F Kennedy Intl",
+                            "via":None
+                        }
+                    ]
+                }
+            }
+            sub_instance = PlanAPI(instance)
+            response = sub_instance.edit(Plan(id=None,
+                fromICAO="EHAM",
+                toICAO="KJFK",
+                fromName="Schiphol",
+                toName="John F Kennedy Intl",
+                user=None,
+                route = Route([
+                    RouteNode(**{
+                            "ident":"EHAM",
+                            "type":"APT",
+                            "lat":52.31485,
+                            "lon":4.75812,
+                            "alt":0,
+                            "name":"Schiphol",
+                            "via":None
+                        }),
+                    RouteNode(**{
+                            "ident":"KJFK",
+                            "type":"APT",
+                            "lat":40.63990,
+                            "lon":-73.77666,
+                            "alt":0,
+                            "name":"John F Kennedy Intl",
+                            "via":None
+                        })
+                ])
+                ))
+            #check PlanAPI method made the correct request of FlightPlanDB
+            instance.assert_has_calls([call._patch('/plan/None', 
+                                                   json={'id': None, 
+                                                         'fromICAO': 'EHAM', 
+                                                         'toICAO': 'KJFK', 
+                                                         'fromName': 'Schiphol', 
+                                                         'toName': 'John F Kennedy Intl', 
+                                                         'flightNumber': None, 
+                                                         'distance': None, 
+                                                         'maxAltitude': None, 
+                                                         'waypoints': None, 
+                                                         'likes': None, 
+                                                         'downloads': None, 
+                                                         'popularity': None, 
+                                                         'notes': None, 
+                                                         'encodedPolyline': None, 
+                                                         'createdAt': None, 
+                                                         'updatedAt': None, 
+                                                         'tags': None, 
+                                                         'user': None, 
+                                                         'application': None, 
+                                                         'route': {'nodes': [
+                                                             {'ident': 'EHAM', 'type': 'APT', 
+                                                              'lat': 52.31485, 'lon': 4.75812, 
+                                                              'alt': 0, 'name': 'Schiphol', 'via': None},
+                                                             {'ident': 'KJFK', 'type': 'APT', 
+                                                              'lat': 40.6399, 'lon': -73.77666, 'alt': 0, 
+                                                              'name': 'John F Kennedy Intl', 'via': None}]}, 'cycle': None}
+                                                   )
+                                       ])
+        
+            
+            correct_response = Plan(id=None,
+                fromICAO="EHAM",
+                toICAO="KJFK",
+                fromName="Schiphol",
+                toName="John F Kennedy Intl",
+                user=None,
+                route = Route([
+                    RouteNode(**{
+                            "ident":"EHAM",
+                            "type":"APT",
+                            "lat":52.31485,
+                            "lon":4.75812,
+                            "alt":0,
+                            "name":"Schiphol",
+                            "via":None
+                        }),
+                    RouteNode(**{
+                            "ident":"KJFK",
+                            "type":"APT",
+                            "lat":40.63990,
+                            "lon":-73.77666,
+                            "alt":0,
+                            "name":"John F Kennedy Intl",
+                            "via":None
+                        })
+                ])
+                )
+                     
+            # check PlanAPI method decoded data correctly for given response
+            assert response == correct_response
     def test_plan_search(self):
     
         with patch("flightplandb.flightplandb.FlightPlanDB",

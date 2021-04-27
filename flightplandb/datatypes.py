@@ -304,20 +304,18 @@ class Plan:
         self.updatedAt = (isoparse(self.updatedAt)
                           if type(self.updatedAt) != datetime
                           else self.updatedAt)
-        
+
         if self.user and isinstance(self.user, dict):
             self.user = User(**self.user)
-            
+
         if self.application and isinstance(self.application, dict):
             self.application = Application(**self.application)
-            
-        if self.route and isinstance(self.route,dict):
+
+        if self.route and isinstance(self.route, dict):
             self.route = Route(**self.route)
-        
+
         if self.cycle and isinstance(self.cycle, dict):
             self.cycle = Cycle(**self.cycle)
-            
-        
 
 
 @dataclass
@@ -597,8 +595,10 @@ class Runway:
     navaids: List[Navaid]
 
     def __post_init__(self):
-        self.ends = list(map(lambda rw: RunwayEnds(**rw), self.ends))
-        self.navaids = list(map(lambda n: Navaid(**n), self.navaids))
+        if self.ends and (isinstance(self.ends[0], dict)):
+            self.ends = list(map(lambda rw: RunwayEnds(**rw), self.ends))
+        if self.navaids and (isinstance(self.navaids[0], dict)):
+            self.navaids = list(map(lambda n: Navaid(**n), self.navaids))
 
 
 @dataclass
@@ -690,12 +690,21 @@ class Airport:
     weather: Weather
 
     def __post_init__(self):
-        self.timezone = Timezone(**self.timezone)
-        self.times = Times(**self.times)
-        self.runways = list(map(lambda rw: Runway(**rw), self.runways))
-        self.frequencies = list(
-            map(lambda rw: Frequency(**rw), self.frequencies))
-        self.weather = Weather(**self.weather)
+        if self.timezone and isinstance(self.timezone, dict):
+            self.timezone = Timezone(**self.timezone)
+
+        if self.times and isinstance(self.times, dict):
+            self.times = Times(**self.times)
+
+        if self.runways and isinstance(self.runways[0], dict):
+            self.runways = list(map(lambda rw: Runway(**rw), self.runways))
+
+        if self.frequencies and isinstance(self.frequencies[0], dict):
+            self.frequencies = list(
+                map(lambda rw: Frequency(**rw), self.frequencies))
+
+        if self.weather and isinstance(self.weather, dict):
+            self.weather = Weather(**self.weather)
 
 
 @dataclass

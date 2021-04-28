@@ -632,6 +632,103 @@ class PlanTest(TestCase):
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
 
+    def test_plan_decode(self):
+        with patch("flightplandb.flightplandb.FlightPlanDB",
+                   autospec=True) as MockClass:
+            instance = MockClass.return_value
+            instance._post.return_value = {
+                'application': None,
+                'createdAt': '2021-04-28T20:33:57.000Z',
+                'cycle': {
+                    'id': 38, 'ident': 'FPD2104', 'release': 4, 'year': 21},
+                'distance': 757.3434118878,
+                'downloads': 0,
+                'encodedPolyline': '_hxfEntgjUr_S_`qAgvaEo'
+                'cvBsksPgn_a@_~kSwgbc@',
+                'flightNumber': None,
+                'fromICAO': 'KSAN',
+                'fromName': 'San Diego Intl',
+                'id': 4179222,
+                'likes': 0,
+                'maxAltitude': 0,
+                'notes': 'Requested: KSAN BROWS TRM LRAIN KDEN',
+                'popularity': 1619642037,
+                'tags': ['decoded'],
+                'toICAO': 'KDEN',
+                'toName': 'Denver Intl',
+                'updatedAt': '2021-04-28T20:33:57.000Z',
+                'user': {
+                    'gravatarHash': '3bcb4f39a24700e081f49c3d2d43d277',
+                    'id': 18990,
+                    'location': None,
+                    'username': 'discordflightplannerbot'},
+                'waypoints': 5}
+
+            sub_instance = PlanAPI(instance)
+            request_query = GenerateQuery(fromICAO="EHAL", toICAO="EHTX")
+            response = sub_instance.generate(request_query)
+            # check PlanAPI method made the correct request of FlightPlanDB
+            correct_calls = [
+                call._post(
+                    '/auto/generate',
+                    json={
+                        'fromICAO': 'EHAL',
+                        'toICAO': 'EHTX',
+                        'useNAT': True,
+                        'usePACOT': True,
+                        'useAWYLO': True,
+                        'useAWYHI': True,
+                        'cruiseAlt': 35000,
+                        'cruiseSpeed': 420,
+                        'ascentRate': 2500,
+                        'ascentSpeed': 250,
+                        'descentRate': 1500,
+                        'descentSpeed': 250})]
+
+            instance.assert_has_calls(correct_calls)
+
+            correct_response = Plan(
+                id=4179222,
+                fromICAO='KSAN',
+                toICAO='KDEN',
+                fromName='San Diego Intl',
+                toName='Denver Intl',
+                flightNumber=None,
+                distance=757.3434118878,
+                maxAltitude=0,
+                waypoints=5,
+                likes=0,
+                downloads=0,
+                popularity=1619642037,
+                notes='Requested: KSAN BROWS TRM LRAIN KDEN',
+                encodedPolyline='_hxfEntgjUr_S_`qAgvaEocvBsksPgn_a@_~kSwgbc@',
+                createdAt=datetime.datetime(
+                    2021, 4, 28, 20, 33, 57, tzinfo=tzutc()),
+                updatedAt=datetime.datetime(
+                    2021, 4, 28, 20, 33, 57, tzinfo=tzutc()),
+                tags=['decoded'],
+                user=User(
+                    id=18990,
+                    username='discordflightplannerbot',
+                    location=None,
+                    gravatarHash='3bcb4f39a24700e081f49c3d2d43d277',
+                    joined=None,
+                    lastSeen=None,
+                    plansCount=0,
+                    plansDistance=0.0,
+                    plansDownloads=0,
+                    plansLikes=0),
+                application=None,
+                route=None,
+                cycle=Cycle(
+                    id=38,
+                    ident='FPD2104',
+                    year=21,
+                    release=4))
+
+            # check PlanAPI method decoded data correctly for given response
+            assert response == correct_response
+
 
 if __name__ == "__main__":
     main()

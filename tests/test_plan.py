@@ -2,7 +2,7 @@ from unittest import TestCase, main
 from unittest.mock import patch, call
 from flightplandb.submodules.plan import PlanAPI
 from flightplandb.datatypes import (
-    Plan, PlanQuery, User, Route,
+    Plan, PlanQuery, User, Route, GenerateQuery,
     RouteNode, Cycle, StatusResponse
 )
 import datetime
@@ -507,6 +507,127 @@ class PlanTest(TestCase):
                 call._get('/plan/42/like', ignore_statuses=[404])])
 
             correct_response = True
+
+            # check PlanAPI method decoded data correctly for given response
+            assert response == correct_response
+
+    def test_plan_generate(self):
+        with patch("flightplandb.flightplandb.FlightPlanDB",
+                   autospec=True) as MockClass:
+            instance = MockClass.return_value
+            instance._post.return_value = {
+                'application': None,
+                'createdAt': '2021-04-28T19:55:45.000Z',
+                'cycle': {
+                    'id': 38,
+                    'ident': 'FPD2104',
+                    'release': 4,
+                    'year': 21},
+                'distance': 36.666306664518004,
+                'downloads': 0,
+                'encodedPolyline': '_dgeIybta@niaA~vdD',
+                'flightNumber': None,
+                'fromICAO': 'EHAL',
+                'fromName': 'Ameland',
+                'id': 4179148,
+                'likes': 0,
+                'maxAltitude': 0,
+                'notes': 'Basic altitude profile:\n'
+                         '- Ascent Rate: 2500ft/min\n'
+                         '- Ascent Speed: 250kts\n'
+                         '- Cruise Altitude: 35000ft\n'
+                         '- Cruise Speed: 420kts\n'
+                         '- Descent Rate: 1500ft/min\n'
+                         '- Descent Speed: 250kts\n'
+                         '\n'
+                         'Options:\n'
+                         '- Use NATs: yes\n'
+                         '- Use PACOTS: yes\n'
+                         '- Use low airways: yes\n'
+                         '- Use high airways: yes\n',
+                'popularity': 1619639745,
+                'tags': ['generated'],
+                'toICAO': 'EHTX',
+                'toName': 'Texel',
+                'updatedAt': '2021-04-28T19:55:45.000Z',
+                'user': {
+                    'gravatarHash': '3bcb4f39a24700e081f49c3d2d43d277',
+                    'id': 18990,
+                    'location': None,
+                    'username': 'discordflightplannerbot'},
+                'waypoints': 2}
+
+            sub_instance = PlanAPI(instance)
+            request_query = GenerateQuery(fromICAO="EHAL", toICAO="EHTX")
+            response = sub_instance.generate(request_query)
+            # check PlanAPI method made the correct request of FlightPlanDB
+            correct_calls = [
+                call._post(
+                    '/auto/generate',
+                    json={
+                        'fromICAO': 'EHAL',
+                        'toICAO': 'EHTX',
+                        'useNAT': True,
+                        'usePACOT': True,
+                        'useAWYLO': True,
+                        'useAWYHI': True,
+                        'cruiseAlt': 35000,
+                        'cruiseSpeed': 420,
+                        'ascentRate': 2500,
+                        'ascentSpeed': 250,
+                        'descentRate': 1500,
+                        'descentSpeed': 250})]
+
+            instance.assert_has_calls(correct_calls)
+
+            correct_response = Plan(
+                id=4179148,
+                fromICAO='EHAL',
+                toICAO='EHTX',
+                fromName='Ameland',
+                toName='Texel',
+                flightNumber=None,
+                distance=36.666306664518004,
+                maxAltitude=0,
+                waypoints=2,
+                likes=0,
+                downloads=0,
+                popularity=1619639745,
+                notes='Basic altitude profile:\n'
+                '- Ascent Rate: 2500ft/min\n'
+                '- Ascent Speed: 250kts\n'
+                '- Cruise Altitude: 35000ft\n'
+                '- Cruise Speed: 420kts\n'
+                '- Descent Rate: 1500ft/min\n'
+                '- Descent Speed: 250kts\n\nOptions:\n'
+                '- Use NATs: yes\n'
+                '- Use PACOTS: yes\n'
+                '- Use low airways: yes\n'
+                '- Use high airways: yes\n',
+                encodedPolyline='_dgeIybta@niaA~vdD',
+                createdAt=datetime.datetime(
+                    2021, 4, 28, 19, 55, 45, tzinfo=tzutc()),
+                updatedAt=datetime.datetime(
+                    2021, 4, 28, 19, 55, 45, tzinfo=tzutc()),
+                tags=['generated'],
+                user=User(
+                    id=18990,
+                    username='discordflightplannerbot',
+                    location=None,
+                    gravatarHash='3bcb4f39a24700e081f49c3d2d43d277',
+                    joined=None,
+                    lastSeen=None,
+                    plansCount=0,
+                    plansDistance=0.0,
+                    plansDownloads=0,
+                    plansLikes=0),
+                application=None,
+                route=None,
+                cycle=Cycle(
+                    id=38,
+                    ident='FPD2104',
+                    year=21,
+                    release=4))
 
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response

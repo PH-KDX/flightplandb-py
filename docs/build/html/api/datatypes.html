@@ -562,7 +562,7 @@ Goodness knows why.</p>
 <dl class="py attribute">
 <dt id="flightplandb.datatypes.Route.eastLevels">
 <code class="sig-name descname"><span class="pre">eastLevels</span></code><a class="headerlink" href="#flightplandb.datatypes.Route.eastLevels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Valid eastbound flightlevels. Only used inside a <a class="reference internal" href="#flightplandb.datatypes.Track" title="flightplandb.datatypes.Track"><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code></a>.</p>
+<dd><p>Valid eastbound flightlevels. Only used inside a NATS <a class="reference internal" href="#flightplandb.datatypes.Track" title="flightplandb.datatypes.Track"><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>Union[List[str], None]</p>
@@ -573,7 +573,7 @@ Goodness knows why.</p>
 <dl class="py attribute">
 <dt id="flightplandb.datatypes.Route.westLevels">
 <code class="sig-name descname"><span class="pre">westLevels</span></code><a class="headerlink" href="#flightplandb.datatypes.Route.westLevels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Valid westbound flightlevels. Only used inside a <a class="reference internal" href="#flightplandb.datatypes.Track" title="flightplandb.datatypes.Track"><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code></a>.</p>
+<dd><p>Valid westbound flightlevels. Only used inside a NATS <a class="reference internal" href="#flightplandb.datatypes.Track" title="flightplandb.datatypes.Track"><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>Union[List[str], None]</p>
@@ -1824,15 +1824,15 @@ Note: each physical runway will appear twice, once from each end</p>
 
 <dl class="py class">
 <dt id="flightplandb.datatypes.Track">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Track</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#flightplandb.datatypes.Route" title="flightplandb.datatypes.Route"><span class="pre">flightplandb.datatypes.Route</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">validFrom</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">datetime.datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validTo</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">datetime.datetime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flightplandb.datatypes.Track" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Track</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#flightplandb.datatypes.Route" title="flightplandb.datatypes.Route"><span class="pre">flightplandb.datatypes.Route</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">validFrom</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">datetime.datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validTo</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">datetime.datetime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flightplandb.datatypes.Track" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used for NATS and PACOTS tracks</p>
 <dl class="py attribute">
 <dt id="flightplandb.datatypes.Track.ident">
 <code class="sig-name descname"><span class="pre">ident</span></code><a class="headerlink" href="#flightplandb.datatypes.Track.ident" title="Permalink to this definition">¶</a></dt>
-<dd><p>Track identifier</p>
+<dd><p>Track identifier; str in NATS, int in PACOTS</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>Union[str, int]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1866,6 +1866,112 @@ Note: each physical runway will appear twice, once from each end</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="flightplandb.datatypes.SearchNavaid">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">SearchNavaid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elevation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runwayIdent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">airportICAO</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flightplandb.datatypes.SearchNavaid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Describes a navigational aid, as returned by the search function</p>
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.SearchNavaid.ident">
+<code class="sig-name descname"><span class="pre">ident</span></code><a class="headerlink" href="#flightplandb.datatypes.SearchNavaid.ident" title="Permalink to this definition">¶</a></dt>
+<dd><p>The navaid identifier</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.SearchNavaid.type">
+<code class="sig-name descname"><span class="pre">type</span></code><a class="headerlink" href="#flightplandb.datatypes.SearchNavaid.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>The navaid type. Must be one of <a class="reference internal" href="#flightplandb.datatypes.Navaid.validtypes" title="flightplandb.datatypes.Navaid.validtypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Navaid.validtypes</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.SearchNavaid.lat">
+<code class="sig-name descname"><span class="pre">lat</span></code><a class="headerlink" href="#flightplandb.datatypes.SearchNavaid.lat" title="Permalink to this definition">¶</a></dt>
+<dd><p>The navaid latitude</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.SearchNavaid.lon">
+<code class="sig-name descname"><span class="pre">lon</span></code><a class="headerlink" href="#flightplandb.datatypes.SearchNavaid.lon" title="Permalink to this definition">¶</a></dt>
+<dd><p>The navaid longitude</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.SearchNavaid.elevation">
+<code class="sig-name descname"><span class="pre">elevation</span></code><a class="headerlink" href="#flightplandb.datatypes.SearchNavaid.elevation" title="Permalink to this definition">¶</a></dt>
+<dd><p>The navaid elevation above mean sea level (elevation)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.SearchNavaid.runwayIdent">
+<code class="sig-name descname"><span class="pre">runwayIdent</span></code><a class="headerlink" href="#flightplandb.datatypes.SearchNavaid.runwayIdent" title="Permalink to this definition">¶</a></dt>
+<dd><p>The runway associated with the navaid. <code class="docutils literal notranslate"><span class="pre">None</span></code> if not available</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Union[str, None]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.SearchNavaid.airportICAO">
+<code class="sig-name descname"><span class="pre">airportICAO</span></code><a class="headerlink" href="#flightplandb.datatypes.SearchNavaid.airportICAO" title="Permalink to this definition">¶</a></dt>
+<dd><p>The ICAO of the airport associated with the navaid.
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if not available</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Union[str, None]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.SearchNavaid.name">
+<code class="sig-name descname"><span class="pre">name</span></code><a class="headerlink" href="#flightplandb.datatypes.SearchNavaid.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The navaid name. <code class="docutils literal notranslate"><span class="pre">None</span></code> if not available</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Union[float, None]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.SearchNavaid.validtypes">
+<code class="sig-name descname"><span class="pre">validtypes</span></code><a class="headerlink" href="#flightplandb.datatypes.SearchNavaid.validtypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not change. Valid Navaid types</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>
 </dd></dl>

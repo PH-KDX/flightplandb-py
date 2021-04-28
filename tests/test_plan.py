@@ -276,13 +276,21 @@ class PlanTest(TestCase):
                         'tags': None,
                         'user': None,
                         'application': None,
-                        'route': {'nodes': [
-                             {'ident': 'EHAM', 'type': 'APT',
-                              'lat': 52.31485, 'lon': 4.75812,
-                              'alt': 0, 'name': 'Schiphol', 'via': None},
-                             {'ident': 'KJFK', 'type': 'APT',
-                              'lat': 40.6399, 'lon': -73.77666, 'alt': 0,
-                              'name': 'John F Kennedy Intl', 'via': None}]},
+                        'route': {
+                            'nodes': [
+                                {
+                                    'ident': 'EHAM', 'type': 'APT',
+                                    'lat': 52.31485, 'lon': 4.75812,
+                                    'id': None, 'alt': 0, 'name': 'Schiphol',
+                                    'via': None},
+                                {
+                                    'ident': 'KJFK', 'type': 'APT',
+                                    'lat': 40.6399, 'lon': -73.77666,
+                                    'id': None, 'alt': 0,
+                                    'name': 'John F Kennedy Intl',
+                                    'via': None}],
+                            'eastLevels': None,
+                            'westLevels': None},
                         'cycle': None}
                     )])
 

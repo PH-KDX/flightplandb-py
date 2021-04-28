@@ -176,6 +176,10 @@ class RouteNode:
 
     Attributes
     ----------
+    id: Union[int, None]
+        For some obscure reason an apparently useless id is included with
+        each node when the node is inside a :class:`Track` route.
+        Goodness knows why.
     ident : str
         Node navaid identifier
     type : str
@@ -184,7 +188,7 @@ class RouteNode:
         Node latitude in decimal degrees
     lon : float
         Node longitude in decimal degrees
-    alt : float
+    alt : Union[float, None]
         Suggested altitude at node
     name : Union[str, None]
         Node name.
@@ -197,9 +201,10 @@ class RouteNode:
     type: str
     lat: float
     lon: float
-    alt: float
-    name: Union[str, None]
-    via: Union[Via, None]
+    id: Union[int, None] = None
+    alt: Union[float, None] = None
+    name: Union[str, None] = None
+    via: Union[Via, None] = None
 
     validtypes = ['UKN', 'APT', 'NDB', 'VOR', 'FIX', 'DME', 'LATLON']
 
@@ -223,8 +228,14 @@ class Route:
     ----------
     nodes : List[RouteNode]
         A list of :class:`RouteNode` s. A route must have at least 2 nodes.
+    eastLevels : Union[List[str], None]
+        Valid eastbound flightlevels. Only used inside a :class:`Track`.
+    westLevels : Union[List[str], None]
+        Valid westbound flightlevels. Only used inside a :class:`Track`.
     """
     nodes: List[RouteNode]
+    eastLevels: Union[List[str], None] = None
+    westLevels: Union[List[str], None] = None
 
     def __post_init__(self):
         self.nodes = list(map(
@@ -827,8 +838,12 @@ class Track:
     validTo: datetime
 
     def __post_init__(self):
-        self.validFrom = isoparse(self.validFrom)
-        self.validTo = isoparse(self.validTo)
+        if self.route and isinstance(self.route, dict):
+            self.route = Route(**self.route)
+        if self.validFrom and isinstance(self.validFrom, str):
+            self.validFrom = isoparse(self.validFrom)
+        if self.validTo and isinstance(self.validTo, str):
+            self.validTo = isoparse(self.validTo)
 
     def _to_api_dict(self):
         resp_dict = self.__dict__

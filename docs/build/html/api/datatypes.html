@@ -439,8 +439,21 @@
 
 <dl class="py class">
 <dt id="flightplandb.datatypes.RouteNode">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">RouteNode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">via</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.Via" title="flightplandb.datatypes.Via"><span class="pre">flightplandb.datatypes.Via</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flightplandb.datatypes.RouteNode" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">RouteNode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">via</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.Via" title="flightplandb.datatypes.Via"><span class="pre">flightplandb.datatypes.Via</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flightplandb.datatypes.RouteNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Describes nodes in <a class="reference internal" href="#flightplandb.datatypes.Route" title="flightplandb.datatypes.Route"><code class="xref py py-class docutils literal notranslate"><span class="pre">Route</span></code></a> s</p>
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.RouteNode.id">
+<code class="sig-name descname"><span class="pre">id</span></code><a class="headerlink" href="#flightplandb.datatypes.RouteNode.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>For some obscure reason an apparently useless id is included with
+each node when the node is inside a <a class="reference internal" href="#flightplandb.datatypes.Track" title="flightplandb.datatypes.Track"><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code></a> route.
+Goodness knows why.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Union[int, None]</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute">
 <dt id="flightplandb.datatypes.RouteNode.ident">
 <code class="sig-name descname"><span class="pre">ident</span></code><a class="headerlink" href="#flightplandb.datatypes.RouteNode.ident" title="Permalink to this definition">¶</a></dt>
@@ -491,7 +504,7 @@
 <dd><p>Suggested altitude at node</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p>Union[float, None]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -533,7 +546,7 @@
 
 <dl class="py class">
 <dt id="flightplandb.datatypes.Route">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Route</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.RouteNode" title="flightplandb.datatypes.RouteNode"><span class="pre">flightplandb.datatypes.RouteNode</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flightplandb.datatypes.Route" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Route</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flightplandb.datatypes.RouteNode" title="flightplandb.datatypes.RouteNode"><span class="pre">flightplandb.datatypes.RouteNode</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eastLevels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">westLevels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flightplandb.datatypes.Route" title="Permalink to this definition">¶</a></dt>
 <dd><p>Describes the route of a <a class="reference internal" href="#flightplandb.datatypes.Plan" title="flightplandb.datatypes.Plan"><code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code></a></p>
 <dl class="py attribute">
 <dt id="flightplandb.datatypes.Route.nodes">
@@ -542,6 +555,28 @@
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="#flightplandb.datatypes.RouteNode" title="flightplandb.datatypes.RouteNode">RouteNode</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.Route.eastLevels">
+<code class="sig-name descname"><span class="pre">eastLevels</span></code><a class="headerlink" href="#flightplandb.datatypes.Route.eastLevels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Valid eastbound flightlevels. Only used inside a <a class="reference internal" href="#flightplandb.datatypes.Track" title="flightplandb.datatypes.Track"><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Union[List[str], None]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flightplandb.datatypes.Route.westLevels">
+<code class="sig-name descname"><span class="pre">westLevels</span></code><a class="headerlink" href="#flightplandb.datatypes.Route.westLevels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Valid westbound flightlevels. Only used inside a <a class="reference internal" href="#flightplandb.datatypes.Track" title="flightplandb.datatypes.Track"><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Union[List[str], None]</p>
 </dd>
 </dl>
 </dd></dl>

@@ -229,9 +229,9 @@ class Route:
     nodes : List[RouteNode]
         A list of :class:`RouteNode` s. A route must have at least 2 nodes.
     eastLevels : Union[List[str], None]
-        Valid eastbound flightlevels. Only used inside a :class:`Track`.
+        Valid eastbound flightlevels. Only used inside a NATS :class:`Track`.
     westLevels : Union[List[str], None]
-        Valid westbound flightlevels. Only used inside a :class:`Track`.
+        Valid westbound flightlevels. Only used inside a NATS :class:`Track`.
     """
     nodes: List[RouteNode]
     eastLevels: Union[List[str], None] = None
@@ -823,8 +823,8 @@ class Track:
 
     Attributes
     ----------
-    ident : str
-        Track identifier
+    ident: Union[str, int]
+        Track identifier; str in NATS, int in PACOTS
     route : Route
         Route of the track
     validFrom : datetime
@@ -832,7 +832,7 @@ class Track:
     validTo : datetime
         UTC datetime the track is valid to
     """
-    ident: str
+    ident: Union[str, int]
     route: Route
     validFrom: datetime
     validTo: datetime
@@ -852,3 +852,48 @@ class Track:
         if type(resp_dict["validTo"]) == datetime:
             resp_dict["validTo"] = _datetime_to_iso(resp_dict["validTo"])
         return resp_dict
+
+
+@dataclass
+class SearchNavaid:
+    """Describes a navigational aid, as returned by the search function
+
+    Attributes
+    ----------
+    ident: str
+        The navaid identifier
+    type: str
+        The navaid type. Must be one of :py:obj:`Navaid.validtypes`
+    lat: float
+        The navaid latitude
+    lon: float
+        The navaid longitude
+    elevation: float
+        The navaid elevation above mean sea level (elevation)
+    runwayIdent: Union[str, None]
+        The runway associated with the navaid. ``None`` if not available
+    airportICAO: Union[str, None]
+        The ICAO of the airport associated with the navaid.
+        ``None`` if not available
+    name: Union[float, None]
+        The navaid name. ``None`` if not available
+    validtypes : List[str]
+        Do not change. Valid Navaid types
+    """
+    ident: str
+    type: str
+    lat: float
+    lon: float
+    elevation: float
+    runwayIdent: Union[str, None] = None
+    airportICAO: Union[str, None] = None
+    name: Union[float, None] = None
+
+    validtypes = ['UKN', 'APT', 'NDB', 'VOR', 'FIX', 'DME', 'LATLON']
+
+    def __post_init__(self):
+        if self.type not in self.validtypes:
+            raise ValueError(f"{self.type} is not a valid Navaid type")
+
+    def _to_api_dict(self):
+        return self.__dict__

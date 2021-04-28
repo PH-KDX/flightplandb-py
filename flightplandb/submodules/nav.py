@@ -1,5 +1,5 @@
 from typing import Generator, List, Union
-from flightplandb.datatypes import Airport, Track, Navaid
+from flightplandb.datatypes import Airport, Track, SearchNavaid
 
 
 class NavAPI:
@@ -61,7 +61,7 @@ class NavAPI:
             map(lambda t: Track(**t), self._fp._get("/nav/PACOTS")))
 
     def search(self, query: str,
-               type_: str = None) -> Generator[Navaid, None, None]:
+               type_: str = None) -> Generator[SearchNavaid, None, None]:
         """Searches navaids using a query.
 
         Parameters
@@ -82,9 +82,9 @@ class NavAPI:
 
         params = {"q": query}
         if type_:
-            if type_ in Navaid.validtypes:
+            if type_ in SearchNavaid.validtypes:
                 params["types"] = type_
             else:
                 raise ValueError(f"{type_} is not a valid Navaid type")
         for i in self._fp._getiter("/search/nav", params=params):
-            yield Navaid(**i)
+            yield SearchNavaid(**i)

@@ -4,7 +4,7 @@ from flightplandb.submodules.nav import NavAPI
 from flightplandb.datatypes import (
     Airport, Timezone, Runway, RunwayEnds,
     Frequency, Weather, Times, Track,
-    Route, RouteNode
+    Route, RouteNode, SearchNavaid
 )
 import datetime
 from dateutil.tz import tzutc
@@ -277,6 +277,171 @@ class NavTest(TestCase):
             instance.assert_has_calls([call._get('/nav/NATS')])
             # check NavAPI method decoded data correctly for given response
             assert response == correct_response
+
+    def test_pacots(self):
+
+        with patch("flightplandb.flightplandb.FlightPlanDB",
+                   autospec=True) as MockClass:
+            instance = MockClass.return_value
+            instance._get.return_value = [
+                {
+                    'ident': 1,
+                    'route': {
+                        'nodes': [{'id': 8465100,
+                                   'ident': 'RESNO',
+                                   'lat': 55,
+                                   'lon': -15,
+                                   'type': 'FIX'},
+                                  {'id': 243738,
+                                   'ident': '55/20',
+                                   'lat': 55,
+                                   'lon': -20,
+                                   'type': 'LATLON'},
+                                  {'id': 243581,
+                                   'ident': '54/30',
+                                   'lat': 54,
+                                   'lon': -30,
+                                   'type': 'LATLON'},
+                                  {'id': 243584,
+                                   'ident': '53/40',
+                                   'lat': 53,
+                                   'lon': -40,
+                                   'type': 'LATLON'},
+                                  {'id': 243583,
+                                   'ident': '52/50',
+                                   'lat': 52,
+                                   'lon': -50,
+                                   'type': 'LATLON'},
+                                  {'id': 8423845,
+                                   'ident': 'TUDEP',
+                                   'lat': 51.1667,
+                                   'lon': -53.2333,
+                                   'type': 'FIX'}]},
+                    'validFrom': '2021-04-28T11:30:00.000Z',
+                    'validTo': '2021-04-28T19:00:00.000Z'}]
+            sub_instance = NavAPI(instance)
+            response = sub_instance.pacots()
+            correct_response = [
+                Track(
+                    ident=1,
+                    route=Route(
+                        nodes=[
+                            RouteNode(
+                                ident='RESNO',
+                                type='FIX',
+                                lat=55,
+                                lon=-15,
+                                id=8465100,
+                                alt=None,
+                                name=None,
+                                via=None),
+                            RouteNode(
+                                ident='55/20',
+                                type='LATLON',
+                                lat=55,
+                                lon=-20,
+                                id=243738,
+                                alt=None,
+                                name=None,
+                                via=None),
+                            RouteNode(
+                                ident='54/30',
+                                type='LATLON',
+                                lat=54,
+                                lon=-30,
+                                id=243581,
+                                alt=None,
+                                name=None,
+                                via=None),
+                            RouteNode(
+                                ident='53/40',
+                                type='LATLON',
+                                lat=53,
+                                lon=-40,
+                                id=243584,
+                                alt=None,
+                                name=None,
+                                via=None),
+                            RouteNode(
+                                ident='52/50',
+                                type='LATLON',
+                                lat=52,
+                                lon=-50,
+                                id=243583,
+                                alt=None,
+                                name=None,
+                                via=None),
+                            RouteNode(
+                                ident='TUDEP',
+                                type='FIX',
+                                lat=51.1667,
+                                lon=-53.2333,
+                                id=8423845,
+                                alt=None,
+                                name=None,
+                                via=None)]),
+                    validFrom=datetime.datetime(
+                        2021, 4, 28, 11, 30, tzinfo=tzutc()),
+                    validTo=datetime.datetime(
+                        2021, 4, 28, 19, 0, tzinfo=tzutc()))]
+            # check that NavAPI method made correct request of FlightPlanDB
+            instance.assert_has_calls([call._get('/nav/PACOTS')])
+            # check NavAPI method decoded data correctly for given response
+            assert response == correct_response
+
+    def test_navaid_search(self):
+
+        with patch("flightplandb.flightplandb.FlightPlanDB",
+                   autospec=True) as MockClass:
+            instance = MockClass.return_value
+            mock_response = [
+                {'airportICAO': None,
+                 'elevation': 1.0000000015200001,
+                 'ident': 'SPY',
+                 'lat': 52.5403,
+                 'lon': 4.85378,
+                 'name': 'SPIJKERBOOR',
+                 'runwayIdent': None,
+                 'type': 'VOR'},
+                {'airportICAO': None,
+                 'elevation': 26.000000039520003,
+                 'ident': 'SPY',
+                 'lat': 52.5403,
+                 'lon': 4.85378,
+                 'name': 'SPIJKERBOOR VOR-DME',
+                 'runwayIdent': None,
+                 'type': 'DME'}
+            ]
+            instance._getiter.return_value = (i for i in mock_response)
+
+            sub_instance = NavAPI(instance)
+            response = sub_instance.search("SPY")
+
+            correct_response_list = [
+                SearchNavaid(
+                    ident='SPY',
+                    type='VOR',
+                    lat=52.5403,
+                    lon=4.85378,
+                    elevation=1.0000000015200001,
+                    runwayIdent=None,
+                    airportICAO=None,
+                    name='SPIJKERBOOR'),
+                SearchNavaid(
+                    ident='SPY',
+                    type='DME',
+                    lat=52.5403,
+                    lon=4.85378,
+                    elevation=26.000000039520003,
+                    runwayIdent=None,
+                    airportICAO=None,
+                    name='SPIJKERBOOR VOR-DME')
+            ]
+            # check UserAPI method decoded data correctly for given response
+            assert list(i for i in response) == correct_response_list
+            # check that UserAPI method made the correct request of FlightPlanDB
+            instance.assert_has_calls(
+                [call._getiter('/search/nav', params={'q': 'SPY'})])
 
 
 if __name__ == "__main__":

@@ -18,8 +18,11 @@ with FlightplanDB-py.  If not, see <https://www.gnu.org/licenses/>.
 
 # FlightplanDB-py
 
+## Code status
+![unittests](https://github.com/PH-KDX/flightplandb-py/actions/workflows/unittests.yml/badge.svg)
+
 ## Introduction
-This is a Python client for the [Flight Plan Database](https://flightplandatabase.com/dev/api) API.
+This is a Python wrapper for the [Flight Plan Database](https://flightplandatabase.com/dev/api) API.
 
 ## API
 All the API commands can be found in under the `FlightPlanDB` class.
@@ -29,4 +32,4 @@ It is organized into subsections as specified in the docs; i.e. `FlightPlanDB.pl
 All datatypes can be found in `FlightPlanDB.datatypes`.
 
 ## Documentation
-The documentation for this project can be found [here](https://flightplandb-py.readthedocs.io/).
+The documentation for this project can be found on readthedocs [here](https://flightplandb-py.readthedocs.io/).

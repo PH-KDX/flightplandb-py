@@ -78,7 +78,8 @@ class PlanAPI():
             ``bytes`` if a different format than ``"dict"`` was specified.
         """
 
-        request = self._fp._post("/plan/", return_format=return_format)
+        request = self._fp._post(
+            "/plan/", return_format=return_format, json=plan._to_api_dict())
 
         if return_format == "dict":
             return Plan(**request)

@@ -12,12 +12,12 @@ class NavAPI:
     def __init__(self, flightplandb):
         self._fp = flightplandb
 
-    def airport(self, icao) -> Union[Airport, None]:
+    def airport(self, icao: str) -> Union[Airport, None]:
         """Fetches information about an airport.
 
         Parameters
         ----------
-        icao : type
+        icao : str
             The airport ICAO to fetch information for
 
         Returns

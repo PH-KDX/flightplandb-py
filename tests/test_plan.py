@@ -140,7 +140,50 @@ class PlanTest(TestCase):
                             "via": None})])))
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls([
-                call._post('/plan/', return_format='dict')])
+                call._post(
+                    '/plan/',
+                    json={
+                        'id': None,
+                        'fromICAO': 'EHAM',
+                        'toICAO': 'KJFK',
+                        'fromName': 'Schiphol',
+                        'toName': 'John F Kennedy Intl',
+                        'flightNumber': None,
+                        'distance': None,
+                        'maxAltitude': None,
+                        'waypoints': None,
+                        'likes': None,
+                        'downloads': None,
+                        'popularity': None,
+                        'notes': None,
+                        'encodedPolyline': None,
+                        'createdAt': None,
+                        'updatedAt': None,
+                        'tags': None,
+                        'user': None,
+                        'application': None,
+                        'route': {
+                            'nodes': [
+                                {'ident': 'EHAM',
+                                 'type': 'APT',
+                                 'lat': 52.31485,
+                                 'lon': 4.75812,
+                                 'id': None,
+                                 'alt': 0,
+                                 'name': 'Schiphol',
+                                 'via': None},
+                                {'ident': 'KJFK',
+                                 'type': 'APT',
+                                 'lat': 40.6399,
+                                 'lon': -73.77666,
+                                 'id': None,
+                                 'alt': 0,
+                                 'name': 'John F Kennedy Intl',
+                                 'via': None}],
+                            'eastLevels': None,
+                            'westLevels': None},
+                        'cycle': None},
+                    return_format='dict')])
 
             correct_response = Plan(
                 id=None,

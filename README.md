@@ -19,7 +19,7 @@ with FlightplanDB-py.  If not, see <https://www.gnu.org/licenses/>.
 # FlightplanDB-py
 
 ## Code status
-![Unittests and line](https://github.com/PH-KDX/flightplandb-py/actions/workflows/test_and_lint.yml/badge.svg)
+![Unittests and lint](https://github.com/PH-KDX/flightplandb-py/actions/workflows/test_and_lint.yml/badge.svg)
 
 ## Introduction
 This is a Python wrapper for the [Flight Plan Database](https://flightplandatabase.com/dev/api) API.

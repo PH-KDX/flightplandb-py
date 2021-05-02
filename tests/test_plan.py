@@ -75,7 +75,7 @@ class PlanTest(TestCase):
                     username="example",
                     gravatarHash="f30b58b998a11b5d417cc2c78df3f764",
                     location=None
-                    ))
+                ))
 
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
@@ -123,21 +123,21 @@ class PlanTest(TestCase):
                 user=None,
                 route=Route([
                     RouteNode(**{
-                            "ident": "EHAM",
-                            "type": "APT",
-                            "lat": 52.31485,
-                            "lon": 4.75812,
-                            "alt": 0,
-                            "name": "Schiphol",
-                            "via": None}),
+                        "ident": "EHAM",
+                        "type": "APT",
+                        "lat": 52.31485,
+                        "lon": 4.75812,
+                        "alt": 0,
+                        "name": "Schiphol",
+                        "via": None}),
                     RouteNode(**{
-                            "ident": "KJFK",
-                            "type": "APT",
-                            "lat": 40.63990,
-                            "lon": -73.77666,
-                            "alt": 0,
-                            "name": "John F Kennedy Intl",
-                            "via": None})])))
+                        "ident": "KJFK",
+                        "type": "APT",
+                        "lat": 40.63990,
+                        "lon": -73.77666,
+                        "alt": 0,
+                        "name": "John F Kennedy Intl",
+                        "via": None})])))
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls([
                 call._post(
@@ -194,21 +194,21 @@ class PlanTest(TestCase):
                 user=None,
                 route=Route([
                     RouteNode(**{
-                            "ident": "EHAM",
-                            "type": "APT",
-                            "lat": 52.31485,
-                            "lon": 4.75812,
-                            "alt": 0,
-                            "name": "Schiphol",
-                            "via": None}),
+                        "ident": "EHAM",
+                        "type": "APT",
+                        "lat": 52.31485,
+                        "lon": 4.75812,
+                        "alt": 0,
+                        "name": "Schiphol",
+                        "via": None}),
                     RouteNode(**{
-                            "ident": "KJFK",
-                            "type": "APT",
-                            "lat": 40.63990,
-                            "lon": -73.77666,
-                            "alt": 0,
-                            "name": "John F Kennedy Intl",
-                            "via": None})]))
+                        "ident": "KJFK",
+                        "type": "APT",
+                        "lat": 40.63990,
+                        "lon": -73.77666,
+                        "alt": 0,
+                        "name": "John F Kennedy Intl",
+                        "via": None})]))
 
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
@@ -273,28 +273,28 @@ class PlanTest(TestCase):
                     fromName="Schiphol",
                     toName="John F Kennedy Intl",
                     user=None,
-                    route=Route(
-                        [
-                            RouteNode(**{
-                                    "ident": "EHAM",
-                                    "type": "APT",
-                                    "lat": 52.31485,
-                                    "lon": 4.75812,
-                                    "alt": 0,
-                                    "name": "Schiphol",
-                                    "via": None
-                                }),
-                            RouteNode(
-                                **{
-                                    "ident": "KJFK",
-                                    "type": "APT",
-                                    "lat": 40.63990,
-                                    "lon": -73.77666,
-                                    "alt": 0,
-                                    "name": "John F Kennedy Intl",
-                                    "via": None
-                                })])
-                    ))
+                    route=Route([
+                        RouteNode(**{
+                            "ident": "EHAM",
+                            "type": "APT",
+                            "lat": 52.31485,
+                            "lon": 4.75812,
+                            "alt": 0,
+                            "name": "Schiphol",
+                            "via": None
+                        }),
+                        RouteNode(**{
+                            "ident": "KJFK",
+                            "type": "APT",
+                            "lat": 40.63990,
+                            "lon": -73.77666,
+                            "alt": 0,
+                            "name": "John F Kennedy Intl",
+                            "via": None
+                        })
+                    ])
+                )
+            )
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls(
                 [call._patch(
@@ -325,17 +325,23 @@ class PlanTest(TestCase):
                                     'ident': 'EHAM', 'type': 'APT',
                                     'lat': 52.31485, 'lon': 4.75812,
                                     'id': None, 'alt': 0, 'name': 'Schiphol',
-                                    'via': None},
+                                    'via': None
+                                },
                                 {
                                     'ident': 'KJFK', 'type': 'APT',
                                     'lat': 40.6399, 'lon': -73.77666,
                                     'id': None, 'alt': 0,
                                     'name': 'John F Kennedy Intl',
-                                    'via': None}],
+                                    'via': None
+                                }
+                            ],
                             'eastLevels': None,
-                            'westLevels': None},
-                        'cycle': None}
-                    )])
+                            'westLevels': None
+                        },
+                        'cycle': None
+                    }
+                )]
+            )
 
             correct_response = Plan(
                 id=None,
@@ -346,23 +352,25 @@ class PlanTest(TestCase):
                 user=None,
                 route=Route([
                     RouteNode(**{
-                            "ident": "EHAM",
-                            "type": "APT",
-                            "lat": 52.31485,
-                            "lon": 4.75812,
-                            "alt": 0,
-                            "name": "Schiphol",
-                            "via": None}),
+                        "ident": "EHAM",
+                        "type": "APT",
+                        "lat": 52.31485,
+                        "lon": 4.75812,
+                        "alt": 0,
+                        "name": "Schiphol",
+                        "via": None
+                    }),
                     RouteNode(**{
-                            "ident": "KJFK",
-                            "type": "APT",
-                            "lat": 40.63990,
-                            "lon": -73.77666,
-                            "alt": 0,
-                            "name": "John F Kennedy Intl",
-                            "via": None})
+                        "ident": "KJFK",
+                        "type": "APT",
+                        "lat": 40.63990,
+                        "lon": -73.77666,
+                        "alt": 0,
+                        "name": "John F Kennedy Intl",
+                        "via": None
+                    })
                 ])
-                )
+            )
 
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response

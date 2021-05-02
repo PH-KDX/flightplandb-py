@@ -54,8 +54,9 @@ class FlightPlanDB:
     """
 
     def __init__(
-            self, key: Optional[str] = None,
-            url_base: str = "https://api.flightplandatabase.com"):
+        self, key: Optional[str] = None,
+        url_base: str = "https://api.flightplandatabase.com"
+    ):
         self.key: str = key
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
         self.url_base = url_base
@@ -120,7 +121,7 @@ class FlightPlanDB:
             "flightgear": "application/vnd.fpd.export.v1.flightgear",
             "tfdi717": "application/vnd.fpd.export.v1.tfdi717",
             "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
-            }
+        }
 
         if not ignore_statuses:
             ignore_statuses = []

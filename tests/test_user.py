@@ -23,7 +23,7 @@ class UserTest(TestCase):
                 "plansDistance": 794.0094160460012,
                 "plansDownloads": 0,
                 "plansLikes": 0
-                }
+            }
             sub_instance = UserAPI(instance)
             response = sub_instance.me
             correct_response = User(
@@ -34,14 +34,14 @@ class UserTest(TestCase):
                 joined=datetime.datetime(
                     2020, 8, 6, 17, 4, 30,
                     tzinfo=tzutc()
-                    ),
+                ),
                 lastSeen=datetime.datetime(2020, 12, 27, 12, 40, 6,
                                            tzinfo=tzutc()),
                 plansCount=2,
                 plansDistance=794.0094160460012,
                 plansDownloads=0,
                 plansLikes=0
-                )
+            )
             # check that UserAPI method made correct request of FlightPlanDB
             instance.assert_has_calls([call._get("/me")])
             # check UserAPI method decoded data correctly for given response
@@ -63,7 +63,7 @@ class UserTest(TestCase):
                 "plansDistance": 1212799.2736187153,
                 "plansDownloads": 10341,
                 "plansLikes": 33
-                }
+            }
             sub_instance = UserAPI(instance)
             response = sub_instance.fetch("lemon")
             correct_response = User(
@@ -74,14 +74,14 @@ class UserTest(TestCase):
                 joined=datetime.datetime(
                     2008, 12, 31, 15, 49, 18,
                     tzinfo=tzutc()
-                    ),
+                ),
                 lastSeen=datetime.datetime(2021, 4, 24, 0, 22, 46,
                                            tzinfo=tzutc()),
                 plansCount=479,
                 plansDistance=1212799.2736187153,
                 plansDownloads=10341,
                 plansLikes=33
-                )
+            )
             # check that UserAPI method made correct request of FlightPlanDB
             instance.assert_has_calls([call._get("/user/lemon")])
             # check UserAPI method decoded data correctly for given response

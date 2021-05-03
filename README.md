@@ -32,4 +32,4 @@ It is organized into subsections as specified in the docs; i.e. `FlightPlanDB.pl
 All datatypes can be found in `FlightPlanDB.datatypes`.
 
 ## Documentation
-The documentation for this project can be found on readthedocs [here](https://flightplandb-py.readthedocs.io/).
+The documentation for this project can be found on readthedocs.io [here](https://flightplandb-py.readthedocs.io/).

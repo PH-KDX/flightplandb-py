@@ -24,6 +24,8 @@ from requests.auth import HTTPBasicAuth
 from requests.structures import CaseInsensitiveDict
 
 import json
+from flightplandb.exceptions import handler
+from flightplandb.exceptions.handler import status_handler
 
 from flightplandb.datatypes import StatusResponse
 
@@ -147,9 +149,8 @@ class FlightPlanDB:
         resp = requests.request(method, urljoin(self.url_base, path),
                                 auth=HTTPBasicAuth(self.key, None),
                                 *args, **kwargs)
-
-        if resp.status_code not in ignore_statuses:
-            resp.raise_for_status()
+        
+        status_handler(resp.status_code, ignore_statuses)
 
         self._header = resp.headers
 

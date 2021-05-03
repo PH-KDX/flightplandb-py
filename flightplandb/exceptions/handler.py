@@ -3,6 +3,7 @@ from flightplandb.exceptions.exceptions import (
     BadRequestException, NotFoundException,
     InternalServerException, ForbiddenException)
 
+
 def status_handler(status_code, ignore_statuses=None):
     if status_code not in ignore_statuses:
         if status_code == 400:
@@ -26,6 +27,6 @@ def status_handler(status_code, ignore_statuses=None):
             )
         else:
             raise BaseErrorHandler(
-                status_code, 
+                status_code,
                 "Unknown Error Occured."
             )

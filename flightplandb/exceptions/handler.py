@@ -1,7 +1,7 @@
 from flightplandb.exceptions.exceptions import (
-    BaseErrorHandler,
-    BadRequestException, NotFoundException,
-    InternalServerException, ForbiddenException)
+    BaseErrorHandler, BadRequestException,
+    ForbiddenException, NotFoundException,
+    InternalServerException)
 
 
 def status_handler(status_code, ignore_statuses=None):

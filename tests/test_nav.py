@@ -162,7 +162,7 @@ class NavTest(TestCase):
             )
             # check that NavAPI method made correct request of FlightPlanDB
             instance.assert_has_calls(
-                [call._get('/nav/airport/EHAL', ignore_statuses=[404])])
+                [call._get('/nav/airport/EHAL')])
             # check NavAPI method decoded data correctly for given response
             assert response == correct_response
 

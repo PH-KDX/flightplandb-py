@@ -29,12 +29,8 @@ class NavAPI:
 
         """
 
-        resp = self._fp._get(f"/nav/airport/{icao}", ignore_statuses=[404])
-        if "message" in resp and resp["message"] == "Not Found":
-            response = None
-        else:
-            response = Airport(**resp)
-        return response
+        resp = self._fp._get(f"/nav/airport/{icao}")
+        return Airport(**resp)
 
     def nats(self) -> List[Track]:
         """Fetches current North Atlantic Tracks.

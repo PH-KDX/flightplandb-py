@@ -1,5 +1,4 @@
 from typing import Generator, Union
-import requests
 from flightplandb.datatypes import (
     StatusResponse, PlanQuery,
     Plan, GenerateQuery
@@ -42,14 +41,10 @@ class PlanAPI():
             ``None`` if the plan with that id was not found.
         """
 
-        try:
-            request = self._fp._get(f"/plan/{id_}",
-                                    return_format=return_format)
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 404:
-                return None
-            else:
-                raise e
+        request = self._fp._get(
+            f"/plan/{id_}",
+            return_format=return_format
+        )
 
         if return_format == "dict":
             return Plan(**request)
@@ -132,7 +127,7 @@ class PlanAPI():
             OK 200 means a successful delete
         """
 
-        resp = self._fp._delete(f"/plan/{id_}", ignore_statuses=[404])
+        resp = self._fp._delete(f"/plan/{id_}")
         return(StatusResponse(**resp))
 
     def search(self, plan_query: PlanQuery, sort: str = "created",
@@ -223,12 +218,11 @@ class PlanAPI():
         Returns
         -------
         bool
-            ``True`` for a successful unlike, ``False`` indicates a failure
+            ``True`` for a successful unlike
         """
 
-        sr = StatusResponse(
-            **self._fp._delete(f"/plan/{id_}/like", ignore_statuses=[404]))
-        return sr.message != "Not Found"
+        self._fp._delete(f"/plan/{id_}/like")
+        return True
 
     def generate(self, gen_query: GenerateQuery,
                  return_format: str = "dict") -> Union[Plan, bytes]:

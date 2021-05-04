@@ -223,8 +223,7 @@ class PlanTest(TestCase):
             sub_instance = PlanAPI(instance)
             response = sub_instance.delete(62493)
             # check PlanAPI method made the correct request of FlightPlanDB
-            instance.assert_has_calls([call._delete('/plan/62493',
-                                      ignore_statuses=[404])])
+            instance.assert_has_calls([call._delete('/plan/62493')])
 
             correct_response = StatusResponse(message="OK", errors=None)
 
@@ -538,16 +537,16 @@ class PlanTest(TestCase):
         with patch("flightplandb.flightplandb.FlightPlanDB",
                    autospec=True) as MockClass:
             instance = MockClass.return_value
-            instance._delete.return_value = {"message": "Not Found",
+            instance._delete.return_value = {"message": "OK",
                                              "errors": None}
 
             sub_instance = PlanAPI(instance)
             response = sub_instance.unlike(42)
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls([
-                call._delete('/plan/42/like', ignore_statuses=[404])])
+                call._delete('/plan/42/like')])
 
-            correct_response = False
+            correct_response = True
 
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response

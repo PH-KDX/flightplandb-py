@@ -24,7 +24,7 @@ from requests.auth import HTTPBasicAuth
 from requests.structures import CaseInsensitiveDict
 
 import json
-from flightplandb.exceptions.handler import status_handler
+from flightplandb.exceptions import status_handler
 
 from flightplandb.datatypes import StatusResponse
 

@@ -1,6 +1,24 @@
 name: Tests and lint
 on: [push]
 jobs:
+  # no need to set up a matrix for this one
+  flake8-lint:
+    runs-on: ubuntu-latest
+    name: Flake8 Lint
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v2
+      - name: Set up Python environment
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.7"
+      - name: flake8 Lint
+        uses: py-actions/flake8@v1
+        with:
+          ignore: "F403"
+          max-line-length: "80"
+
+  # but we do want to run unittests on many platforms
   unittests:
     strategy:
       matrix:
@@ -21,20 +39,3 @@ jobs:
         run: python -m pip install .
       - name: Run unittests
         run: python -m unittest
-
-  # no need to set up a matrix for this one
-  flake8-lint:
-    runs-on: ubuntu-latest
-    name: Flake8 Lint
-    steps:
-      - name: Check out source repository
-        uses: actions/checkout@v2
-      - name: Set up Python environment
-        uses: actions/setup-python@v1
-        with:
-          python-version: "3.7"
-      - name: flake8 Lint
-        uses: py-actions/flake8@v1
-        with:
-          ignore: "F403"
-          max-line-length: "80"

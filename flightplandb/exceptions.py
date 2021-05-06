@@ -41,10 +41,10 @@ def status_handler(status_code, ignore_statuses=None):
         elif status_code == 500:
             raise InternalServerException(
                 "The server encountered an unexpected condition \
-                which prevented it from fulfilling the request"
+                which prevented it from fulfilling the request."
             )
         else:
             raise BaseErrorHandler(
                 status_code,
-                "Unknown Error Occured."
+                "Unknown Error Occurred."
             )

@@ -97,6 +97,6 @@ def status_handler(status_code, ignore_statuses=None):
             )
         else:
             raise BaseErrorHandler(
-                status_code,
-                "Unknown Error Occurred."
+                status_code=status_code,
+                message="Unknown Error Occurred."
             )

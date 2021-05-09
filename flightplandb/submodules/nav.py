@@ -27,7 +27,7 @@ class NavAPI:
 
         Raises
         ------
-        :class:`~flightplandb.exceptions.NotFoundException`
+        :class:`~flightplandb.exceptions.BadRequestException`
             No airport with the specified ICAO code was found.
         """
 

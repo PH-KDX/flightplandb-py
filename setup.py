@@ -14,8 +14,8 @@ setup(
     ],
     extras_require={
         "dev": [
-            "Sphinx==3.5.2",
-            "sphinx-rtd-theme==0.5.1"
+            "Sphinx==4.0.0",
+            "sphinx-rtd-theme==0.5.2"
         ]
     }
 )

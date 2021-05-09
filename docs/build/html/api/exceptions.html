@@ -206,6 +206,25 @@ Raised for an HTTP status code 400.</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt id="flightplandb.exceptions.UnauthorizedException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-name descname"><span class="pre">UnauthorizedException</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flightplandb.exceptions.UnauthorizedException" title="Permalink to this definition">¶</a></dt>
+<dd><p>You are incorrectly authorised and may not make this request.
+Raised for an HTTP status code 401.</p>
+<dl class="py attribute">
+<dt id="flightplandb.exceptions.UnauthorizedException.status_code">
+<code class="sig-name descname"><span class="pre">status_code</span></code><a class="headerlink" href="#flightplandb.exceptions.UnauthorizedException.status_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not used</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flightplandb.exceptions.UnauthorizedException.message">
+<code class="sig-name descname"><span class="pre">message</span></code><a class="headerlink" href="#flightplandb.exceptions.UnauthorizedException.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>A verbose description of this error.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
 <dt id="flightplandb.exceptions.ForbiddenException">
 <em class="property"><span class="pre">exception</span> </em><code class="sig-name descname"><span class="pre">ForbiddenException</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flightplandb.exceptions.ForbiddenException" title="Permalink to this definition">¶</a></dt>
 <dd><p>The server refuses to fulfill this request,

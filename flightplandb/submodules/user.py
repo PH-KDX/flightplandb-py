@@ -21,6 +21,11 @@ class UserAPI:
         -------
         User
             The User object of the currently authenticated user
+
+        Raises
+        ------
+        :class:`~flightplandb.exceptions.UnauthorizedException`
+            Authentication failed.
         """
 
         return User(**self._fp._get("/me"))
@@ -37,6 +42,11 @@ class UserAPI:
         -------
         User
             The User object of the user associated with the username
+
+        Raises
+        -------
+        :class:`~flightplandb.exceptions.NotFoundException`
+            No user was found with this username.
         """
 
         return User(**self._fp._get(f"/user/{username}"))

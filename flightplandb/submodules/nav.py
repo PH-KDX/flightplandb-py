@@ -28,7 +28,7 @@ class NavAPI:
         Raises
         ------
         :class:`~flightplandb.exceptions.NotFoundException`
-            The airport was not found.
+            No airport with the specified ICAO code was found.
         """
 
         resp = self._fp._get(f"/nav/airport/{icao}")

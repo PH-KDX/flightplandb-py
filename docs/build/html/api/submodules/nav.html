@@ -88,14 +88,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../user/userdocs.html">User docs</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API docs</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../api.html#flightplandb-flightplandb-module">flightplandb.flightplandb module</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#main-module">Main module</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../flightplandb.html">FlightplanDB docs</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="../flightplandb.html#submodules">Submodules</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../api.html#flightplandb-datatypes-module">flightplandb.datatypes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#datatypes">Datatypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#exceptions">Exceptions</a></li>
 </ul>
 </li>
 </ul>
@@ -178,18 +179,20 @@
 Accessed via <a class="reference internal" href="../flightplandb.html#flightplandb.flightplandb.FlightPlanDB.nav" title="flightplandb.flightplandb.FlightPlanDB.nav"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nav()</span></code></a>.</p>
 <dl class="py method">
 <dt id="flightplandb.submodules.nav.NavAPI.airport">
-<code class="sig-name descname"><span class="pre">airport</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">icao</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../datatypes.html#flightplandb.datatypes.Airport" title="flightplandb.datatypes.Airport"><span class="pre">flightplandb.datatypes.Airport</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#flightplandb.submodules.nav.NavAPI.airport" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">airport</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">icao</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="../datatypes.html#flightplandb.datatypes.Airport" title="flightplandb.datatypes.Airport"><span class="pre">flightplandb.datatypes.Airport</span></a><a class="headerlink" href="#flightplandb.submodules.nav.NavAPI.airport" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetches information about an airport.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>icao</strong> (<em>type</em>) -- The airport ICAO to fetch information for</p>
+<dd class="field-odd"><p><strong>icao</strong> (<em>str</em>) -- The airport ICAO to fetch information for</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference internal" href="../datatypes.html#flightplandb.datatypes.Airport" title="flightplandb.datatypes.Airport"><code class="xref py py-class docutils literal notranslate"><span class="pre">Airport</span></code></a> if the airport was found.
-<code class="docutils literal notranslate"><span class="pre">None</span></code> if it was not.</p>
+<dd class="field-even"><p><a class="reference internal" href="../datatypes.html#flightplandb.datatypes.Airport" title="flightplandb.datatypes.Airport"><code class="xref py py-class docutils literal notranslate"><span class="pre">Airport</span></code></a> if the airport was found.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Union[<a class="reference internal" href="../datatypes.html#flightplandb.datatypes.Airport" title="flightplandb.datatypes.Airport">Airport</a>, None]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="../exceptions.html#flightplandb.exceptions.BadRequestException" title="flightplandb.exceptions.BadRequestException"><strong>BadRequestException</strong></a> -- No airport with the specified ICAO code was found.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -230,7 +233,7 @@ Accessed via <a class="reference internal" href="../flightplandb.html#flightplan
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>query</strong> (<em>str</em>) -- The search query. Searches the navaid identifier and navaid name</p></li>
-<li><p><strong>type</strong> (<em>str</em>) -- Navaid type.
+<li><p><strong>type_</strong> (<em>str</em>) -- Navaid type.
 Must be either <code class="docutils literal notranslate"><span class="pre">None</span></code> (default value, returns all types) or one
 of <a class="reference internal" href="../datatypes.html#flightplandb.datatypes.Navaid.validtypes" title="flightplandb.datatypes.Navaid.validtypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validtypes</span></code></a></p></li>
 </ul>

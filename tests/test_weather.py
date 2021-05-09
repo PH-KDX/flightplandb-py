@@ -23,7 +23,7 @@ class WeatherTest(TestCase):
                  BKN033 07/M00 Q1029 NOSIG",
                 TAF="TAF EHAM 250442Z 2506/2612 02012KT 9999 BKN030 BECMG\
                  2507/2510 CAVOK BECMG 2608/2611 05009KT"
-                )
+            )
             # check that WeatherAPI method made correct request of FlightPlanDB
             instance.assert_has_calls([call._get('/weather/EHAM')])
             # check WeatherAPI method decoded data correctly for given response

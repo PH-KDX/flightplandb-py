@@ -12,7 +12,7 @@ class NavAPI:
     def __init__(self, flightplandb):
         self._fp = flightplandb
 
-    def airport(self, icao: str) -> Union[Airport, None]:
+    def airport(self, icao: str) -> Union[Airport]:
         """Fetches information about an airport.
 
         Parameters
@@ -23,18 +23,16 @@ class NavAPI:
         Returns
         -------
         Union[Airport, None]
-
             :class:`~flightplandb.datatypes.Airport` if the airport was found.
-            ``None`` if it was not.
 
+        Raises
+        ------
+        :class:`~flightplandb.exceptions.BadRequestException`
+            No airport with the specified ICAO code was found.
         """
 
-        resp = self._fp._get(f"/nav/airport/{icao}", ignore_statuses=[404])
-        if "message" in resp and resp["message"] == "Not Found":
-            response = None
-        else:
-            response = Airport(**resp)
-        return response
+        resp = self._fp._get(f"/nav/airport/{icao}")
+        return Airport(**resp)
 
     def nats(self) -> List[Track]:
         """Fetches current North Atlantic Tracks.
@@ -62,13 +60,13 @@ class NavAPI:
 
     def search(self, query: str,
                type_: str = None) -> Generator[SearchNavaid, None, None]:
-        """Searches navaids using a query.
+        r"""Searches navaids using a query.
 
         Parameters
         ----------
         query : str
             The search query. Searches the navaid identifier and navaid name
-        type_ : str
+        type\_ : str
             Navaid type.
             Must be either ``None`` (default value, returns all types) or one
             of :py:obj:`~flightplandb.datatypes.Navaid.validtypes`

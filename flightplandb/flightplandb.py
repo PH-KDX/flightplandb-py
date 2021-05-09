@@ -24,6 +24,7 @@ from requests.auth import HTTPBasicAuth
 from requests.structures import CaseInsensitiveDict
 
 import json
+from flightplandb.exceptions import status_handler
 
 from flightplandb.datatypes import StatusResponse
 
@@ -54,8 +55,9 @@ class FlightPlanDB:
     """
 
     def __init__(
-            self, key: Optional[str] = None,
-            url_base: str = "https://api.flightplandatabase.com"):
+        self, key: Optional[str] = None,
+        url_base: str = "https://api.flightplandatabase.com"
+    ):
         self.key: str = key
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
         self.url_base = url_base
@@ -120,7 +122,7 @@ class FlightPlanDB:
             "flightgear": "application/vnd.fpd.export.v1.flightgear",
             "tfdi717": "application/vnd.fpd.export.v1.tfdi717",
             "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
-            }
+        }
 
         if not ignore_statuses:
             ignore_statuses = []
@@ -147,8 +149,7 @@ class FlightPlanDB:
                                 auth=HTTPBasicAuth(self.key, None),
                                 *args, **kwargs)
 
-        if resp.status_code not in ignore_statuses:
-            resp.raise_for_status()
+        status_handler(resp.status_code, ignore_statuses)
 
         self._header = resp.headers
 

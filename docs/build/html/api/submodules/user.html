@@ -88,14 +88,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../user/userdocs.html">User docs</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API docs</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../api.html#flightplandb-flightplandb-module">flightplandb.flightplandb module</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#main-module">Main module</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../flightplandb.html">FlightplanDB docs</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="../flightplandb.html#submodules">Submodules</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../api.html#flightplandb-datatypes-module">flightplandb.datatypes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#datatypes">Datatypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#exceptions">Exceptions</a></li>
 </ul>
 </li>
 </ul>
@@ -188,6 +189,9 @@ Accessed via <a class="reference internal" href="../flightplandb.html#flightplan
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="../datatypes.html#flightplandb.datatypes.User" title="flightplandb.datatypes.User">User</a></p>
 </dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../exceptions.html#flightplandb.exceptions.UnauthorizedException" title="flightplandb.exceptions.UnauthorizedException"><strong>UnauthorizedException</strong></a> -- Authentication failed.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -204,6 +208,9 @@ Accessed via <a class="reference internal" href="../flightplandb.html#flightplan
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="../datatypes.html#flightplandb.datatypes.User" title="flightplandb.datatypes.User">User</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="../exceptions.html#flightplandb.exceptions.NotFoundException" title="flightplandb.exceptions.NotFoundException"><strong>NotFoundException</strong></a> -- No user was found with this username.</p>
 </dd>
 </dl>
 </dd></dl>

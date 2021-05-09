@@ -75,7 +75,7 @@ class PlanTest(TestCase):
                     username="example",
                     gravatarHash="f30b58b998a11b5d417cc2c78df3f764",
                     location=None
-                    ))
+                ))
 
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
@@ -123,21 +123,21 @@ class PlanTest(TestCase):
                 user=None,
                 route=Route([
                     RouteNode(**{
-                            "ident": "EHAM",
-                            "type": "APT",
-                            "lat": 52.31485,
-                            "lon": 4.75812,
-                            "alt": 0,
-                            "name": "Schiphol",
-                            "via": None}),
+                        "ident": "EHAM",
+                        "type": "APT",
+                        "lat": 52.31485,
+                        "lon": 4.75812,
+                        "alt": 0,
+                        "name": "Schiphol",
+                        "via": None}),
                     RouteNode(**{
-                            "ident": "KJFK",
-                            "type": "APT",
-                            "lat": 40.63990,
-                            "lon": -73.77666,
-                            "alt": 0,
-                            "name": "John F Kennedy Intl",
-                            "via": None})])))
+                        "ident": "KJFK",
+                        "type": "APT",
+                        "lat": 40.63990,
+                        "lon": -73.77666,
+                        "alt": 0,
+                        "name": "John F Kennedy Intl",
+                        "via": None})])))
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls([
                 call._post(
@@ -194,21 +194,21 @@ class PlanTest(TestCase):
                 user=None,
                 route=Route([
                     RouteNode(**{
-                            "ident": "EHAM",
-                            "type": "APT",
-                            "lat": 52.31485,
-                            "lon": 4.75812,
-                            "alt": 0,
-                            "name": "Schiphol",
-                            "via": None}),
+                        "ident": "EHAM",
+                        "type": "APT",
+                        "lat": 52.31485,
+                        "lon": 4.75812,
+                        "alt": 0,
+                        "name": "Schiphol",
+                        "via": None}),
                     RouteNode(**{
-                            "ident": "KJFK",
-                            "type": "APT",
-                            "lat": 40.63990,
-                            "lon": -73.77666,
-                            "alt": 0,
-                            "name": "John F Kennedy Intl",
-                            "via": None})]))
+                        "ident": "KJFK",
+                        "type": "APT",
+                        "lat": 40.63990,
+                        "lon": -73.77666,
+                        "alt": 0,
+                        "name": "John F Kennedy Intl",
+                        "via": None})]))
 
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
@@ -223,8 +223,7 @@ class PlanTest(TestCase):
             sub_instance = PlanAPI(instance)
             response = sub_instance.delete(62493)
             # check PlanAPI method made the correct request of FlightPlanDB
-            instance.assert_has_calls([call._delete('/plan/62493',
-                                      ignore_statuses=[404])])
+            instance.assert_has_calls([call._delete('/plan/62493')])
 
             correct_response = StatusResponse(message="OK", errors=None)
 
@@ -273,28 +272,28 @@ class PlanTest(TestCase):
                     fromName="Schiphol",
                     toName="John F Kennedy Intl",
                     user=None,
-                    route=Route(
-                        [
-                            RouteNode(**{
-                                    "ident": "EHAM",
-                                    "type": "APT",
-                                    "lat": 52.31485,
-                                    "lon": 4.75812,
-                                    "alt": 0,
-                                    "name": "Schiphol",
-                                    "via": None
-                                }),
-                            RouteNode(
-                                **{
-                                    "ident": "KJFK",
-                                    "type": "APT",
-                                    "lat": 40.63990,
-                                    "lon": -73.77666,
-                                    "alt": 0,
-                                    "name": "John F Kennedy Intl",
-                                    "via": None
-                                })])
-                    ))
+                    route=Route([
+                        RouteNode(**{
+                            "ident": "EHAM",
+                            "type": "APT",
+                            "lat": 52.31485,
+                            "lon": 4.75812,
+                            "alt": 0,
+                            "name": "Schiphol",
+                            "via": None
+                        }),
+                        RouteNode(**{
+                            "ident": "KJFK",
+                            "type": "APT",
+                            "lat": 40.63990,
+                            "lon": -73.77666,
+                            "alt": 0,
+                            "name": "John F Kennedy Intl",
+                            "via": None
+                        })
+                    ])
+                )
+            )
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls(
                 [call._patch(
@@ -325,17 +324,23 @@ class PlanTest(TestCase):
                                     'ident': 'EHAM', 'type': 'APT',
                                     'lat': 52.31485, 'lon': 4.75812,
                                     'id': None, 'alt': 0, 'name': 'Schiphol',
-                                    'via': None},
+                                    'via': None
+                                },
                                 {
                                     'ident': 'KJFK', 'type': 'APT',
                                     'lat': 40.6399, 'lon': -73.77666,
                                     'id': None, 'alt': 0,
                                     'name': 'John F Kennedy Intl',
-                                    'via': None}],
+                                    'via': None
+                                }
+                            ],
                             'eastLevels': None,
-                            'westLevels': None},
-                        'cycle': None}
-                    )])
+                            'westLevels': None
+                        },
+                        'cycle': None
+                    }
+                )]
+            )
 
             correct_response = Plan(
                 id=None,
@@ -346,23 +351,25 @@ class PlanTest(TestCase):
                 user=None,
                 route=Route([
                     RouteNode(**{
-                            "ident": "EHAM",
-                            "type": "APT",
-                            "lat": 52.31485,
-                            "lon": 4.75812,
-                            "alt": 0,
-                            "name": "Schiphol",
-                            "via": None}),
+                        "ident": "EHAM",
+                        "type": "APT",
+                        "lat": 52.31485,
+                        "lon": 4.75812,
+                        "alt": 0,
+                        "name": "Schiphol",
+                        "via": None
+                    }),
                     RouteNode(**{
-                            "ident": "KJFK",
-                            "type": "APT",
-                            "lat": 40.63990,
-                            "lon": -73.77666,
-                            "alt": 0,
-                            "name": "John F Kennedy Intl",
-                            "via": None})
+                        "ident": "KJFK",
+                        "type": "APT",
+                        "lat": 40.63990,
+                        "lon": -73.77666,
+                        "alt": 0,
+                        "name": "John F Kennedy Intl",
+                        "via": None
+                    })
                 ])
-                )
+            )
 
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response
@@ -530,16 +537,16 @@ class PlanTest(TestCase):
         with patch("flightplandb.flightplandb.FlightPlanDB",
                    autospec=True) as MockClass:
             instance = MockClass.return_value
-            instance._delete.return_value = {"message": "Not Found",
+            instance._delete.return_value = {"message": "OK",
                                              "errors": None}
 
             sub_instance = PlanAPI(instance)
             response = sub_instance.unlike(42)
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls([
-                call._delete('/plan/42/like', ignore_statuses=[404])])
+                call._delete('/plan/42/like')])
 
-            correct_response = False
+            correct_response = True
 
             # check PlanAPI method decoded data correctly for given response
             assert response == correct_response

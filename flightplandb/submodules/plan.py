@@ -1,5 +1,4 @@
 from typing import Generator, Union
-import requests
 from flightplandb.datatypes import (
     StatusResponse, PlanQuery,
     Plan, GenerateQuery
@@ -39,17 +38,16 @@ class PlanAPI():
 
             ``bytes`` if a different format than ``"dict"`` was specified.
 
-            ``None`` if the plan with that id was not found.
+        Raises
+        ------
+        :class:`~flightplandb.exceptions.NotFoundException`
+            No plan with the specified id was found.
         """
 
-        try:
-            request = self._fp._get(f"/plan/{id_}",
-                                    return_format=return_format)
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 404:
-                return None
-            else:
-                raise e
+        request = self._fp._get(
+            f"/plan/{id_}",
+            return_format=return_format
+        )
 
         if return_format == "dict":
             return Plan(**request)
@@ -76,6 +74,12 @@ class PlanAPI():
             is specified as the ``return_format``.
 
             ``bytes`` if a different format than ``"dict"`` was specified.
+
+        Raises
+        ------
+        :class:`~flightplandb.exceptions.BadRequestException`
+            The plan submitted had incorrect arguments
+            or was otherwise unusable.
         """
 
         request = self._fp._post(
@@ -106,6 +110,14 @@ class PlanAPI():
             is specified as the ``return_format``.
 
             ``bytes`` if a different format than ``"dict"`` was specified.
+
+        Raises
+        ------
+        :class:`~flightplandb.exceptions.BadRequestException`
+            The plan submitted had incorrect arguments
+            or was otherwise unusable.
+        :class:`~flightplandb.exceptions.NotFoundException`
+            No plan with the specified id was found.
         """
 
         plan_data = plan._to_api_dict()
@@ -130,9 +142,14 @@ class PlanAPI():
         -------
         StatusResponse
             OK 200 means a successful delete
+
+        Raises
+        ------
+        :class:`~flightplandb.exceptions.NotFoundException`
+            No plan with the specified id was found.
         """
 
-        resp = self._fp._delete(f"/plan/{id_}", ignore_statuses=[404])
+        resp = self._fp._delete(f"/plan/{id_}")
         return(StatusResponse(**resp))
 
     def search(self, plan_query: PlanQuery, sort: str = "created",
@@ -204,8 +221,15 @@ class PlanAPI():
         Returns
         -------
         StatusResponse
-            201 means the plan was successfully liked.
-            200 means the plan was already liked.
+            ``message=Created`` means the plan was successfully liked.
+            ``message=OK`` means the plan was already liked.
+
+        Raises
+        ------
+        :class:`~flightplandb.exceptions.InternalServerException`
+            No plan with the specified id was found.
+            (yeah, I don't know why it isn't ``NotFoundException`` either;
+            ask the guy who made the API)
         """
 
         return StatusResponse(**self._fp._post(f"/plan/{id_}/like"))
@@ -223,12 +247,17 @@ class PlanAPI():
         Returns
         -------
         bool
-            ``True`` for a successful unlike, ``False`` indicates a failure
+            ``True`` for a successful unlike
+
+        Raises
+        ------
+        :class:`~flightplandb.exceptions.NotFoundException`
+            No plan with the specified id was found,
+            or the plan was found but wasn't liked.
         """
 
-        sr = StatusResponse(
-            **self._fp._delete(f"/plan/{id_}/like", ignore_statuses=[404]))
-        return sr.message != "Not Found"
+        self._fp._delete(f"/plan/{id_}/like")
+        return True
 
     def generate(self, gen_query: GenerateQuery,
                  return_format: str = "dict") -> Union[Plan, bytes]:
@@ -277,6 +306,12 @@ class PlanAPI():
         Plan
             The registered flight plan created on flight plan database,
             corresponding to the decoded route
+
+        Raises
+        ------
+        :class:`~flightplandb.exceptions.BadRequestException`
+            The encoded plan submitted had incorrect
+            arguments or was otherwise unusable.
         """
 
         return Plan(**self._fp._post(

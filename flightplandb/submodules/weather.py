@@ -24,6 +24,11 @@ class WeatherAPI:
         -------
         Weather
             METAR and TAF for an airport
+
+        Raises
+        ------
+        :class:`~flightplandb.exceptions.NotFoundException`
+            No airport with the specified ICAO code was found.
         """
 
         return Weather(**self._fp._get(f"/weather/{icao}"))

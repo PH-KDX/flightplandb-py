@@ -5,9 +5,9 @@ Introduction
 
 Prerequisites
 ^^^^^^^^^^^^^^^^^^^^
-FlightplanDB-py works with Python 3.6 or higher. Python 3.5 or
-lower is not supported due to f-strings, which were introduced with
-`PEP498 <https://www.python.org/dev/peps/pep-0498/>`_, being used in the library.
+FlightplanDB-py works with Python 3.7 or higher. Python 3.6 or
+lower is not supported due to dataclasses, which were introduced with
+`PEP 557 <https://www.python.org/dev/peps/pep-0557/>`_, being used in the library.
 
 Installation
 ^^^^^^^^^^^^^^^^^^^^

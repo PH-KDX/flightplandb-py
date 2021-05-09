@@ -149,17 +149,20 @@ class NavTest(TestCase):
                                 lon=53.4534)],
                         navaids=[])],
                 frequencies=[
-                        Frequency(
-                            type='TWR',
-                            frequency=118350000,
-                            name='Ameland Radio')
-                    ],
+                    Frequency(
+                        type='TWR',
+                        frequency=118350000,
+                        name='Ameland Radio'
+                    )
+                ],
                 weather=Weather(
-                        METAR=None,
-                        TAF=None))
+                    METAR=None,
+                    TAF=None
+                )
+            )
             # check that NavAPI method made correct request of FlightPlanDB
-            instance.assert_has_calls([call._get('/nav/airport/EHAL',
-                                       ignore_statuses=[404])])
+            instance.assert_has_calls(
+                [call._get('/nav/airport/EHAL')])
             # check NavAPI method decoded data correctly for given response
             assert response == correct_response
 

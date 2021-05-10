@@ -31,5 +31,8 @@ It is organized into subsections as specified in the docs; i.e. `FlightPlanDB.pl
 ## Data Types
 All datatypes can be found in `FlightPlanDB.datatypes`.
 
+## Exceptions
+All exceptions can be found in `FlightPlanDB.exceptions`.
+
 ## Documentation
 The documentation for this project can be found on readthedocs.io [here](https://flightplandb-py.readthedocs.io/).

@@ -510,14 +510,14 @@ class FlightPlanDB:
 
     # Sub APIs
     @property
+    def nav(self):
+        """Alias for :class:`~flightplandb.submodules.nav.NavAPI()`"""
+        return NavAPI(self)
+
+    @property
     def plan(self):
         """Alias for :class:`~flightplandb.submodules.plan.PlanAPI()`"""
         return PlanAPI(self)
-
-    @property
-    def user(self):
-        """Alias for :class:`~flightplandb.submodules.user.UserAPI()`"""
-        return UserAPI(self)
 
     @property
     def tags(self):
@@ -525,9 +525,9 @@ class FlightPlanDB:
         return TagsAPI(self)
 
     @property
-    def nav(self):
-        """Alias for :class:`~flightplandb.submodules.nav.NavAPI()`"""
-        return NavAPI(self)
+    def user(self):
+        """Alias for :class:`~flightplandb.submodules.user.UserAPI()`"""
+        return UserAPI(self)
 
     @property
     def weather(self):

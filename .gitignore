@@ -3,6 +3,8 @@
 *.log
 tmp/
 
+dist
+
 .env
 
 **/*.egg-info*
@@ -13,6 +15,8 @@ tmp/
 
 .python-version
 .docblock.json
+
+docs/build
 
 ignore/
 

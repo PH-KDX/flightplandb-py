@@ -10,14 +10,14 @@ For more information on Flight Plan Database, see their excellent [About page](h
 
 
 ## API
-All the API commands can be found in under the `FlightPlanDB` class.
+All the API commands can be called via the `flightplandb.FlightPlanDB` class.
 It is organized into subsections as specified in the docs; i.e. `FlightPlanDB.plan` has all the plan API commands.
 
 ## Data Types
-All datatypes can be found in `FlightPlanDB.datatypes`.
+All datatypes can be found in `flightplandb.datatypes`.
 
 ## Exceptions
-All exceptions can be found in `FlightPlanDB.exceptions`.
+All exceptions can be found in `flightplandb.exceptions`.
 
 ## Documentation
 The documentation for this project can be found on readthedocs.io [here](https://flightplandb-py.readthedocs.io/).

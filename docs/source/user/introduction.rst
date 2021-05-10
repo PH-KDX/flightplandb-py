@@ -3,18 +3,31 @@
 Introduction
 --------------------
 
+About
+^^^^^^^^^^^^^^^^^^^^
+This is a Python 3 wrapper for the `Flight Plan Database API <https://flightplandatabase.com/dev/api>`_.
+Flight Plan Database is a website for creating and sharing flight plans for use in flight simulation.
+For more information on Flight Plan Database, see their excellent `About page <https://flightplandatabase.com/about>`_.
+
 Prerequisites
 ^^^^^^^^^^^^^^^^^^^^
-FlightplanDB-py works with Python 3.6 or higher. Python 3.5 or
-lower is not supported due to f-strings, which were introduced with
-`PEP498 <https://www.python.org/dev/peps/pep-0498/>`_, being used in the library.
+FlightplanDB-py works with Python 3.7 or higher. Python 3.6 or
+lower is not supported due to dataclasses, which were introduced with
+`PEP 557 <https://www.python.org/dev/peps/pep-0557/>`_, being used in the library.
 
 Installation
 ^^^^^^^^^^^^^^^^^^^^
 Currently, the only way the library can be installed is from the
 `GitHub repository <https://github.com/PH-KDX/flightplandb-py>`_.
-It's recommended to install the devel branch, which is reasonably up-to-date and relatively stable.
+It's recommended to install the stable branch, if you want the library to just work.
 This looks as follows:
+
+.. code-block:: console
+
+  $ pip install https://github.com/PH-KDX/flightplandb-py/archive/stable.zip
+
+after which the package and its dependencies are installed.
+Or, if you like living dangerously, install the devel branch:
 
 .. code-block:: console
 
@@ -22,11 +35,11 @@ This looks as follows:
 
 after which the package and its dependencies are installed.
 
-Once the package is published on PyPi, the only thing you'll need to do will be
+To install with pip (coming soon) run
 
 .. code-block:: console
 
-  $ pip install flightplandb-py
+  $ pip install flightplandb
 
 Virtual Environments
 """"""""""""""""""""

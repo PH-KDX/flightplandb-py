@@ -17,7 +17,6 @@
 # with FlightplanDB-py.  If not, see <https://www.gnu.org/licenses/>.
 
 from typing import Generator, List, Dict, Union, Optional
-from dataclasses import asdict
 
 from urllib.parse import urljoin
 import requests
@@ -25,14 +24,15 @@ from requests.auth import HTTPBasicAuth
 from requests.structures import CaseInsensitiveDict
 
 import json
+from flightplandb.exceptions import status_handler
 
-from flightplandb.datatypes import (
-    StatusResponse,
-    PlanQuery, Plan, GenerateQuery,
-    User, UserSmall, Tag,
-    Airport, Track, Navaid,
-    Weather
-)
+from flightplandb.datatypes import StatusResponse
+
+from flightplandb.submodules.plan import PlanAPI
+from flightplandb.submodules.user import UserAPI
+from flightplandb.submodules.tags import TagsAPI
+from flightplandb.submodules.nav import NavAPI
+from flightplandb.submodules.weather import WeatherAPI
 
 
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directive-autoclass
@@ -41,6 +41,9 @@ class FlightPlanDB:
     """This class mostly contains internal functions called by the API.
     However, the internal functions are hidden, so unless you look at
     the source code, you're unlikely to see them.
+
+    Submodules are accessed via the alias properties at the end; for instance,
+    ``flightplandb.plan.fetch()``
 
     Parameters
     ----------
@@ -52,8 +55,9 @@ class FlightPlanDB:
     """
 
     def __init__(
-            self, key: Optional[str] = None,
-            url_base: str = "https://api.flightplandatabase.com"):
+        self, key: Optional[str] = None,
+        url_base: str = "https://api.flightplandatabase.com"
+    ):
         self.key: str = key
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
         self.url_base = url_base
@@ -118,7 +122,7 @@ class FlightPlanDB:
             "flightgear": "application/vnd.fpd.export.v1.flightgear",
             "tfdi717": "application/vnd.fpd.export.v1.tfdi717",
             "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
-            }
+        }
 
         if not ignore_statuses:
             ignore_statuses = []
@@ -145,8 +149,7 @@ class FlightPlanDB:
                                 auth=HTTPBasicAuth(self.key, None),
                                 *args, **kwargs)
 
-        if resp.status_code not in ignore_statuses:
-            resp.raise_for_status()
+        status_handler(resp.status_code, ignore_statuses)
 
         self._header = resp.headers
 
@@ -507,542 +510,26 @@ class FlightPlanDB:
 
     # Sub APIs
     @property
-    def plan(self):
-        """Alias for :class:`PlanAPI()`"""
-        return PlanAPI(self)
-
-    @property
-    def user(self):
-        """Alias for :class:`UserAPI()`"""
-        return UserAPI(self)
-
-    @property
-    def tags(self):
-        """Alias for :class:`TagsAPI()`"""
-        return TagsAPI(self)
-
-    @property
     def nav(self):
-        """Alias for :class:`NavAPI()`"""
+        """Alias for :class:`~flightplandb.submodules.nav.NavAPI()`"""
         return NavAPI(self)
 
     @property
-    def weather(self):
-        """Alias for :class:`WeatherAPI()`"""
-        return WeatherAPI(self)
-
-
-class PlanAPI():
-
-    """Flightplan-related commands"""
-
-    def __init__(self, flightplandb: FlightPlanDB):
-        self._fp = flightplandb
-
-    def fetch(self, id_: int,
-              return_format: str = "dict") -> Union[Plan, None, bytes]:
-        # Underscore for id_ must be escaped as id\_ so sphinx shows the _.
-        # However, this would raise W605. To fix this, a raw string is used.
-        r"""
-        Fetches a flight plan and its associated attributes by ID.
-        Returns it in specified format.
-
-        Parameters
-        ----------
-        id\_ : int
-            The ID of the flight plan to fetch
-        return_format : str
-            The API response format, defaults to ``"dict"``
-
-        Returns
-        -------
-        Union[Plan, None, bytes]
-            :class:`~flightplandb.datatypes.Plan` by default or if ``"dict"``
-            is specified as the ``return_format``.
-
-            ``bytes`` if a different format than ``"dict"`` was specified.
-
-            ``None`` if the plan with that id was not found.
-        """
-
-        try:
-            request = self._fp._get(f"/plan/{id_}",
-                                    return_format=return_format)
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 404:
-                return None
-            else:
-                raise e
-
-        if return_format == "dict":
-            return Plan(**request)
-
-        return request  # if the format is not a dict
-
-    def create(self, plan: Plan,
-               return_format: str = "dict") -> Union[Plan, bytes]:
-        """Creates a new flight plan.
-
-        Requires authentication.
-
-        Parameters
-        ----------
-        plan : Plan
-            The Plan object to register on the website
-        return_format : str
-            The API response format, defaults to ``"dict"``
-
-        Returns
-        -------
-        Union[Plan, bytes]
-            :class:`~flightplandb.datatypes.Plan` by default or if ``"dict"``
-            is specified as the ``return_format``.
-
-            ``bytes`` if a different format than ``"dict"`` was specified.
-        """
-
-        request = self._fp._post("/plan/", return_format=return_format)
-
-        if return_format == "dict":
-            return Plan(**request)
-
-        return request
-
-    def edit(self, plan: Plan,
-             return_format: str = "dict") -> Union[Plan, bytes]:
-        """Edits a flight plan linked to your account.
-
-        Requires authentication.
-
-        Parameters
-        ----------
-        plan : Plan
-            The new Plan object to replace the old one associated with that ID
-        return_format : str
-            The API response format, defaults to ``"dict"``
-
-        Returns
-        -------
-        Union[Plan, bytes]
-            :class:`~flightplandb.datatypes.Plan` by default or if ``"dict"``
-            is specified as the ``return_format``.
-
-            ``bytes`` if a different format than ``"dict"`` was specified.
-        """
-
-        request = self._fp._patch(f"/plan/{plan.id}", json=asdict(plan))
-
-        if return_format == "dict":
-            return Plan(**request)
-
-        return request
-
-    def delete(self, id_: int) -> StatusResponse:
-        r"""Deletes a flight plan that is linked to your account.
-
-        Requires authentication.
-
-        Parameters
-        ----------
-        id\_ : int
-            The ID of the flight plan to delete
-
-        Returns
-        -------
-        StatusResponse
-            OK 200 means a successful delete
-        """
-
-        return StatusResponse(**self._fp._delete(f"/plan/{id_}"))
-
-    def search(self, plan_query: PlanQuery, sort: str = "created",
-               limit: int = 100) -> Generator[Plan, None, None]:
-        """Searches for flight plans.
-        A number of search parameters are available.
-        They will be combined to form a search request.
-
-        Requires authentication if route is included in results
-
-        Parameters
-        ----------
-        plan_query : PlanQuery
-            A dataclass containing multiple options for plan searches
-        sort : str, optional
-            Sort order to return results in. Valid sort orders are
-            created, updated, popularity, and distance
-        limit : int
-            Maximum number of plans to return, defaults to 100
-
-        Yields
-        -------
-        Generator[Plan, None, None]
-            A generator containing :class:`~flightplandb.datatypes.Plan`
-            objects.
-            Each plan's :py:obj:`~flightplandb.datatypes.Plan.route`
-            will be set to ``None`` unless otherwise specified in the
-            :py:obj:`~flightplandb.datatypes.PlanQuery.includeRoute` parameter
-            of the :class:`~flightplandb.datatypes.PlanQuery` used
-            to request it
-        """
-
-        for i in self._fp._getiter("/search/plans",
-                                   sort=sort,
-                                   params=asdict(plan_query),
-                                   limit=limit):
-            yield Plan(**i)
-
-    def has_liked(self, id_: int) -> bool:
-        r"""Fetches your like status for a flight plan.
-
-        Requires authentication.
-
-        Parameters
-        ----------
-        id\_ : int
-            ID of the flightplan to be checked
-
-        Returns
-        -------
-        bool
-            ``True``/``False`` to indicate that the plan was liked / not liked
-        """
-
-        sr = StatusResponse(
-            **self._fp._get(f"/plan/{id_}/like", ignore_statuses=[404]))
-        return sr.message != "Not Found"
-
-    def like(self, id_: int) -> StatusResponse:
-        r"""Likes a flight plan.
-
-        Requires authentication.
-
-        Parameters
-        ----------
-        id\_ : int
-            ID of the flightplan to be liked
-
-        Returns
-        -------
-        StatusResponse
-            201 means the plan was successfully liked.
-            200 means the plan was already liked.
-        """
-
-        return StatusResponse(**self._fp._post(f"/plan/{id_}/like"))
-
-    def unlike(self, id_: int) -> bool:
-        r"""Removes a flight plan like.
-
-        Requires authentication.
-
-        Parameters
-        ----------
-        id\_ : int
-            ID of the flightplan to be unliked
-
-        Returns
-        -------
-        bool
-            ``True`` for a successful unlike, ``False`` indicates a failure
-        """
-
-        sr = StatusResponse(
-            **self._fp._delete(f"/plan/{id_}/like", ignore_statuses=[404]))
-        return sr.message != "Not Found"
-
-    def generate(self, gen_query: GenerateQuery,
-                 return_format: str = "dict") -> Union[Plan, bytes]:
-        """Creates a new flight plan using the route generator.
-
-        Requires authentication.
-
-        Parameters
-        ----------
-        gen_query : GenerateQuery
-            A dataclass with options for flight plan generation
-        return_format : str
-            The API response format, defaults to ``"dict"``
-
-        Returns
-        -------
-        Union[Plan, bytes]
-            Plan by default or if ``"dict"`` is specified as
-            the ``return_format``.
-
-            Bytes if a different format than ``"dict"`` was specified
-        """
-
-        return Plan(
-            **self._fp._post(
-                "/auto/generate", json=asdict(gen_query)))
-
-    def decode(self, route: str) -> Plan:
-        """Creates a new flight plan using the route decoder.
-
-        Requires authentication.
-
-        Parameters
-        ----------
-        route : str
-            The route to decode. Use a comma or space separated string of
-            waypoints, beginning and ending with valid airport ICAOs
-            (e.g. KSAN BROWS TRM LRAIN KDEN). Airways are supported if they
-            are preceded and followed by valid waypoints on the airway
-            (e.g. 06TRA UL851 BEGAR). SID and STAR procedures are not
-            currently supported and will be skipped, along with any
-            other unmatched waypoints.
-
-        Returns
-        -------
-        Plan
-            The registered flight plan created on flight plan database,
-            corresponding to the decoded route
-        """
-
-        return Plan(**self._fp._post(
-            "/auto/decode", json={"route": route}))
-
-
-class UserAPI:
-
-    """Commands related to registered users"""
-
-    def __init__(self, flightplandb: FlightPlanDB):
-        self._fp = flightplandb
+    def plan(self):
+        """Alias for :class:`~flightplandb.submodules.plan.PlanAPI()`"""
+        return PlanAPI(self)
 
     @property
-    def me(self) -> User:
-        """Fetches profile information for the currently authenticated user.
+    def tags(self):
+        """Alias for :class:`~flightplandb.submodules.tags.TagsAPI()`"""
+        return TagsAPI(self)
 
-        Requires authentication.
+    @property
+    def user(self):
+        """Alias for :class:`~flightplandb.submodules.user.UserAPI()`"""
+        return UserAPI(self)
 
-        Returns
-        -------
-        User
-            The User object of the currently authenticated user
-        """
-
-        return User(**self._fp._get("/me"))
-
-    def fetch(self, username: str) -> User:
-        """Fetches profile information for any registered user
-
-        Parameters
-        ----------
-        username : str
-            Username of the registered User
-
-        Returns
-        -------
-        User
-            The User object of the user associated with the username
-        """
-
-        return User(**self._fp._get(f"user/{username}"))
-
-    def plans(self, username: str, sort: str = "created",
-              limit: int = 100) -> Generator[Plan, None, None]:
-        """Fetches flight plans created by a user.
-
-        Parameters
-        ----------
-        username : str
-            Username of the user who created the flight plans
-        sort : str, optional
-            Sort order to return results in. Valid sort orders are
-            created, updated, popularity, and distance
-        limit: int
-            Maximum number of plans to fetch, defaults to ``100``
-
-        Yields
-        -------
-        Generator[Plan, None, None]
-            A generator with all the flight plans a user created,
-            limited by ``limit``
-        """
-
-        for i in self._fp._getiter(f"/user/{username}/plans",
-                                   sort=sort,
-                                   limit=limit):
-            yield Plan(**i)
-
-    def likes(self, username: str, sort: str = "created",
-              limit: int = 100) -> Generator[Plan, None, None]:
-        """Fetches flight plans liked by a user.
-
-        Parameters
-        ----------
-        username : str
-            Username of the user who liked the flight plans
-        sort : str, optional
-            Sort order to return results in. Valid sort orders are
-            created, updated, popularity, and distance
-        limit : int
-            Maximum number of plans to fetch, defaults to ``100``
-
-        Yields
-        -------
-        Generator[Plan, None, None]
-            A generator with all the flight plans a user liked,
-            limited by ``limit``
-        """
-
-        for i in self._fp._getiter(f"/user/{username}/likes",
-                                   sort=sort,
-                                   limit=limit):
-            yield Plan(**i)
-
-    def search(self, username: str,
-               limit=100) -> Generator[UserSmall, None, None]:
-        """Searches for users by username. For more detailed info on a
-        specific user, use :meth:`fetch`
-
-        Parameters
-        ----------
-        username : str
-            Username to search user database for
-        limit : type
-            Maximum number of users to fetch, defaults to ``100``
-
-        Yields
-        -------
-        Generator[UserSmall, None, None]
-            A generator with a list of users approximately matching
-            ``username``, limited by ``limit``. UserSmall is used instead of
-            User, because less info is returned.
-        """
-
-        for i in self._fp._getiter("/search/users",
-                                   limit=limit,
-                                   params={"q": username}):
-            yield UserSmall(**i)
-
-
-class TagsAPI:
-
-    """Related to flight plans"""
-
-    def __init__(self, flightplandb: FlightPlanDB):
-        self._fp = flightplandb
-
-    def fetch(self) -> List[Tag]:
-        """Fetches current popular tags from all flight plans.
-        Only tags with sufficient popularity are included.
-
-        Returns
-        ----------
-        List[Tag]
-            A list of the current popular tags.
-        """
-
-        return list(map(lambda t: Tag(**t), self._fp._get("/tags")))
-
-
-class NavAPI:
-
-    """Commands related to navigation aids and airports"""
-
-    def __init__(self, flightplandb: FlightPlanDB):
-        self._fp = flightplandb
-
-    def airport(self, icao) -> Union[Airport, None]:
-        """Fetches information about an airport.
-
-        Parameters
-        ----------
-        icao : type
-            The airport ICAO to fetch information for
-
-        Returns
-        -------
-        Union[Airport, None]
-
-            :class:`~flightplandb.datatypes.Airport` if the airport was found.
-            ``None`` if it was not.
-
-        """
-
-        resp = self._fp._get(f"/nav/airport/{icao}", ignore_statuses=[404])
-        if "message" in resp and resp["message"] == "Not Found":
-            response = None
-        else:
-            response = Airport(**resp)
-        return response
-
-    def nats(self) -> List[Track]:
-        """Fetches current North Atlantic Tracks.
-
-        Returns
-        -------
-        List[Track]
-            List of NATs
-        """
-
-        return list(
-            map(lambda n: Track(**n), self._fp._get("/nav/NATS")))
-
-    def pacots(self) -> List[Track]:
-        """Fetches current Pacific Organized Track System tracks.
-
-        Returns
-        -------
-        List[Track]
-            List of PACOTs
-        """
-
-        return list(
-            map(lambda t: Track(**t), self._fp._get("/nav/PACOTS")))
-
-    def search(self, query: str,
-               type_: str = None) -> Generator[Navaid, None, None]:
-        """Searches navaids using a query.
-
-        Parameters
-        ----------
-        query : str
-            The search query. Searches the navaid identifier and navaid name
-        type_ : str
-            Navaid type.
-            Must be either ``None`` (default value, returns all types) or one
-            of :py:obj:`~flightplandb.datatypes.Navaid.validtypes`
-
-        Yields
-        -------
-        Generator[Navaid, None, None]
-            A generator of navaids with either a name or ident
-            matching the ``query``
-        """
-
-        params = {"q": query}
-        if type_:
-            if type_ in Navaid.validtypes:
-                params["types"] = type_
-            else:
-                raise ValueError(f"{type_} is not a valid Navaid type")
-        for i in self._fp._getiter("/search/nav", params=params):
-            yield Navaid(**i)
-
-
-class WeatherAPI:
-
-    """Weather. I mean, how much is there to say?"""
-
-    def __init__(self, flightplandb: FlightPlanDB):
-        self._fp = flightplandb
-
-    def fetch(self, icao: str) -> Weather:
-        """
-        Fetches current weather conditions at an airport
-
-        Parameters
-        ----------
-        icao : str
-            ICAO code of the airport for which the weather will be fetched
-
-        Returns
-        -------
-        Weather
-            METAR and TAF for an airport
-        """
-
-        return Weather(**self._fp._get(f"/weather/{icao}"))
+    @property
+    def weather(self):
+        """Alias for :class:`~flightplandb.submodules.weather.WeatherAPI()`"""
+        return WeatherAPI(self)

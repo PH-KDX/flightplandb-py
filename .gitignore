@@ -14,6 +14,8 @@ tmp/
 .python-version
 .docblock.json
 
+docs/build
+
 ignore/
 
 venv

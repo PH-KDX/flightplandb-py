@@ -14,32 +14,24 @@ Prerequisites
 FlightplanDB-py works with Python 3.7 or higher. Python 3.6 or
 lower is not supported due to dataclasses, which were introduced with
 `PEP 557 <https://www.python.org/dev/peps/pep-0557/>`_, being used in the library.
+These instructions were written With Debian in mind, so you might have do some
+things slightly differently on your machine.
 
 Installation
 ^^^^^^^^^^^^^^^^^^^^
-Currently, the only way the library can be installed is from the
-`GitHub repository <https://github.com/PH-KDX/flightplandb-py>`_.
-It's recommended to install the stable branch, if you want the library to just work.
-This looks as follows:
+The easiest way to install the library is from PyPi, by running
 
 .. code-block:: console
 
-  $ pip install https://github.com/PH-KDX/flightplandb-py/archive/stable.zip
+  $ pip install flightplandb
 
-after which the package and its dependencies are installed.
-Or, if you like living dangerously, install the devel branch:
+Or, if you like living dangerously, install the devel branch directly from the GitHub repo:
 
 .. code-block:: console
 
   $ pip install https://github.com/PH-KDX/flightplandb-py/archive/devel.zip
 
 after which the package and its dependencies are installed.
-
-To install with pip (coming soon) run
-
-.. code-block:: console
-
-  $ pip install flightplandb
 
 Virtual Environments
 """"""""""""""""""""

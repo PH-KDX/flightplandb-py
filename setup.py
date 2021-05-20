@@ -8,7 +8,6 @@ setup(
     name="flightplandb",
     version="0.3.1",
     author="PH-KDX",
-    author_email="smtp.python.email.sender@gmail.com",
     url="https://github.com/PH-KDX/flightplandb-py/",
     project_urls={
         "Documentation": "https://flightplandb-py.readthedocs.io/",

@@ -878,7 +878,7 @@ class SearchNavaid:
     name: Union[float, None]
         The navaid name. ``None`` if not available
     validtypes : List[str]
-        Do not change. Valid Navaid types
+        Do not change. Valid SearchNavaid types
     """
     ident: str
     type: str
@@ -893,7 +893,7 @@ class SearchNavaid:
 
     def __post_init__(self):
         if self.type not in self.validtypes:
-            raise ValueError(f"{self.type} is not a valid Navaid type")
+            raise ValueError(f"{self.type} is not a valid SearchNavaid type")
 
     def _to_api_dict(self):
         return self.__dict__

@@ -1,7 +1,7 @@
 name: Tests and lint
 on: [push]
 jobs:
-  # no need to set up a matrix for this one
+  # no need to set up a matrix for the lint
   flake8-lint:
     runs-on: ubuntu-latest
     name: Flake8 Lint
@@ -17,15 +17,14 @@ jobs:
         with:
           max-line-length: "80"
 
-  # but we do want to run unittests on many platforms
+  # but we do want to run unittests on many python versions
   unittests:
     strategy:
       matrix:
         python-version: [ '3.7', '3.8', '3.9' ]
-        platform: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.platform }}
+    runs-on: ubuntu-latest
 
-    name: Unit tests, Python ${{ matrix.python-version }} on ${{ matrix.platform }}
+    name: Unit tests, Python ${{ matrix.python-version }}
 
     steps:
       - name: Check out source repository

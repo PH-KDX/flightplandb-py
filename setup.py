@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="flightplandb",
-    version="0.3.1",
+    version="0.3.2",
     author="PH-KDX",
     url="https://github.com/PH-KDX/flightplandb-py/",
     project_urls={
@@ -24,7 +24,7 @@ setup(
     ],
     extras_require={
         "dev": [
-            "Sphinx==4.0.0",
+            "Sphinx==4.0.2",
             "sphinx-rtd-theme==0.5.2"
         ]
     },

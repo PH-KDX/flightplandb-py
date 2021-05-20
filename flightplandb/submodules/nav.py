@@ -69,11 +69,11 @@ class NavAPI:
         type\_ : str
             Navaid type.
             Must be either ``None`` (default value, returns all types) or one
-            of :py:obj:`~flightplandb.datatypes.Navaid.validtypes`
+            of :py:obj:`~flightplandb.datatypes.SearchNavaid.validtypes`
 
         Yields
         -------
-        Generator[Navaid, None, None]
+        Generator[SearchNavaid, None, None]
             A generator of navaids with either a name or ident
             matching the ``query``
         """

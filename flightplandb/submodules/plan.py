@@ -226,10 +226,8 @@ class PlanAPI():
 
         Raises
         ------
-        :class:`~flightplandb.exceptions.InternalServerException`
+        :class:`~flightplandb.exceptions.NotFoundException`
             No plan with the specified id was found.
-            (yeah, I don't know why it isn't ``NotFoundException`` either;
-            ask the guy who made the API)
         """
 
         return StatusResponse(**self._fp._post(f"/plan/{id_}/like"))

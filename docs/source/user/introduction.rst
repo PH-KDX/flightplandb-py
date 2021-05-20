@@ -14,20 +14,18 @@ Prerequisites
 FlightplanDB-py works with Python 3.7 or higher. Python 3.6 or
 lower is not supported due to dataclasses, which were introduced with
 `PEP 557 <https://www.python.org/dev/peps/pep-0557/>`_, being used in the library.
+These instructions were written with Debian in mind, so you might have tweak them
+a little to get everything working on your machine.
 
 Installation
 ^^^^^^^^^^^^^^^^^^^^
-Currently, the only way the library can be installed is from the
-`GitHub repository <https://github.com/PH-KDX/flightplandb-py>`_.
-It's recommended to install the stable branch, if you want the library to just work.
-This looks as follows:
+The easiest way to install the library is from PyPi, by running
 
 .. code-block:: console
 
-  $ pip install https://github.com/PH-KDX/flightplandb-py/archive/stable.zip
+  $ pip install flightplandb
 
-after which the package and its dependencies are installed.
-Or, if you like living dangerously, install the devel branch:
+Or, if you like living dangerously, install the devel branch directly from the GitHub repo:
 
 .. code-block:: console
 
@@ -35,11 +33,7 @@ Or, if you like living dangerously, install the devel branch:
 
 after which the package and its dependencies are installed.
 
-To install with pip (coming soon) run
-
-.. code-block:: console
-
-  $ pip install flightplandb
+If you've never used ``pip`` before, check out `this useful overview <https://realpython.com/what-is-pip/>`_.
 
 Virtual Environments
 """"""""""""""""""""
@@ -89,9 +83,9 @@ Your account will need a verified email address to add an API key.
 
 Endpoints that require authentication are marked as such in the API docs. Failing to
 provide valid authentication credentials on these endpoints will result in a
-401 HTTPError being raised. You are responsible for maintaining the security
-of your private API key, which gives near full access to your Flight Plan
-Database account. If your key is exposed, please use
+:class:`~flightplandb.exceptions.ForbiddenException()` being raised. You are responsible
+for maintaining the security of your private API key, which gives near full access to
+your Flight Plan Database account. If your key is exposed, please use
 :meth:`~flightplandb.FlightPlanDB.revoke()` to revoke your key manually.
 
 

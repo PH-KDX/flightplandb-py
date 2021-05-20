@@ -606,7 +606,7 @@ class Navaid:
         The navaid slope in degrees from horizontal used for type GS
     bearing: Union[float, None]
         The navaid bearing in true degrees. ``None`` if not available
-    name: Union[float, None]
+    name: Union[str, None]
         The navaid name. ``None`` if not available
     elevation: float
         The navaid elevation above mean sea level (elevation)
@@ -624,7 +624,7 @@ class Navaid:
     frequency: Union[float, None]
     slope: Union[float, None]
     bearing: Union[float, None]
-    name: Union[float, None]
+    name: Union[str, None]
     elevation: float
     range: float
 
@@ -863,7 +863,7 @@ class SearchNavaid:
     ident: str
         The navaid identifier
     type: str
-        The navaid type. Must be one of :py:obj:`Navaid.validtypes`
+        The navaid type. Must be one of :py:obj:`SearchNavaid.validtypes`
     lat: float
         The navaid latitude
     lon: float
@@ -878,7 +878,7 @@ class SearchNavaid:
     name: Union[float, None]
         The navaid name. ``None`` if not available
     validtypes : List[str]
-        Do not change. Valid Navaid types
+        Do not change. Valid SearchNavaid types
     """
     ident: str
     type: str
@@ -893,7 +893,7 @@ class SearchNavaid:
 
     def __post_init__(self):
         if self.type not in self.validtypes:
-            raise ValueError(f"{self.type} is not a valid Navaid type")
+            raise ValueError(f"{self.type} is not a valid SearchNavaid type")
 
     def _to_api_dict(self):
         return self.__dict__

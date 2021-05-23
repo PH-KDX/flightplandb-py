@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="flightplandb",
-    version="0.3.2",
+    version="0.3.3",
     author="PH-KDX",
     url="https://github.com/PH-KDX/flightplandb-py/",
     project_urls={

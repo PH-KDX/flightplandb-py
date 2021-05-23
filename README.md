@@ -1,6 +1,6 @@
-<div style="text-align:center">
-  <img src="https://raw.githubusercontent.com/PH-KDX/flightplandb-py/feature/artwork/png/240x240.png"/>
-</div>
+<p align="center">
+    <img src="https://raw.githubusercontent.com/PH-KDX/flightplandb-py/feature/artwork/png/240x240.png" alt="FlightPlanDB-py logo">
+</p>
 
 # FlightplanDB-py
 

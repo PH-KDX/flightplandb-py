@@ -70,6 +70,20 @@ which should return
 if all has gone well.
 
 
+Request Limits
+^^^^^^^^^^^^^^^^^^^^
+API requests are rate limited on a 24 hour rolling basis to ensure fair access to all users.
+If you reach your daily limit, a
+:class:`~flightplandb.exceptions.TooManyRequestsException()` will be raised on
+your requests. To check your limit and used requests, look at the output of
+:meth:`~flightplandb.FlightPlanDB.limit_cap` and
+:meth:`~flightplandb.FlightPlanDB.limit_used` respectively.
+These calls, together with :meth:`~flightplandb.FlightPlanDB.ping()`, will not increment your request counter.
+
+The limit for unauthenticated users is IP-based, and is currently set to 100.
+The limit for authenticated users is key-based, and is currently set to 2500.
+
+
 Authentication
 ^^^^^^^^^^^^^^^^^^^^
 Whilst many parts of the API are publicly accessible, some endpoints require
@@ -78,7 +92,8 @@ authentication with an API access key, which is an alphanumeric string such as
 specified when initiating a :meth:`~flightplandb.FlightPlanDB` class instance,
 using the ``key`` argument.
 
-To get an API key, visit your `account settings <https://flightplandatabase.com/settings>`_ page.
+To get an API key, visit your Flight Plan Database
+`account settings <https://flightplandatabase.com/settings>`_ page.
 Your account will need a verified email address to add an API key.
 
 Endpoints that require authentication are marked as such in the API docs. Failing to

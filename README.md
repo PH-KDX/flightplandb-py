@@ -1,3 +1,7 @@
+<div style="text-align:center">
+  <img src="https://raw.githubusercontent.com/PH-KDX/flightplandb-py/feature/artwork/png/240x240.png"/>
+</div>
+
 # FlightplanDB-py
 
 ## Project status

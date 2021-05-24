@@ -76,4 +76,4 @@ pygments_style = 'sphinx'
 
 
 def setup(app):
-    app.add_css_file("css/darkmode.css")
+    app.add_css_file("css/colourscheme.css")

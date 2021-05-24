@@ -1,3 +1,13 @@
+.wy-side-nav-search {
+    background-color: rgb(42, 147, 205);
+    color: rgb(230, 228, 225);
+}
+@media (prefers-color-scheme: light) {
+  .wy-side-nav-search {
+      background-color: rgb(42, 147, 205);
+      color: rgb(230, 228, 225);
+  }
+}
 @media (prefers-color-scheme: dark) {
     html {
         background-color: #181a1b !important;
@@ -456,7 +466,7 @@
         background-image: none;
     }
     .wy-tray-container li.wy-tray-item-info {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         background-image: none;
     }
     .wy-tray-container li.wy-tray-item-warning {
@@ -513,7 +523,7 @@
         border-color: currentcolor;
     }
     .btn-info {
-        background-color: rgb(33, 102, 148) !important;
+        background-color: rgb(42, 147, 205) !important;
     }
     .btn-info:hover {
         background-color: rgb(37, 114, 165) !important;
@@ -578,7 +588,7 @@
         color: rgb(192, 186, 178);
     }
     .wy-dropdown-menu > dd > a:hover {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         background-image: none;
         color: rgb(232, 230, 227);
     }
@@ -601,7 +611,7 @@
         background-image: none;
     }
     .wy-dropdown.wy-dropdown-bubble .wy-dropdown-menu a:hover {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         background-image: none;
         color: rgb(232, 230, 227);
     }
@@ -1026,21 +1036,21 @@
         color: rgb(208, 204, 198);
     }
     .wy-menu-vertical a:active {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         color: rgb(232, 230, 227);
     }
     .wy-menu-vertical a:active span.toctree-expand {
         color: rgb(232, 230, 227);
     }
     .wy-side-nav-search {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         color: rgb(230, 228, 225);
     }
     .wy-side-nav-search input[type="text"] {
         border-color: rgb(35, 111, 160);
     }
     .wy-side-nav-search img {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
     }
     .wy-side-nav-search .wy-dropdown > a,
     .wy-side-nav-search > a {
@@ -1066,7 +1076,7 @@
         color: rgb(184, 178, 169);
     }
     .wy-nav .wy-menu-vertical a:hover {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         color: rgb(232, 230, 227);
     }
     .wy-body-for-nav {
@@ -1079,7 +1089,7 @@
         background-image: none;
     }
     .wy-nav-top {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         background-image: none;
         color: rgb(232, 230, 227);
     }
@@ -1087,7 +1097,7 @@
         color: rgb(232, 230, 227);
     }
     .wy-nav-top img {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
     }
     .wy-nav-content-wrap {
         background-color: rgb(26, 28, 29);
@@ -2187,7 +2197,7 @@
         background-image: none;
     }
     .wy-tray-container li.wy-tray-item-info {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         background-image: none;
     }
     .wy-tray-container li.wy-tray-item-warning {
@@ -2244,7 +2254,7 @@
         border-color: currentcolor;
     }
     .btn-info {
-        background-color: rgb(33, 102, 148) !important;
+        background-color: rgb(42, 147, 205) !important;
     }
     .btn-info:hover {
         background-color: rgb(37, 114, 165) !important;
@@ -2309,7 +2319,7 @@
         color: rgb(192, 186, 178);
     }
     .wy-dropdown-menu > dd > a:hover {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         background-image: none;
         color: rgb(232, 230, 227);
     }
@@ -2332,7 +2342,7 @@
         background-image: none;
     }
     .wy-dropdown.wy-dropdown-bubble .wy-dropdown-menu a:hover {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         background-image: none;
         color: rgb(232, 230, 227);
     }
@@ -2757,21 +2767,21 @@
         color: rgb(208, 204, 198);
     }
     .wy-menu-vertical a:active {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         color: rgb(232, 230, 227);
     }
     .wy-menu-vertical a:active span.toctree-expand {
         color: rgb(232, 230, 227);
     }
     .wy-side-nav-search {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         color: rgb(230, 228, 225);
     }
     .wy-side-nav-search input[type="text"] {
         border-color: rgb(35, 111, 160);
     }
     .wy-side-nav-search img {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
     }
     .wy-side-nav-search .wy-dropdown > a,
     .wy-side-nav-search > a {
@@ -2797,7 +2807,7 @@
         color: rgb(184, 178, 169);
     }
     .wy-nav .wy-menu-vertical a:hover {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         color: rgb(232, 230, 227);
     }
     .wy-body-for-nav {
@@ -2810,7 +2820,7 @@
         background-image: none;
     }
     .wy-nav-top {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
         background-image: none;
         color: rgb(232, 230, 227);
     }
@@ -2818,7 +2828,7 @@
         color: rgb(232, 230, 227);
     }
     .wy-nav-top img {
-        background-color: rgb(33, 102, 148);
+        background-color: rgb(42, 147, 205);
     }
     .wy-nav-content-wrap {
         background-color: rgb(26, 28, 29);
@@ -3373,9 +3383,6 @@
     }
     ::placeholder {
         opacity: 0.5 !important;
-    }
-    a[href="https://coinmarketcap.com/"] > svg[width="94"][height="16"] > path {
-        fill: var(--darkreader-neutral-text) !important;
     }
     #edge-translate-panel-body {
         color: var(--darkreader-neutral-text) !important;

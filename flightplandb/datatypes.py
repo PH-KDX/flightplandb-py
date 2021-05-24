@@ -320,7 +320,8 @@ class Plan:
     route : Optional[Route]
         The flight plan route
     cycle : Optional[Cycle]
-        The navigation data cycle
+        Navigation data cycle associated with the item.
+        ``None`` if no cycle linked
     """
     id: int
     fromICAO: Union[str, None]

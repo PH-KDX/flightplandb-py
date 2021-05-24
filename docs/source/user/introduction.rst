@@ -97,8 +97,8 @@ To get an API key, visit your Flight Plan Database
 Your account will need a verified email address to add an API key.
 
 Endpoints that require authentication are marked as such in the API docs. Failing to
-provide valid authentication credentials on these endpoints will result in a
-:class:`~flightplandb.exceptions.ForbiddenException()` being raised. You are responsible
+provide valid authentication credentials on these endpoints will result in an
+:class:`~flightplandb.exceptions.UnauthorizedException()` being raised. You are responsible
 for maintaining the security of your private API key, which gives near full access to
 your Flight Plan Database account. If your key is exposed, please use
 :meth:`~flightplandb.FlightPlanDB.revoke()` to revoke your key manually.

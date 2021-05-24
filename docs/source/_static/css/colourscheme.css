@@ -850,7 +850,7 @@
         background-color: rgb(40, 40, 40);
         background-image: none;
         border-color: rgb(56, 61, 63);
-        color: rgb(233, 88, 73);
+        color: rgb(255, 255, 255);
     }
     .rst-content .section ul,
     .rst-content .toctree-wrapper ul,
@@ -1298,7 +1298,7 @@
     }
     .rst-content code.literal,
     .rst-content tt.literal {
-        color: rgb(233, 88, 73);
+        color: rgb(255, 255, 255);
     }
     .rst-content code.xref,
     .rst-content tt.xref,
@@ -2581,7 +2581,7 @@
         background-color: rgb(40, 40, 40);
         background-image: none;
         border-color: rgb(56, 61, 63);
-        color: rgb(233, 88, 73);
+        color: rgb(255, 255, 255);
     }
     .rst-content .section ul,
     .rst-content .toctree-wrapper ul,
@@ -3029,7 +3029,7 @@
     }
     .rst-content code.literal,
     .rst-content tt.literal {
-        color: rgb(233, 88, 73);
+        color: rgb(255, 255, 255);
     }
     .rst-content code.xref,
     .rst-content tt.xref,

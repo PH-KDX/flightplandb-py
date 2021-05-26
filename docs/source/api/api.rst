@@ -6,26 +6,9 @@ API docs
    :undoc-members:
    :show-inheritance:
 
-Main module
---------------------------------
-
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 5
 
    flightplandb
-
-Datatypes
---------------------------------
-
-.. toctree::
-   :maxdepth: 4
-
    datatypes
-
-Exceptions
---------------------------------
-
-.. toctree::
-   :maxdepth: 4
-
    exceptions

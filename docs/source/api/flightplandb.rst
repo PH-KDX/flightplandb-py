@@ -1,4 +1,4 @@
-FlightplanDB docs
+Main module
 ====================
 
 .. automodule:: flightplandb.flightplandb
@@ -6,7 +6,7 @@ FlightplanDB docs
    :undoc-members:
 
 Submodules
-^^^^^^^^^^^^^^^^^^^^^
+---------------------
 .. toctree::
    :titlesonly:
    :glob:

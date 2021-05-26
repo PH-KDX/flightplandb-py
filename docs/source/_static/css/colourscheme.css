@@ -16,7 +16,7 @@
 }
 @media (prefers-color-scheme: dark) {
     html {
-        background-color: #181a1b !important;
+        background-color: rgb(23, 23, 23) !important;
     }
     html, body, input, textarea, select, button {
         background-color: #181a1b;

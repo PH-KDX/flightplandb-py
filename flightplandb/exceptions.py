@@ -74,6 +74,20 @@ class NotFoundException(BaseErrorHandler):
     pass
 
 
+class TooManyRequestsException(BaseErrorHandler):
+    """Your requests limit for the server has been exceeded.
+    Raised for an HTTP status code 429.
+
+    Attributes
+    ----------
+    status_code
+        Not used
+    message
+        A verbose description of this error.
+    """
+    pass
+
+
 class InternalServerException(BaseErrorHandler):
     """Something unspecified went wrong with the server.
     Raised for an HTTP status code 500.
@@ -113,6 +127,11 @@ def status_handler(status_code, ignore_statuses=None):
                 status_code=status_code,
                 message="The server has not found anything "
                 "matching the Request-URI."
+            )
+        elif status_code == 429:
+            raise TooManyRequestsException(
+                status_code=status_code,
+                message="Your requests limit for the server has been exceeded."
             )
         elif status_code == 500:
             raise InternalServerException(

@@ -36,11 +36,11 @@ class StatusResponse:
     ----------
     message : str
         The message associated with the status returned
-    errors : Union[List[str], None]
+    errors : Optional[List[str]]
         A list of any errors raised
     """
     message: str
-    errors: Union[List[str], None]
+    errors: Optional[List[str]]
 
     def _to_api_dict(self):
         return self.__dict__
@@ -56,7 +56,7 @@ class User:
         Unique user identifier number
     username : str
         Username
-    location : Optional[Union[str, None]]
+    location : Optional[str]
         User provided location information. ``None`` if not available
     gravatarHash : Optional[str]
         Gravatar hash based on user's account email address.
@@ -75,7 +75,7 @@ class User:
     """
     id: int
     username: str
-    location: Optional[Union[str, None]] = None
+    location: Optional[str] = None
     gravatarHash: Optional[str] = None
     joined: Optional[datetime] = None
     lastSeen: Optional[datetime] = None
@@ -109,14 +109,14 @@ class UserSmall:
         Unique user identifier number
     username : str
         Username
-    location : Optional[Union[str, None]]
+    location : Optional[str]
         User provided location information. ``None`` if not available
     gravatarHash : Optional[str]
         Gravatar hash based on user's account email address.
     """
     id: int
     username: str
-    location: Optional[Union[str, None]] = None
+    location: Optional[str] = None
     gravatarHash: Optional[str] = None
 
     def _to_api_dict(self):
@@ -131,14 +131,14 @@ class Application:
     ----------
     id : int
         Unique application identifier number
-    name : Optional[Union[str, None]]
+    name : Optional[str]
         Application name
-    url : Optional[Union[str, None]]
+    url : Optional[str]
         Application URL
     """
     id: int
-    name: Optional[Union[str, None]] = None
-    url: Optional[Union[str, None]] = None
+    name: Optional[str] = None
+    url: Optional[str] = None
 
     def _to_api_dict(self):
         return self.__dict__
@@ -176,7 +176,7 @@ class RouteNode:
 
     Attributes
     ----------
-    id: Union[int, None]
+    id: Optional[int]
         For some obscure reason an apparently useless id is included with
         each node when the node is inside a :class:`Track` route.
         Goodness knows why.
@@ -188,11 +188,11 @@ class RouteNode:
         Node latitude in decimal degrees
     lon : float
         Node longitude in decimal degrees
-    alt : Union[float, None]
+    alt : Optional[float]
         Suggested altitude at node
-    name : Union[str, None]
+    name : Optional[str]
         Node name.
-    via : Union[Via, None]
+    via : Optional[Via]
         Route to node.
     validtypes : List[str]
         Do not change. Valid RouteNode types.
@@ -201,10 +201,10 @@ class RouteNode:
     type: str
     lat: float
     lon: float
-    id: Union[int, None] = None
-    alt: Union[float, None] = None
-    name: Union[str, None] = None
-    via: Union[Via, None] = None
+    id: Optional[int] = None
+    alt: Optional[float] = None
+    name: Optional[str] = None
+    via: Optional[Via] = None
 
     validtypes = ['UKN', 'APT', 'NDB', 'VOR', 'FIX', 'DME', 'LATLON']
 
@@ -228,14 +228,14 @@ class Route:
     ----------
     nodes : List[RouteNode]
         A list of :class:`RouteNode` s. A route must have at least 2 nodes.
-    eastLevels : Union[List[str], None]
+    eastLevels : Optional[List[str]]
         Valid eastbound flightlevels. Only used inside a NATS :class:`Track`.
-    westLevels : Union[List[str], None]
+    westLevels : Optional[List[str]]
         Valid westbound flightlevels. Only used inside a NATS :class:`Track`.
     """
     nodes: List[RouteNode]
-    eastLevels: Union[List[str], None] = None
-    westLevels: Union[List[str], None] = None
+    eastLevels: Optional[List[str]] = None
+    westLevels: Optional[List[str]] = None
 
     def __post_init__(self):
         self.nodes = list(map(
@@ -281,15 +281,15 @@ class Plan:
     ----------
     id : int
         Unique plan identifier number
-    fromICAO : Union[str, None]
+    fromICAO : Optional[str]
         ICAO code of the departure airport
-    toICAO : Union[str, None]
+    toICAO : Optional[str]
         ICAO code of the destination airport
-    fromName : Union[str, None]
+    fromName : Optional[str]
         Name of the departure airport
-    toName : Union[str, None]
+    toName : Optional[str]
         Name of the destination airport
-    flightNumber : Optional[Union[str, None]]
+    flightNumber : Optional[str]
         Flight number of the flight plan
     distance : Optional[float]
         Total distance of the flight plan route
@@ -313,21 +313,22 @@ class Plan:
         UTC Date and time of the last flight plan edit
     tags : Optional[List[str]]
         List of flight plan tags
-    user : Optional[Union[User, None]]
+    user : Optional[User]
         User associated with the item. ``None`` if no user linked
-    application : Optional[Union[Application, None]]
+    application : Optional[Application]
         Application associated with the item. ``None`` if no application linked
     route : Optional[Route]
         The flight plan route
     cycle : Optional[Cycle]
-        The navigation data cycle
+        Navigation data cycle associated with the item.
+        ``None`` if no cycle linked
     """
     id: int
-    fromICAO: Union[str, None]
-    toICAO: Union[str, None]
-    fromName: Union[str, None]
-    toName: Union[str, None]
-    flightNumber: Optional[Union[str, None]] = None
+    fromICAO: Optional[str]
+    toICAO: Optional[str]
+    fromName: Optional[str]
+    toName: Optional[str]
+    flightNumber: Optional[str] = None
     distance: Optional[float] = None
     maxAltitude: Optional[float] = None
     waypoints: Optional[int] = None
@@ -339,8 +340,8 @@ class Plan:
     createdAt: Optional[datetime] = None
     updatedAt: Optional[datetime] = None
     tags: Optional[List[str]] = None
-    user: Optional[Union[User, None]] = None
-    application: Optional[Union[Application, None]] = None
+    user: Optional[User] = None
+    application: Optional[Application] = None
     route: Optional[Route] = None
     cycle: Optional[Cycle] = None
 
@@ -483,7 +484,7 @@ class Tag:
     ----------
     name : str
         Tag name
-    description : Union[str, None]
+    description : Optional[str]
         Description of the tag. ``None`` if no description is available
     planCount : int
         Number of plans with this tag
@@ -491,7 +492,7 @@ class Tag:
         Popularity index of the tag
     """
     name: str
-    description: Union[str, None]
+    description: Optional[str]
     planCount: int
     popularity: int
 
@@ -505,14 +506,14 @@ class Timezone:
 
     Attributes
     ----------
-    name : Union[str, None]
+    name : Optional[str]
         The IANA timezone the airport is located in. ``None`` if not available
-    offset : Union[float, None]
+    offset : Optional[float]
         The number of seconds the airport timezone is currently
         offset from UTC. Positive is ahead of UTC. ``None`` if not available
     """
-    name: Union[str, None]
-    offset: Union[float, None]
+    name: Optional[str]
+    offset: Optional[float]
 
     def _to_api_dict(self):
         return self.__dict__
@@ -600,13 +601,13 @@ class Navaid:
         The airport associated with the navaid
     runway: str
         The runway associated with the navaid
-    frequency: Union[float, None]
+    frequency: Optional[float]
         The navaid frequency in Hz. ``None`` if not available
-    slope: Union[float, None]
+    slope: Optional[float]
         The navaid slope in degrees from horizontal used for type GS
-    bearing: Union[float, None]
+    bearing: Optional[float]
         The navaid bearing in true degrees. ``None`` if not available
-    name: Union[str, None]
+    name: Optional[str]
         The navaid name. ``None`` if not available
     elevation: float
         The navaid elevation above mean sea level (elevation)
@@ -621,10 +622,10 @@ class Navaid:
     lon: float
     airport: str
     runway: str
-    frequency: Union[float, None]
-    slope: Union[float, None]
-    bearing: Union[float, None]
-    name: Union[str, None]
+    frequency: Optional[float]
+    slope: Optional[float]
+    bearing: Optional[float]
+    name: Optional[str]
     elevation: float
     range: float
 
@@ -704,13 +705,13 @@ class Frequency:
         The frequency type
     frequency : float
         The frequency in Hz
-    name : Union[str, None]
+    name : Optional[str]
         The frequency name. ``None`` if not available
 
     """
     type: str
     frequency: float
-    name: Union[str, None]
+    name: Optional[str]
 
     def _to_api_dict(self):
         return self.__dict__
@@ -722,13 +723,13 @@ class Weather:
 
     Attributes
     ----------
-    METAR : Union[str, None]
+    METAR : Optional[str]
         Current METAR report for the airport
-    TAF : Union[str, None]
+    TAF : Optional[str]
         Current TAF report for the airport
     """
-    METAR: Union[str, None]
-    TAF: Union[str, None]
+    METAR: Optional[str]
+    TAF: Optional[str]
 
     def _to_api_dict(self):
         return self.__dict__
@@ -743,11 +744,11 @@ class Airport:
     ----------
     ICAO: str
         The airport ICAO code
-    IATA: Union[str, None]
+    IATA: Optional[str]
         The airport IATA code. ``None`` if not available
     name: str
         The airport name
-    regionName: Union[str, None]
+    regionName: Optional[str]
         The geographical region the airport is located in.
         ``None`` if not available
     elevation: float
@@ -774,9 +775,9 @@ class Airport:
         Airport weather information
     """
     ICAO: str
-    IATA: Union[str, None]
+    IATA: Optional[str]
     name: str
-    regionName: Union[str, None]
+    regionName: Optional[str]
     elevation: float
     lat: float
     lon: float
@@ -870,12 +871,12 @@ class SearchNavaid:
         The navaid longitude
     elevation: float
         The navaid elevation above mean sea level (elevation)
-    runwayIdent: Union[str, None]
+    runwayIdent: Optional[str]
         The runway associated with the navaid. ``None`` if not available
-    airportICAO: Union[str, None]
+    airportICAO: Optional[str]
         The ICAO of the airport associated with the navaid.
         ``None`` if not available
-    name: Union[float, None]
+    name: Optional[float]
         The navaid name. ``None`` if not available
     validtypes : List[str]
         Do not change. Valid SearchNavaid types
@@ -885,9 +886,9 @@ class SearchNavaid:
     lat: float
     lon: float
     elevation: float
-    runwayIdent: Union[str, None] = None
-    airportICAO: Union[str, None] = None
-    name: Union[float, None] = None
+    runwayIdent: Optional[str] = None
+    airportICAO: Optional[str] = None
+    name: Optional[float] = None
 
     validtypes = ['UKN', 'APT', 'NDB', 'VOR', 'FIX', 'DME', 'LATLON']
 

@@ -28,7 +28,22 @@ This is a small example program which demonstrates basic usage of the library.
   for plan in lemon_plans:
       print(plan)
 
+  # define a query to search for all plans
+  query = fpdb.datatypes.PlanQuery(fromICAO="EHAM",
+                                   toICAO="EGLL")
+  # then search for the first three results of that query, sorted by distance
+  resp = api.plan.search(query, limit=3, sort="distance")
+  # and print each result in the response
+  for i in resp:
+      print(i)
+
+  # fetch the weather for Schiphol Airport
+  print(api.weather.fetch("EHAM"))
+
+  # then check remaining requests by subtracting the requests made from the total limit
+  print(api.limit_cap-api.limit_used)
+
 Try saving it in a file called ``test.py`` in your project directory and running it.
-Experiment around to see what works!
+Experiment around with different commands to get a feel for the library.
 
 For specific commands, check out the :doc:`../api/api`.

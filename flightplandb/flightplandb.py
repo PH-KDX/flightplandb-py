@@ -63,7 +63,7 @@ class FlightPlanDB:
         self.url_base = url_base
 
     def _request(self, method: str,
-                 path: str, return_format="dict",
+                 path: str, return_format="native",
                  ignore_statuses: Optional[List] = None,
                  params: Optional[Dict] = None,
                  *args, **kwargs) -> Union[Dict, bytes]:
@@ -76,7 +76,7 @@ class FlightPlanDB:
         path : str
             The endpoint's path to which the request is being made
         return_format : str, optional
-            The API response format, defaults to ``"dict"``
+            The API response format, defaults to ``"native"``
         ignore_statuses : Optional[List], optional
             Statuses (together with 200 OK) which don't
             raise an HTTPError, defaults to None
@@ -90,7 +90,8 @@ class FlightPlanDB:
         Returns
         -------
         Union[Dict, bytes]
-            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
+            A ``dataclass`` if ``return_format`` is ``"native"``,
+            otherwise ``bytes``
 
         Raises
         ------
@@ -102,12 +103,12 @@ class FlightPlanDB:
 
         format_return_types = {
             # if a dict is requested, the JSON will later be converted to that
-            "dict": "application/json",
+            "native": "application/vnd.fpd.v1+json",
             # otherwise, pure JSON will be returned
-            "json": "application/json",
-            "xml": "application/xml",
-            "csv": "text/csv",
-            "pdf": "application/pdf",
+            "json": "application/vnd.fpd.v1+json",
+            "xml": "application/vnd.fpd.v1+xml",
+            "csv": "text/vnd.fpd.export.v1.csv+csv",
+            "pdf": "application/vnd.fpd.export.v1.pdf",
             "kml": "application/vnd.fpd.export.v1.kml+xml",
             "xplane": "application/vnd.fpd.export.v1.xplane",
             "xplane11": "application/vnd.fpd.export.v1.xplane11",
@@ -147,19 +148,19 @@ class FlightPlanDB:
 
         resp = requests.request(method, urljoin(self.url_base, path),
                                 auth=HTTPBasicAuth(self.key, None),
-                                *args, **kwargs)
+                                headers=params, *args, **kwargs)
 
         status_handler(resp.status_code, ignore_statuses)
 
         self._header = resp.headers
 
-        if return_format == "dict":
+        if return_format == "native":
             return resp.json()
 
         return resp.text  # if the format is not a dict
 
     # and here go the specific non-paginated HTTP calls
-    def _get(self, path: str, return_format="dict",
+    def _get(self, path: str, return_format="native",
              ignore_statuses: Optional[List] = None,
              params: Optional[Dict] = None,
              *args, **kwargs) -> Union[Dict, bytes]:
@@ -170,7 +171,7 @@ class FlightPlanDB:
         path : str
             The endpoint's path to which the request is being made
         return_format : str, optional
-            The API response format, defaults to ``"dict"``
+            The API response format, defaults to ``"native"``
         ignore_statuses : Optional[List], optional
             Statuses (together with 200 OK) which don't
             raise an HTTPError, defaults to None
@@ -184,7 +185,8 @@ class FlightPlanDB:
         Returns
         -------
         Union[Dict, bytes]
-            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
+            A ``dataclass`` if ``return_format`` is ``"native"``,
+            otherwise ``bytes``
         """
 
         # I HATE not being able to set empty lists as default arguments
@@ -200,7 +202,7 @@ class FlightPlanDB:
                              *args, **kwargs)
         return resp
 
-    def _post(self, path: str, return_format="dict",
+    def _post(self, path: str, return_format="native",
               ignore_statuses: Optional[List] = None,
               params: Optional[Dict] = None,
               *args, **kwargs) -> Union[Dict, bytes]:
@@ -211,7 +213,7 @@ class FlightPlanDB:
         path : str
             The endpoint's path to which the request is being made
         return_format : str, optional
-            The API response format, defaults to ``"dict"``
+            The API response format, defaults to ``"native"``
         ignore_statuses : Optional[List], optional
             Statuses (together with 200 OK) which don't
             raise an HTTPError, defaults to None
@@ -225,7 +227,8 @@ class FlightPlanDB:
         Returns
         -------
         Union[Dict, bytes]
-            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
+            A ``dataclass`` if ``return_format`` is ``"native"``,
+            otherwise ``bytes``
         """
         if not ignore_statuses:
             ignore_statuses = []
@@ -240,7 +243,7 @@ class FlightPlanDB:
                              *args, **kwargs)
         return resp
 
-    def _patch(self, path: str, return_format="dict",
+    def _patch(self, path: str, return_format="native",
                ignore_statuses: Optional[List] = None,
                params: Optional[Dict] = None,
                *args, **kwargs) -> Union[Dict, bytes]:
@@ -251,7 +254,7 @@ class FlightPlanDB:
         path : str
             The endpoint's path to which the request is being made
         return_format : str, optional
-            The API response format, defaults to ``"dict"``
+            The API response format, defaults to ``"native"``
         ignore_statuses : Optional[List], optional
             Statuses (together with 200 OK) which don't
             raise an HTTPError, defaults to None
@@ -265,7 +268,8 @@ class FlightPlanDB:
         Returns
         -------
         Union[Dict, bytes]
-            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
+            A ``dataclass`` if ``return_format`` is ``"native"``,
+            otherwise ``bytes``
         """
 
         if not ignore_statuses:
@@ -281,7 +285,7 @@ class FlightPlanDB:
                              *args, **kwargs)
         return resp
 
-    def _delete(self, path: str, return_format="dict",
+    def _delete(self, path: str, return_format="native",
                 ignore_statuses: Optional[List] = None,
                 params: Optional[Dict] = None,
                 *args, **kwargs) -> Union[Dict, bytes]:
@@ -292,7 +296,7 @@ class FlightPlanDB:
         path : str
             The endpoint's path to which the request is being made
         return_format : str, optional
-            The API response format, defaults to ``"dict"``
+            The API response format, defaults to ``"native"``
         ignore_statuses : Optional[List], optional
             Statuses (together with 200 OK) which don't
             raise an HTTPError, defaults to None
@@ -306,7 +310,8 @@ class FlightPlanDB:
         Returns
         -------
         Union[Dict, bytes]
-            A ``dict`` if ``return_format`` is ``"dict"``, otherwise ``bytes``
+            A ``dataclass`` if ``return_format`` is ``"native"``,
+            otherwise ``bytes``
         """
 
         if not ignore_statuses:

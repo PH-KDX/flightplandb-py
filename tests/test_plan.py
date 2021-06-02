@@ -47,7 +47,7 @@ class PlanTest(TestCase):
             response = sub_instance.fetch(62373)
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls(
-                [call._get('/plan/62373', return_format='dict')])
+                [call._get('/plan/62373', return_format='native')])
 
             correct_response = Plan(
                 id=62373,
@@ -183,7 +183,7 @@ class PlanTest(TestCase):
                             'eastLevels': None,
                             'westLevels': None},
                         'cycle': None},
-                    return_format='dict')])
+                    return_format='native')])
 
             correct_response = Plan(
                 id=None,

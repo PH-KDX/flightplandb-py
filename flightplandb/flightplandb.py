@@ -90,7 +90,8 @@ class FlightPlanDB:
         Returns
         -------
         Union[Dict, bytes]
-            A ``dataclass`` if ``return_format`` is ``"native"``, otherwise ``bytes``
+            A ``dataclass`` if ``return_format`` is ``"native"``,
+            otherwise ``bytes``
 
         Raises
         ------
@@ -184,7 +185,8 @@ class FlightPlanDB:
         Returns
         -------
         Union[Dict, bytes]
-            A ``dataclass`` if ``return_format`` is ``"native"``, otherwise ``bytes``
+            A ``dataclass`` if ``return_format`` is ``"native"``,
+            otherwise ``bytes``
         """
 
         # I HATE not being able to set empty lists as default arguments
@@ -225,7 +227,8 @@ class FlightPlanDB:
         Returns
         -------
         Union[Dict, bytes]
-            A ``dataclass`` if ``return_format`` is ``"native"``, otherwise ``bytes``
+            A ``dataclass`` if ``return_format`` is ``"native"``,
+            otherwise ``bytes``
         """
         if not ignore_statuses:
             ignore_statuses = []
@@ -265,7 +268,8 @@ class FlightPlanDB:
         Returns
         -------
         Union[Dict, bytes]
-            A ``dataclass`` if ``return_format`` is ``"native"``, otherwise ``bytes``
+            A ``dataclass`` if ``return_format`` is ``"native"``,
+            otherwise ``bytes``
         """
 
         if not ignore_statuses:
@@ -306,7 +310,8 @@ class FlightPlanDB:
         Returns
         -------
         Union[Dict, bytes]
-            A ``dataclass`` if ``return_format`` is ``"native"``, otherwise ``bytes``
+            A ``dataclass`` if ``return_format`` is ``"native"``,
+            otherwise ``bytes``
         """
 
         if not ignore_statuses:

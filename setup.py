@@ -44,6 +44,9 @@ setup(
         "dev": [
             "Sphinx==4.0.2",
             "sphinx-rtd-theme==0.5.2"
+        ],
+        "test": [
+            "pytest==6.2.5"
         ]
     },
     python_requires='>=3.7.0',

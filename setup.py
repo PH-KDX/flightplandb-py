@@ -37,13 +37,13 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        "requests==2.25.1",
-        "python-dateutil==2.8.1"
+        "requests==2.26.0",
+        "python-dateutil==2.8.2"
     ],
     extras_require={
         "dev": [
-            "Sphinx==4.0.2",
-            "sphinx-rtd-theme==0.5.2"
+            "Sphinx==4.2.0",
+            "sphinx-rtd-theme==1.0.0"
         ],
         "test": [
             "pytest==6.2.5"
@@ -57,6 +57,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Operating System :: OS Independent",
         "Topic :: Internet",
         "Topic :: Software Development :: Libraries",

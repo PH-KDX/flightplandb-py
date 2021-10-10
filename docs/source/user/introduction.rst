@@ -102,8 +102,3 @@ provide valid authentication credentials on these endpoints will result in an
 for maintaining the security of your private API key, which gives near full access to
 your Flight Plan Database account. If your key is exposed, please use
 :meth:`~flightplandb.FlightPlanDB.revoke()` to revoke your key manually.
-
-
-Further information
-^^^^^^^^^^^^^^^^^^^^
-A good video on the usage of the library can be found `here <https://youtu.be/dQw4w9WgXcQ>`_.

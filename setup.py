@@ -24,7 +24,7 @@ def get_version(rel_path):
 
 setup(
     name="flightplandb",
-    version=get_version("flightplandb/__init__.py"),
+    version=get_version("src/flightplandb/__init__.py"),
     author="PH-KDX",
     url="https://github.com/PH-KDX/flightplandb-py/",
     project_urls={
@@ -34,7 +34,8 @@ setup(
     description="Python wrapper for the Flight Plan Database API",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(),
+    package_dir={"":"src"},
+    packages=find_packages(where="src"),
     include_package_data=True,
     install_requires=[
         "requests==2.26.0",

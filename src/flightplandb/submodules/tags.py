@@ -20,4 +20,4 @@ class TagsAPI(FlightPlanDB):
             A list of the current popular tags.
         """
 
-        return list(map(lambda t: Tag(**t), self._get("/tags"), key=key))
+        return list(map(lambda t: Tag(**t), self._get(path="/tags", key=key)))

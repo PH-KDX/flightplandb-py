@@ -29,7 +29,7 @@ class NavAPI(FlightPlanDB):
             No airport with the specified ICAO code was found.
         """
 
-        resp = self._get(f"/nav/airport/{icao}", key=key)
+        resp = self._get(path=f"/nav/airport/{icao}", key=key)
         return Airport(**resp)
 
     def nats(self, key: Optional[str] = None) -> List[Track]:
@@ -54,7 +54,7 @@ class NavAPI(FlightPlanDB):
         """
 
         return list(
-            map(lambda t: Track(**t), self._get("/nav/PACOTS", key=key)))
+            map(lambda t: Track(**t), self._get(path="/nav/PACOTS", key=key)))
 
     def search(self, query: str,
                type_: str = None, key: Optional[str] = None
@@ -83,5 +83,5 @@ class NavAPI(FlightPlanDB):
                 params["types"] = type_
             else:
                 raise ValueError(f"{type_} is not a valid Navaid type")
-        for i in self._getiter("/search/nav", params=params, key=key):
+        for i in self._getiter(path="/search/nav", params=params, key=key):
             yield SearchNavaid(**i)

@@ -84,7 +84,7 @@ class API(FlightPlanDB):
             OK 200 means the service is up and running.
         """
 
-        resp = self._get("", key=key)
+        resp = self._get(path="", key=key)
         return StatusResponse(**resp)
 
     def revoke(self, key: Optional[str] = None) -> StatusResponse:
@@ -102,6 +102,6 @@ class API(FlightPlanDB):
             occurred and the errors array will give further details.
         """
 
-        resp = self._get("/auth/revoke", key=key)
+        resp = self._get(path="/auth/revoke", key=key)
         self._header = resp.headers
         return StatusResponse(**resp.json())

@@ -1,18 +1,16 @@
-from typing import List
+from typing import List, Optional
 from flightplandb.datatypes import Tag
+from flightplandb.flightplandb import FlightPlanDB
 
 
-class TagsAPI:
+class TagsAPI(FlightPlanDB):
 
     """
     Related to flight plans.
     Accessed via :meth:`~flightplandb.flightplandb.FlightPlanDB.tags`.
     """
 
-    def __init__(self, flightplandb):
-        self._fp = flightplandb
-
-    def fetch(self) -> List[Tag]:
+    def fetch(self, key: Optional[str] = None) -> List[Tag]:
         """Fetches current popular tags from all flight plans.
         Only tags with sufficient popularity are included.
 
@@ -22,4 +20,4 @@ class TagsAPI:
             A list of the current popular tags.
         """
 
-        return list(map(lambda t: Tag(**t), self._fp._get("/tags")))
+        return list(map(lambda t: Tag(**t), self._get("/tags"), key=key))

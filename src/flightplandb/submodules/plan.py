@@ -1,22 +1,21 @@
-from typing import Generator, Union
+from typing import Generator, Union, Optional
 from flightplandb.datatypes import (
     StatusResponse, PlanQuery,
     Plan, GenerateQuery
 )
+from flightplandb.flightplandb import FlightPlanDB
 
 
-class PlanAPI():
+class PlanAPI(FlightPlanDB):
 
     """
     Flightplan-related commands.
     Accessed via :meth:`~flightplandb.flightplandb.FlightPlanDB.plan`.
     """
 
-    def __init__(self, flightplandb):
-        self._fp = flightplandb
-
     def fetch(self, id_: int,
-              return_format: str = "native") -> Union[Plan, None, bytes]:
+              return_format: str = "native",
+              key: Optional[str] = None) -> Union[Plan, None, bytes]:
         # Underscore for id_ must be escaped as id\_ so sphinx shows the _.
         # However, this would raise W605. To fix this, a raw string is used.
         r"""
@@ -45,9 +44,10 @@ class PlanAPI():
             No plan with the specified id was found.
         """
 
-        request = self._fp._get(
-            f"/plan/{id_}",
-            return_format=return_format
+        request = self._get(
+            path=f"/plan/{id_}",
+            return_format=return_format,
+            key=key
         )
 
         if return_format == "native":
@@ -56,7 +56,8 @@ class PlanAPI():
         return request  # if the format is not a dict
 
     def create(self, plan: Plan,
-               return_format: str = "native") -> Union[Plan, bytes]:
+               return_format: str = "native",
+               key: Optional[str] = None) -> Union[Plan, bytes]:
         """Creates a new flight plan.
 
         Requires authentication.
@@ -84,8 +85,11 @@ class PlanAPI():
             or was otherwise unusable.
         """
 
-        request = self._fp._post(
-            "/plan/", return_format=return_format, json=plan._to_api_dict())
+        request = self._post(
+            path="/plan/",
+            return_format=return_format,
+            json=plan._to_api_dict(),
+            key=key)
 
         if return_format == "native":
             return Plan(**request)
@@ -93,7 +97,8 @@ class PlanAPI():
         return request
 
     def edit(self, plan: Plan,
-             return_format: str = "native") -> Union[Plan, bytes]:
+             return_format: str = "native",
+             key: Optional[str] = None) -> Union[Plan, bytes]:
         """Edits a flight plan linked to your account.
 
         Requires authentication.
@@ -124,14 +129,18 @@ class PlanAPI():
         """
 
         plan_data = plan._to_api_dict()
-        request = self._fp._patch(f"/plan/{plan_data['id']}", json=plan_data)
+        request = self._patch(
+            path=f"/plan/{plan_data['id']}",
+            json=plan_data,
+            key=key)
 
         if return_format == "native":
             return Plan(**request)
 
         return request
 
-    def delete(self, id_: int) -> StatusResponse:
+    def delete(self, id_: int,
+               key: Optional[str] = None) -> StatusResponse:
         r"""Deletes a flight plan that is linked to your account.
 
         Requires authentication.
@@ -152,11 +161,12 @@ class PlanAPI():
             No plan with the specified id was found.
         """
 
-        resp = self._fp._delete(f"/plan/{id_}")
+        resp = self._delete(path=f"/plan/{id_}", key=key)
         return(StatusResponse(**resp))
 
     def search(self, plan_query: PlanQuery, sort: str = "created",
-               limit: int = 100) -> Generator[Plan, None, None]:
+               limit: int = 100,
+               key: Optional[str] = None) -> Generator[Plan, None, None]:
         """Searches for flight plans.
         A number of search parameters are available.
         They will be combined to form a search request.
@@ -185,13 +195,15 @@ class PlanAPI():
             to request it
         """
 
-        for i in self._fp._getiter("/search/plans",
-                                   sort=sort,
-                                   params=plan_query._to_api_dict(),
-                                   limit=limit):
+        for i in self._getiter(path="/search/plans",
+                               sort=sort,
+                               params=plan_query._to_api_dict(),
+                               limit=limit,
+                               key=key):
             yield Plan(**i)
 
-    def has_liked(self, id_: int) -> bool:
+    def has_liked(self, id_: int,
+                  key: Optional[str] = None) -> bool:
         r"""Fetches your like status for a flight plan.
 
         Requires authentication.
@@ -208,10 +220,14 @@ class PlanAPI():
         """
 
         sr = StatusResponse(
-            **self._fp._get(f"/plan/{id_}/like", ignore_statuses=[404]))
+            **self._get(
+                path=f"/plan/{id_}/like",
+                ignore_statuses=[404],
+                key=key))
         return sr.message != "Not Found"
 
-    def like(self, id_: int) -> StatusResponse:
+    def like(self, id_: int,
+                key: Optional[str] = None) -> StatusResponse:
         r"""Likes a flight plan.
 
         Requires authentication.
@@ -233,9 +249,10 @@ class PlanAPI():
             No plan with the specified id was found.
         """
 
-        return StatusResponse(**self._fp._post(f"/plan/{id_}/like"))
+        return StatusResponse(**self._post(path=f"/plan/{id_}/like", key=key))
 
-    def unlike(self, id_: int) -> bool:
+    def unlike(self, id_: int,
+               key: Optional[str] = None) -> bool:
         r"""Removes a flight plan like.
 
         Requires authentication.
@@ -257,11 +274,12 @@ class PlanAPI():
             or the plan was found but wasn't liked.
         """
 
-        self._fp._delete(f"/plan/{id_}/like")
+        self._delete(path=f"/plan/{id_}/like", key=key)
         return True
 
     def generate(self, gen_query: GenerateQuery,
-                 return_format: str = "native") -> Union[Plan, bytes]:
+                 return_format: str = "native",
+                 key: Optional[str] = None) -> Union[Plan, bytes]:
         """Creates a new flight plan using the route generator.
 
         Requires authentication.
@@ -284,10 +302,11 @@ class PlanAPI():
         """
 
         return Plan(
-            **self._fp._post(
-                "/auto/generate", json=gen_query._to_api_dict()))
+            **self._post(
+                path="/auto/generate", json=gen_query._to_api_dict(), key=key))
 
-    def decode(self, route: str) -> Plan:
+    def decode(self, route: str,
+               key: Optional[str] = None) -> Plan:
         """Creates a new flight plan using the route decoder.
 
         Requires authentication.
@@ -316,5 +335,5 @@ class PlanAPI():
             arguments or was otherwise unusable.
         """
 
-        return Plan(**self._fp._post(
-            "/auto/decode", json={"route": route}))
+        return Plan(**self._post(
+            path="/auto/decode", json={"route": route}, key=key))

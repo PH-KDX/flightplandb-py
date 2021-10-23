@@ -1,18 +1,15 @@
-from typing import Generator
+from typing import Generator, Optional
 from flightplandb.datatypes import Plan, User, UserSmall
+from flightplandb.flightplandb import FlightPlanDB
 
 
-class UserAPI:
+class UserAPI(FlightPlanDB):
 
     """Commands related to registered users.
     Accessed via :meth:`~flightplandb.flightplandb.FlightPlanDB.user`.
     """
 
-    def __init__(self, flightplandb):
-        self._fp = flightplandb
-
-    @property
-    def me(self) -> User:
+    def me(self, key: Optional[str] = None) -> User:
         """Fetches profile information for the currently authenticated user.
 
         Requires authentication.
@@ -28,9 +25,9 @@ class UserAPI:
             Authentication failed.
         """
 
-        return User(**self._fp._get("/me"))
+        return User(**self._get(path="/me", key=key))
 
-    def fetch(self, username: str) -> User:
+    def fetch(self, username: str, key: Optional[str] = None) -> User:
         """Fetches profile information for any registered user
 
         Parameters
@@ -49,10 +46,11 @@ class UserAPI:
             No user was found with this username.
         """
 
-        return User(**self._fp._get(f"/user/{username}"))
+        return User(**self._get(path=f"/user/{username}", key=key))
 
     def plans(self, username: str, sort: str = "created",
-              limit: int = 100) -> Generator[Plan, None, None]:
+              limit: int = 100,
+              key: Optional[str] = None) -> Generator[Plan, None, None]:
         """Fetches flight plans created by a user.
 
         Parameters
@@ -71,13 +69,15 @@ class UserAPI:
             A generator with all the flight plans a user created,
             limited by ``limit``
         """
-        for i in self._fp._getiter(f"/user/{username}/plans",
-                                   sort=sort,
-                                   limit=limit):
+        for i in self._getiter(path=f"/user/{username}/plans",
+                               sort=sort,
+                               limit=limit,
+                               key=key):
             yield Plan(**i)
 
     def likes(self, username: str, sort: str = "created",
-              limit: int = 100) -> Generator[Plan, None, None]:
+              limit: int = 100,
+              key: Optional[str] = None) -> Generator[Plan, None, None]:
         """Fetches flight plans liked by a user.
 
         Parameters
@@ -97,13 +97,15 @@ class UserAPI:
             limited by ``limit``
         """
 
-        for i in self._fp._getiter(f"/user/{username}/likes",
-                                   sort=sort,
-                                   limit=limit):
+        for i in self._getiter(path=f"/user/{username}/likes",
+                               sort=sort,
+                               limit=limit,
+                               key=key):
             yield Plan(**i)
 
     def search(self, username: str,
-               limit=100) -> Generator[UserSmall, None, None]:
+               limit=100,
+               key: Optional[str] = None) -> Generator[UserSmall, None, None]:
         """Searches for users by username. For more detailed info on a
         specific user, use :meth:`fetch`
 
@@ -122,7 +124,8 @@ class UserAPI:
             User, because less info is returned.
         """
 
-        for i in self._fp._getiter("/search/users",
-                                   limit=limit,
-                                   params={"q": username}):
+        for i in self._getiter(path="/search/users",
+                               limit=limit,
+                               params={"q": username},
+                               key=key):
             yield UserSmall(**i)

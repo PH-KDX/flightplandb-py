@@ -1,18 +1,16 @@
-from typing import Generator, List, Union
+from typing import Generator, List, Union, Optional
+from flightplandb.flightplandb import FlightPlanDB
 from flightplandb.datatypes import Airport, Track, SearchNavaid
 
 
-class NavAPI:
+class NavAPI(FlightPlanDB):
 
     """
     Commands related to navigation aids and airports.
     Accessed via :meth:`~flightplandb.flightplandb.FlightPlanDB.nav`.
     """
 
-    def __init__(self, flightplandb):
-        self._fp = flightplandb
-
-    def airport(self, icao: str) -> Union[Airport]:
+    def airport(self, icao: str, key: Optional[str] = None) -> Union[Airport]:
         """Fetches information about an airport.
 
         Parameters
@@ -31,10 +29,10 @@ class NavAPI:
             No airport with the specified ICAO code was found.
         """
 
-        resp = self._fp._get(f"/nav/airport/{icao}")
+        resp = self._get(f"/nav/airport/{icao}", key=key)
         return Airport(**resp)
 
-    def nats(self) -> List[Track]:
+    def nats(self, key: Optional[str] = None) -> List[Track]:
         """Fetches current North Atlantic Tracks.
 
         Returns
@@ -44,9 +42,9 @@ class NavAPI:
         """
 
         return list(
-            map(lambda n: Track(**n), self._fp._get("/nav/NATS")))
+            map(lambda n: Track(**n), self._get("/nav/NATS", key=key)))
 
-    def pacots(self) -> List[Track]:
+    def pacots(self, key: Optional[str] = None) -> List[Track]:
         """Fetches current Pacific Organized Track System tracks.
 
         Returns
@@ -56,10 +54,11 @@ class NavAPI:
         """
 
         return list(
-            map(lambda t: Track(**t), self._fp._get("/nav/PACOTS")))
+            map(lambda t: Track(**t), self._get("/nav/PACOTS", key=key)))
 
     def search(self, query: str,
-               type_: str = None) -> Generator[SearchNavaid, None, None]:
+               type_: str = None, key: Optional[str] = None
+               ) -> Generator[SearchNavaid, None, None]:
         r"""Searches navaids using a query.
 
         Parameters
@@ -84,5 +83,5 @@ class NavAPI:
                 params["types"] = type_
             else:
                 raise ValueError(f"{type_} is not a valid Navaid type")
-        for i in self._fp._getiter("/search/nav", params=params):
+        for i in self._getiter("/search/nav", params=params, key=key):
             yield SearchNavaid(**i)

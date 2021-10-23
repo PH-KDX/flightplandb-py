@@ -28,14 +28,10 @@ from flightplandb.exceptions import status_handler
 
 from flightplandb.datatypes import StatusResponse
 
-from flightplandb.submodules.plan import PlanAPI
-from flightplandb.submodules.user import UserAPI
-from flightplandb.submodules.tags import TagsAPI
-from flightplandb.submodules.nav import NavAPI
-from flightplandb.submodules.weather import WeatherAPI
 
 
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directive-autoclass
+# https://github.com/python/cpython/blob/main/Lib/random.py#L792
 class FlightPlanDB:
 
     """This class mostly contains internal functions called by the API.
@@ -54,18 +50,15 @@ class FlightPlanDB:
         defaults to https://api.flightplandatabase.com
     """
 
-    def __init__(
-        self, key: Optional[str] = None,
-        url_base: str = "https://api.flightplandatabase.com"
-    ):
-        self.key: str = key
+    def __init__(self):
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
-        self.url_base = url_base
+        self.url_base: str = "https://api.flightplandatabase.com"
 
     def _request(self, method: str,
                  path: str, return_format="native",
                  ignore_statuses: Optional[List] = None,
                  params: Optional[Dict] = None,
+                 key: Optional[str] = None,
                  *args, **kwargs) -> Union[Dict, bytes]:
         """General HTTP requests function for non-paginated results.
 
@@ -82,6 +75,8 @@ class FlightPlanDB:
             raise an HTTPError, defaults to None
         params : Optional[Dict], optional
             Any other HTTP request parameters, defaults to None
+        key : Optional[str]
+            API token, defaults to None (which makes it unauthenticated)
         *args
             Variable length argument list.
         **kwargs
@@ -147,7 +142,7 @@ class FlightPlanDB:
         params["Accept"] = return_format_encoded
 
         resp = requests.request(method, urljoin(self.url_base, path),
-                                auth=HTTPBasicAuth(self.key, None),
+                                auth=HTTPBasicAuth(key, None),
                                 headers=params, *args, **kwargs)
 
         status_handler(resp.status_code, ignore_statuses)
@@ -163,6 +158,7 @@ class FlightPlanDB:
     def _get(self, path: str, return_format="native",
              ignore_statuses: Optional[List] = None,
              params: Optional[Dict] = None,
+             key: Optional[str] = None,
              *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`_request()` for get requests.
 
@@ -177,6 +173,8 @@ class FlightPlanDB:
             raise an HTTPError, defaults to None
         params : Optional[Dict], optional
             Any other HTTP request parameters, defaults to None
+        key : Optional[str]
+            API token, defaults to None (which makes it unauthenticated)
         *args
             Variable length argument list.
         **kwargs
@@ -199,12 +197,14 @@ class FlightPlanDB:
                              return_format,
                              ignore_statuses,
                              params,
+                             key,
                              *args, **kwargs)
         return resp
 
     def _post(self, path: str, return_format="native",
               ignore_statuses: Optional[List] = None,
               params: Optional[Dict] = None,
+              key: Optional[str] = None,
               *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`_request()` for post requests.
 
@@ -219,6 +219,8 @@ class FlightPlanDB:
             raise an HTTPError, defaults to None
         params : Optional[Dict], optional
             Any other HTTP request parameters, defaults to None
+        key : Optional[str]
+            API token, defaults to None (which makes it unauthenticated)
         *args
             Variable length argument list.
         **kwargs
@@ -240,12 +242,14 @@ class FlightPlanDB:
                              return_format,
                              ignore_statuses,
                              params,
+                             key,
                              *args, **kwargs)
         return resp
 
     def _patch(self, path: str, return_format="native",
                ignore_statuses: Optional[List] = None,
                params: Optional[Dict] = None,
+               key: Optional[str] = None,
                *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`_request()` for patch requests.
 
@@ -260,6 +264,8 @@ class FlightPlanDB:
             raise an HTTPError, defaults to None
         params : Optional[Dict], optional
             Any other HTTP request parameters, defaults to None
+        key : Optional[str]
+            API token, defaults to None (which makes it unauthenticated)
         *args
             Variable length argument list.
         **kwargs
@@ -282,12 +288,14 @@ class FlightPlanDB:
                              return_format,
                              ignore_statuses,
                              params,
+                             key,
                              *args, **kwargs)
         return resp
 
     def _delete(self, path: str, return_format="native",
                 ignore_statuses: Optional[List] = None,
                 params: Optional[Dict] = None,
+                key: Optional[str] = None,
                 *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`_request()` for delete requests.
 
@@ -302,6 +310,8 @@ class FlightPlanDB:
             raise an HTTPError, defaults to None
         params : Optional[Dict], optional
             Any other HTTP request parameters, defaults to None
+        key : Optional[str]
+            API token, defaults to None (which makes it unauthenticated)
         *args
             Variable length argument list.
         **kwargs
@@ -324,6 +334,7 @@ class FlightPlanDB:
                              return_format,
                              ignore_statuses,
                              params,
+                             key,
                              *args, **kwargs)
         return resp
 
@@ -332,6 +343,7 @@ class FlightPlanDB:
                  sort: str = "created",
                  ignore_statuses: Optional[List] = None,
                  params: Optional[Dict] = None,
+                 key: Optional[str] = None,
                  *args, **kwargs) -> Generator[Dict, None, None]:
         """Get :meth:`_request()` for paginated results.
 
@@ -349,6 +361,8 @@ class FlightPlanDB:
             raise an HTTPError, defaults to None
         params : Optional[Dict], optional
             Any other HTTP request parameters, defaults to None
+        key : Optional[str]
+            API token, defaults to None (which makes it unauthenticated)
         *args
             Variable length argument list.
         **kwargs
@@ -378,7 +392,7 @@ class FlightPlanDB:
             params["sort"] = sort
 
         url = urljoin(self.url_base, path)
-        auth = HTTPBasicAuth(self.key, None)
+        auth = HTTPBasicAuth(key, None)
 
         session = requests.Session()
         # initially no results have been fetched yet
@@ -412,131 +426,4 @@ class FlightPlanDB:
                 if num_results == limit:
                     return
 
-    def _header_value(self, header_key: str) -> str:
-        """Gets header value for key
 
-        Parameters
-        ----------
-        header_key : str
-            One of the HTTP header keys
-
-        Returns
-        -------
-        str
-            The value corresponding to the passed key
-        """
-
-        if header_key not in self._header:
-            self.ping()  # Make at least one request
-        return self._header[header_key]
-
-    @property
-    def version(self) -> int:
-        """API version that returned the response
-
-        Returns
-        -------
-        int
-            API version
-        """
-
-        return int(self._header_value("X-API-Version"))
-
-    @property
-    def units(self) -> str:
-        """The units system used for numeric values.
-        https://flightplandatabase.com/dev/api#units
-
-        Returns
-        -------
-        str
-            AVIATION, METRIC or SI
-        """
-
-        return self._header_value("X-Units")
-
-    @property
-    def limit_cap(self) -> int:
-        """The number of requests allowed per day, operated on an hourly rolling
-        basis. i.e requests used between 19:00 and 20:00 will become available
-        again at 19:00 the following day. API key authenticated requests get a
-        higher daily rate limit and can be raised if a compelling
-        use case is presented.
-
-        Returns
-        -------
-        int
-            number of allowed requests per day
-        """
-
-        return int(self._header_value("X-Limit-Cap"))
-
-    @property
-    def limit_used(self) -> int:
-        """The number of requests used in the current period
-        by the presented API key or IP address
-
-        Returns
-        -------
-        int
-            number of requests used in period
-        """
-
-        return int(self._header_value("X-Limit-Used"))
-
-    def ping(self) -> StatusResponse:
-        """Checks API status to see if it is up
-
-        Returns
-        -------
-        StatusResponse
-            OK 200 means the service is up and running.
-        """
-
-        resp = self._get("")
-        return StatusResponse(**resp)
-
-    def revoke(self) -> StatusResponse:
-        """Revoke the API key in use in the event it is compromised.
-
-        Requires authentication.
-
-        Returns
-        -------
-        StatusResponse
-            If the HTTP response code is 200 and the status message is "OK",
-            then the key has been revoked and any further requests will be
-            rejected.
-            Any other status code or message indicates an error has
-            occurred and the errors array will give further details.
-        """
-
-        resp = self._get("/auth/revoke")
-        self._header = resp.headers
-        return StatusResponse(**resp.json())
-
-    # Sub APIs
-    @property
-    def nav(self):
-        """Alias for :class:`~flightplandb.submodules.nav.NavAPI()`"""
-        return NavAPI(self)
-
-    @property
-    def plan(self):
-        """Alias for :class:`~flightplandb.submodules.plan.PlanAPI()`"""
-        return PlanAPI(self)
-
-    @property
-    def tags(self):
-        """Alias for :class:`~flightplandb.submodules.tags.TagsAPI()`"""
-        return TagsAPI(self)
-
-    @property
-    def user(self):
-        """Alias for :class:`~flightplandb.submodules.user.UserAPI()`"""
-        return UserAPI(self)
-
-    @property
-    def weather(self):
-        """Alias for :class:`~flightplandb.submodules.weather.WeatherAPI()`"""
-        return WeatherAPI(self)

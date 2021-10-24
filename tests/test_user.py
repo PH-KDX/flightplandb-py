@@ -116,8 +116,7 @@ def test_user_plans(mocker):
             "downloads": 1,
             "popularity": 1,
             "notes": "",
-            "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hpe@lnCxw \
-            Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+            "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hpe@lnCxw \Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
             "createdAt": "2015-08-04T20:48:08.000Z",
             "updatedAt": "2015-08-04T20:48:08.000Z",
             "tags": [
@@ -170,8 +169,7 @@ def test_user_plans(mocker):
             downloads=1,
             popularity=1,
             notes="",
-            encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hpe@lnCxw \
-                Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+            encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hpe@lnCxw \Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
             createdAt="2015-08-04T20:48:08.000Z",
             updatedAt="2015-08-04T20:48:08.000Z",
             tags=[
@@ -246,8 +244,7 @@ def test_user_likes(mocker):
                 "downloads": 1,
                 "popularity": 1,
                 "notes": "",
-                "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hpe@lnCxw \
-                Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+                "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hpe@lnCxwDbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
                 "createdAt": "2015-08-04T20:48:08.000Z",
                 "updatedAt": "2015-08-04T20:48:08.000Z",
                 "tags": [
@@ -300,8 +297,7 @@ def test_user_likes(mocker):
                 downloads=1,
                 popularity=1,
                 notes="",
-                encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hpe@lnCxw \
-                    Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+                encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hpe@lnCxwDbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
                 createdAt="2015-08-04T20:48:08.000Z",
                 updatedAt="2015-08-04T20:48:08.000Z",
                 tags=[

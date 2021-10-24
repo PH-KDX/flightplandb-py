@@ -422,7 +422,6 @@ class PlanQuery:
     distanceMax: Optional[str] = None
     tags: Optional[str] = None
     includeRoute: Optional[bool] = None
-    limit: Optional[int] = None
 
     def _to_api_dict(self):
         return self.__dict__

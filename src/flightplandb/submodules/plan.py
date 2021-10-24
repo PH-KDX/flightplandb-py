@@ -131,6 +131,7 @@ class PlanAPI(FlightPlanDB):
         plan_data = plan._to_api_dict()
         request = self._patch(
             path=f"/plan/{plan_data['id']}",
+            return_format=return_format,
             json=plan_data,
             key=key)
 

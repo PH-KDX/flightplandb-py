@@ -1,4 +1,3 @@
-import pytest
 import flightplandb
 from flightplandb.datatypes import Tag
 
@@ -28,16 +27,19 @@ def test_tags_api(mocker):
             description='Computer generated plans',
             planCount=35343,
             popularity=0.009036140132228622)]
-    
+
     def patched_get(self, path, key):
         return json_response
 
-    mocker.patch.object(flightplandb.submodules.tags.TagsAPI, "_get", patched_get)
+    mocker.patch.object(
+        target=flightplandb.submodules.tags.TagsAPI,
+        attribute="_get",
+        new=patched_get)
     instance = flightplandb.submodules.tags.TagsAPI()
     spy = mocker.spy(instance, "_get")
 
     response = instance.fetch()
-
+    # check that TagsAPI method made correct request of FlightPlanDB
     spy.assert_called_once_with(path='/tags', key=None)
-    
+    # check that TagsAPI method decoded data correctly for given response
     assert response == correct_response

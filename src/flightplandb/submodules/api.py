@@ -1,6 +1,7 @@
-from typing import List, Dict, Optional
+from typing import Optional
 from flightplandb.flightplandb import FlightPlanDB
 from flightplandb.datatypes import StatusResponse
+
 
 class API(FlightPlanDB):
     def _header_value(self, header_key: str, key: Optional[str] = None) -> str:
@@ -21,7 +22,6 @@ class API(FlightPlanDB):
             self.ping(key=key)  # Make at least one request
         return self._header[header_key]
 
-    
     def version(self, key: Optional[str] = None) -> int:
         """API version that returned the response
 
@@ -33,7 +33,6 @@ class API(FlightPlanDB):
 
         return int(self._header_value("X-API-Version", key=key))
 
-    
     def units(self, key: Optional[str] = None) -> str:
         """The units system used for numeric values.
         https://flightplandatabase.com/dev/api#units
@@ -46,7 +45,6 @@ class API(FlightPlanDB):
 
         return self._header_value("X-Units", key=key)
 
-    
     def limit_cap(self, key: Optional[str] = None) -> int:
         """The number of requests allowed per day, operated on an hourly rolling
         basis. i.e requests used between 19:00 and 20:00 will become available
@@ -62,7 +60,6 @@ class API(FlightPlanDB):
 
         return int(self._header_value("X-Limit-Cap", key=key))
 
-    
     def limit_used(self, key: Optional[str] = None) -> int:
         """The number of requests used in the current period
         by the presented API key or IP address

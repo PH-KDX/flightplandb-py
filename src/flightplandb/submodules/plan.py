@@ -228,7 +228,7 @@ class PlanAPI(FlightPlanDB):
         return sr.message != "Not Found"
 
     def like(self, id_: int,
-                key: Optional[str] = None) -> StatusResponse:
+             key: Optional[str] = None) -> StatusResponse:
         r"""Likes a flight plan.
 
         Requires authentication.

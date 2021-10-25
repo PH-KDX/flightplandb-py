@@ -26,9 +26,6 @@ from requests.structures import CaseInsensitiveDict
 import json
 from flightplandb.exceptions import status_handler
 
-from flightplandb.datatypes import StatusResponse
-
-
 
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directive-autoclass
 # https://github.com/python/cpython/blob/main/Lib/random.py#L792
@@ -425,5 +422,3 @@ class FlightPlanDB:
                 # ...unless the result limit has been reached
                 if num_results == limit:
                     return
-
-

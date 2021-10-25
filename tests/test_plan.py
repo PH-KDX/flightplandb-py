@@ -1,7 +1,4 @@
-from unittest import TestCase, main
-from unittest.mock import patch, call
 import flightplandb
-from flightplandb.submodules.plan import PlanAPI
 from flightplandb.datatypes import (
     Plan, PlanQuery, User, Route, GenerateQuery,
     RouteNode, Cycle, StatusResponse
@@ -25,8 +22,7 @@ def test_plan_fetch(mocker):
             "downloads": 1,
             "popularity": 1,
             "notes": "",
-            "encodedPolyline": "aaf{E`|y}T|Ftf@px\\hpe@lnCxw "
-                "Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+            "encodedPolyline": "aaf{E`|y}T|Ftf@px\\hpe@lnCxw Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
             "createdAt": "2015-08-04T20:48:08.000Z",
             "updatedAt": "2015-08-04T20:48:08.000Z",
             "tags": [
@@ -54,8 +50,7 @@ def test_plan_fetch(mocker):
             downloads=1,
             popularity=1,
             notes="",
-            encodedPolyline="aaf{E`|y}T|Ftf@px\\hpe@lnCxw "
-                "Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+            encodedPolyline="aaf{E`|y}T|Ftf@px\\hpe@lnCxw Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
             createdAt="2015-08-04T20:48:08.000Z",
             updatedAt="2015-08-04T20:48:08.000Z",
             tags=[
@@ -140,7 +135,7 @@ def test_plan_create(mocker):
                 "alt": 0,
                 "name": "John F Kennedy Intl",
                 "via": None})]))
-        
+
     request_data = Plan(
         id=None,
         fromICAO="EHAM",
@@ -166,8 +161,8 @@ def test_plan_create(mocker):
                 "name": "John F Kennedy Intl",
                 "via": None})]))
     correct_call = {
-        'path':'/plan/',
-        'json':{
+        'path': '/plan/',
+        'json': {
             'id': None,
             'fromICAO': 'EHAM',
             'toICAO': 'KJFK',
@@ -208,8 +203,8 @@ def test_plan_create(mocker):
                 'eastLevels': None,
                 'westLevels': None},
             'cycle': None},
-        'return_format':'native',
-        'key':None
+        'return_format': 'native',
+        'key': None
     }
 
     def patched_post(self, path, return_format, json, key):
@@ -313,7 +308,7 @@ def test_plan_edit(mocker):
             })
         ])
     )
-        
+
     request_data = Plan(
         id=23896,
         fromICAO="EHAM",
@@ -343,8 +338,8 @@ def test_plan_edit(mocker):
         ])
     )
     correct_call = {
-        'path':'/plan/23896',
-        'json':{
+        'path': '/plan/23896',
+        'json': {
             'id': 23896,
             'fromICAO': 'EHAM',
             'toICAO': 'KJFK',
@@ -385,8 +380,8 @@ def test_plan_edit(mocker):
                 'eastLevels': None,
                 'westLevels': None},
             'cycle': None},
-        'return_format':'native',
-        'key':None
+        'return_format': 'native',
+        'key': None
     }
 
     def patched_patch(self, path, return_format, json, key):
@@ -727,8 +722,8 @@ def test_plan_generate(mocker):
     )
 
     correct_call = {
-        "path":'/auto/generate',
-        "json":{
+        "path": '/auto/generate',
+        "json": {
             'fromICAO': 'EHAL',
             'toICAO': 'EHTX',
             'useNAT': True,
@@ -742,8 +737,8 @@ def test_plan_generate(mocker):
             'descentRate': 1500,
             'descentSpeed': 250
         },
-        "return_format":"native",
-        "key":None
+        "return_format": "native",
+        "key": None
     }
 
     def patched_post(self, path, return_format, json, key):
@@ -765,34 +760,34 @@ def test_plan_generate(mocker):
 
 def test_plan_decode(mocker):
     json_response = {
-        "id":4708699,
-        "fromICAO":"KSAN",
-        "toICAO":"KDEN",
-        "fromName":"San Diego Intl",
-        "toName":"Denver Intl",
-        "flightNumber":None,
-        "distance":757.3434118878,
-        "maxAltitude":0,
-        "waypoints":5,
-        "likes":0,
-        "downloads":0,
-        "popularity":1635191202,
-        "notes":"Requested: KSAN BROWS TRM LRAIN KDEN",
-        "encodedPolyline":"_hxfEntgjUr_S_`qAgvaEocvBsksPgn_a@_~kSwgbc@",
-        "createdAt":"2021-10-25T19:46:42.000Z",
-        "updatedAt":"2021-10-25T19:46:42.000Z",
-        "tags":["decoded"],
+        "id": 4708699,
+        "fromICAO": "KSAN",
+        "toICAO": "KDEN",
+        "fromName": "San Diego Intl",
+        "toName": "Denver Intl",
+        "flightNumber": None,
+        "distance": 757.3434118878,
+        "maxAltitude": 0,
+        "waypoints": 5,
+        "likes": 0,
+        "downloads": 0,
+        "popularity": 1635191202,
+        "notes": "Requested: KSAN BROWS TRM LRAIN KDEN",
+        "encodedPolyline": "_hxfEntgjUr_S_`qAgvaEocvBsksPgn_a@_~kSwgbc@",
+        "createdAt": "2021-10-25T19:46:42.000Z",
+        "updatedAt": "2021-10-25T19:46:42.000Z",
+        "tags": ["decoded"],
         'user': {
             'gravatarHash': '3bcb4f39a24700e081f49c3d2d43d277',
             'id': 18990,
             'location': None,
             'username': 'discordflightplannerbot'},
-        "application":None,
-        "cycle":{
-            "id":40,
-            "ident":"FPD2106",
-            "year":21,
-            "release":6
+        "application": None,
+        "cycle": {
+            "id": 40,
+            "ident": "FPD2106",
+            "year": 21,
+            "release": 6
             }
         }
 
@@ -832,25 +827,26 @@ def test_plan_decode(mocker):
             plansCount=0,
             plansDistance=0.0,
             plansDownloads=0,
-            plansLikes=0),
-            application=None,
-            route=None,
-            cycle=Cycle(
-                id=40,
-                ident='FPD2106',
-                year=21,
-                release=6
-                )
+            plansLikes=0
+            ),
+        application=None,
+        route=None,
+        cycle=Cycle(
+            id=40,
+            ident='FPD2106',
+            year=21,
+            release=6
             )
+        )
 
     correct_call = {
-        "path":'/auto/decode',
-        "json":{
+        "path": '/auto/decode',
+        "json": {
             'route': {
                 'KSAN BROWS TRM LRAIN KDEN'
                 }
         },
-        "key":None
+        "key": None
     }
 
     def patched_post(self, path, json, key):

@@ -47,7 +47,8 @@ setup(
             "sphinx-rtd-theme==1.0.0"
         ],
         "test": [
-            "pytest==6.2.5"
+            "pytest>=6.2.5",
+            "pytest-mock>=3.6.1"
         ]
     },
     python_requires='>=3.7.0',

@@ -302,9 +302,12 @@ class PlanAPI(FlightPlanDB):
             Bytes if a different format than ``"native"`` was specified
         """
 
-        return Plan(
-            **self._post(
-                path="/auto/generate", json=gen_query._to_api_dict(), key=key))
+        response = self._post(
+                    path="/auto/generate", return_format=return_format, json=gen_query._to_api_dict(), key=key)
+        if return_format == "native":
+            return Plan(**response)
+        else:
+            return response
 
     def decode(self, route: str,
                key: Optional[str] = None) -> Plan:

@@ -1,4 +1,4 @@
-from typing import Generator, List, Union, Optional
+from typing import Generator, List, Optional
 from flightplandb.flightplandb import FlightPlanDB
 from flightplandb.datatypes import Airport, Track, SearchNavaid
 
@@ -10,7 +10,7 @@ class NavAPI(FlightPlanDB):
     Accessed via :meth:`~flightplandb.flightplandb.FlightPlanDB.nav`.
     """
 
-    def airport(self, icao: str, key: Optional[str] = None) -> Union[Airport]:
+    def airport(self, icao: str, key: Optional[str] = None) -> Airport:
         """Fetches information about an airport.
 
         Parameters

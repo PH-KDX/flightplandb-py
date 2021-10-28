@@ -3,7 +3,7 @@ from flightplandb.flightplandb import FlightPlanDB
 from flightplandb.datatypes import StatusResponse
 
 
-class API(FlightPlanDB):
+class API(FlightPlanDB): 
     def _header_value(self, header_key: str, key: Optional[str] = None) -> str:
         """Gets header value for key
 

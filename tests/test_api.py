@@ -1,5 +1,5 @@
 import flightplandb
-from flightplandb.datatypes import StatusResponse, Weather
+from flightplandb.datatypes import StatusResponse
 import pytest
 
 
@@ -31,11 +31,11 @@ def test_api_headers(header_key, mocker, ping_headers, existing_headers, correct
     instance._header = existing_headers
 
     response = instance._header_value(header_key=header_key, key=None)
-    if correct_mock_calls == None:
+    if correct_mock_calls is None:
         spy.assert_not_called()
     else:
         spy.assert_called_once_with(**correct_mock_calls)
-    assert(response==correct_response)
+    assert response == correct_response
 
 
 def test_api_ping(mocker):

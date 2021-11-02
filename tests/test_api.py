@@ -62,3 +62,29 @@ def test_api_ping(mocker):
     spy.assert_called_once_with(path='', key=None)
     # check that API method decoded data correctly for given response
     assert response == correct_response
+
+
+def test_key_revoke(mocker):
+    json_response = {
+        "message": "OK",
+        "errors": None
+        }
+
+    correct_response = StatusResponse(message="OK", errors=None)
+
+    def patched_get(self, path, key):
+        return json_response
+
+    mocker.patch.object(
+        target=flightplandb.submodules.api.API,
+        attribute="_get",
+        new=patched_get
+        )
+    instance = flightplandb.submodules.api.API()
+    spy = mocker.spy(instance, "_get")
+
+    response = instance.revoke(key="qwertyuiop")
+    # check that API method made correct request of FlightPlanDB
+    spy.assert_called_once_with(path='/auth/revoke', key="qwertyuiop")
+    # check that API method decoded data correctly for given response
+    assert response == correct_response

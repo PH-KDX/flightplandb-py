@@ -100,5 +100,4 @@ class API(FlightPlanDB):
         """
 
         resp = self._get(path="/auth/revoke", key=key)
-        self._header = resp.headers
-        return StatusResponse(**resp.json())
+        return StatusResponse(**resp)

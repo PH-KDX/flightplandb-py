@@ -28,7 +28,6 @@ class BadRequestException(BaseErrorHandler):
     message
         A verbose description of this error.
     """
-    pass
 
 
 class UnauthorizedException(BaseErrorHandler):
@@ -42,7 +41,6 @@ class UnauthorizedException(BaseErrorHandler):
     message
         A verbose description of this error.
     """
-    pass
 
 
 class ForbiddenException(BaseErrorHandler):
@@ -57,7 +55,6 @@ class ForbiddenException(BaseErrorHandler):
     message
         A verbose description of this error.
     """
-    pass
 
 
 class NotFoundException(BaseErrorHandler):
@@ -71,7 +68,6 @@ class NotFoundException(BaseErrorHandler):
     message
         A verbose description of this error.
     """
-    pass
 
 
 class TooManyRequestsException(BaseErrorHandler):
@@ -85,7 +81,6 @@ class TooManyRequestsException(BaseErrorHandler):
     message
         A verbose description of this error.
     """
-    pass
 
 
 class InternalServerException(BaseErrorHandler):
@@ -99,7 +94,6 @@ class InternalServerException(BaseErrorHandler):
     message
         A verbose description of this error.
     """
-    pass
 
 
 def status_handler(status_code, ignore_statuses=None):

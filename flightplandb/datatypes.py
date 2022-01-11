@@ -629,7 +629,7 @@ class Navaid:
     elevation: float
     range: float
 
-    validtypes = ['LOC-ILS', 'LOC-LOC', 'GS', 'DME']
+    validtypes = ['LOC-ILS', 'LOC-LOC', 'GS', 'DME', 'OM', 'MM', 'IM']
 
     def __post_init__(self):
         if self.type not in self.validtypes:

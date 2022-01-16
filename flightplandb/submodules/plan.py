@@ -55,8 +55,7 @@ class PlanAPI():
 
         return request  # if the format is not a dict
 
-    def create(self, plan: Plan,
-               return_format: str = "native") -> Union[Plan, bytes]:
+    def create(self, plan: Plan) -> Plan:
         """Creates a new flight plan.
 
         Requires authentication.
@@ -65,35 +64,23 @@ class PlanAPI():
         ----------
         plan : Plan
             The Plan object to register on the website
-        return_format : str
-            The API response format, defaults to ``"native"``.
-            Must be one of the keys in the table at the top of the page.
 
         Returns
         -------
-        Union[Plan, bytes]
-            :class:`~flightplandb.datatypes.Plan` by default or if ``"native"``
-            is specified as the ``return_format``.
-
-            ``bytes`` if a different format than ``"native"`` was specified.
+        Plan
+            The registered flight plan created on flight plan database
 
         Raises
         ------
         :class:`~flightplandb.exceptions.BadRequestException`
-            The plan submitted had incorrect arguments
-            or was otherwise unusable.
+            The plan submitted had incorrect arguments or was
+            otherwise unusable.
         """
 
-        request = self._fp._post(
-            "/plan/", return_format=return_format, json=plan._to_api_dict())
+        return Plan(**self._fp._post(
+            "/plan/", json=plan._to_api_dict()))
 
-        if return_format == "native":
-            return Plan(**request)
-
-        return request
-
-    def edit(self, plan: Plan,
-             return_format: str = "native") -> Union[Plan, bytes]:
+    def edit(self, plan: Plan) -> Plan:
         """Edits a flight plan linked to your account.
 
         Requires authentication.
@@ -102,17 +89,12 @@ class PlanAPI():
         ----------
         plan : Plan
             The new Plan object to replace the old one associated with that ID
-        return_format : str
-            The API response format, defaults to ``"native"``.
-            Must be one of the keys in the table at the top of the page.
 
         Returns
         -------
-        Union[Plan, bytes]
-            :class:`~flightplandb.datatypes.Plan` by default or if ``"native"``
-            is specified as the ``return_format``.
-
-            ``bytes`` if a different format than ``"native"`` was specified.
+        Plan
+            The registered flight plan created on flight plan database,
+            corresponding to the route after being edited
 
         Raises
         ------
@@ -124,12 +106,8 @@ class PlanAPI():
         """
 
         plan_data = plan._to_api_dict()
-        request = self._fp._patch(f"/plan/{plan_data['id']}", json=plan_data)
+        return Plan(**self._fp._patch(f"/plan/{plan_data['id']}", json=plan_data))
 
-        if return_format == "native":
-            return Plan(**request)
-
-        return request
 
     def delete(self, id_: int) -> StatusResponse:
         r"""Deletes a flight plan that is linked to your account.
@@ -260,8 +238,7 @@ class PlanAPI():
         self._fp._delete(f"/plan/{id_}/like")
         return True
 
-    def generate(self, gen_query: GenerateQuery,
-                 return_format: str = "native") -> Union[Plan, bytes]:
+    def generate(self, gen_query: GenerateQuery) -> Plan:
         """Creates a new flight plan using the route generator.
 
         Requires authentication.
@@ -270,17 +247,12 @@ class PlanAPI():
         ----------
         gen_query : GenerateQuery
             A dataclass with options for flight plan generation
-        return_format : str
-            The API response format, defaults to ``"native"``.
-            Must be one of the keys in the table at the top of the page.
 
         Returns
         -------
-        Union[Plan, bytes]
-            Plan by default or if ``"native"`` is specified as
-            the ``return_format``.
-
-            Bytes if a different format than ``"native"`` was specified
+        Plan
+            The registered flight plan created on flight plan database,
+            corresponding to the generated route
         """
 
         return Plan(

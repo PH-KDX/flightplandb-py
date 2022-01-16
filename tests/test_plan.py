@@ -182,8 +182,7 @@ class PlanTest(TestCase):
                                  'via': None}],
                             'eastLevels': None,
                             'westLevels': None},
-                        'cycle': None},
-                    return_format='native')])
+                        'cycle': None})])
 
             correct_response = Plan(
                 id=None,

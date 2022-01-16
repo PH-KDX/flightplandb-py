@@ -106,8 +106,8 @@ class PlanAPI():
         """
 
         plan_data = plan._to_api_dict()
-        return Plan(**self._fp._patch(f"/plan/{plan_data['id']}", json=plan_data))
-
+        return Plan(
+            **self._fp._patch(f"/plan/{plan_data['id']}", json=plan_data))
 
     def delete(self, id_: int) -> StatusResponse:
         r"""Deletes a flight plan that is linked to your account.

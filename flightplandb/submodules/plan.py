@@ -154,22 +154,18 @@ class PlanAPI():
             created, updated, popularity, and distance
         limit : int
             Maximum number of plans to return, defaults to 100
+        include_route : bool, optional
+            Include route in response, defaults to False
 
         Yields
         -------
         Generator[Plan, None, None]
             A generator containing :class:`~flightplandb.datatypes.Plan`
             objects.
-            Each plan's :py:obj:`~flightplandb.datatypes.Plan.route`
-            will be set to ``None`` unless otherwise specified in the
-            :py:obj:`~flightplandb.datatypes.PlanQuery.includeRoute` parameter
-            of the :class:`~flightplandb.datatypes.PlanQuery` used
-            to request it
         """
 
         request_json = plan_query._to_api_dict()
-        if include_route:
-            request_json["includeRoute"] = "true"
+        request_json["includeRoute"] = include_route
 
         for i in self._fp._getiter(path="/search/plans",
                                    sort=sort,
@@ -264,11 +260,14 @@ class PlanAPI():
         Plan
             The registered flight plan created on flight plan database,
             corresponding to the generated route
+        include_route : bool, optional
+            Include route in response, defaults to false
         """
 
         request_json = gen_query._to_api_dict()
-        if include_route:
-            request_json["includeRoute"] = "true"
+        
+        # due to an API bug this must be a string instead of a boolean
+        request_json["includeRoute"] = "true" if include_route else "false"
 
         return Plan(
             **self._fp._post(

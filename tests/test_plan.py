@@ -141,8 +141,8 @@ class PlanTest(TestCase):
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls([
                 call._post(
-                    '/plan/',
-                    json={
+                    path='/plan/',
+                    json_data={
                         'id': None,
                         'fromICAO': 'EHAM',
                         'toICAO': 'KJFK',
@@ -182,8 +182,7 @@ class PlanTest(TestCase):
                                  'via': None}],
                             'eastLevels': None,
                             'westLevels': None},
-                        'cycle': None},
-                    return_format='native')])
+                        'cycle': None})])
 
             correct_response = Plan(
                 id=None,
@@ -297,8 +296,8 @@ class PlanTest(TestCase):
             # check PlanAPI method made the correct request of FlightPlanDB
             instance.assert_has_calls(
                 [call._patch(
-                    '/plan/None',
-                    json={
+                    path='/plan/None',
+                    json_data={
                         'id': None,
                         'fromICAO': 'EHAM',
                         'toICAO': 'KJFK',
@@ -497,7 +496,7 @@ class PlanTest(TestCase):
             # check that PlanAPI method made the correct request of FlightPlanDB
 
             instance.assert_has_calls([call._getiter(
-                '/search/plans',
+                path='/search/plans',
                 sort='created',
                 params={
                     'q': None,
@@ -511,8 +510,7 @@ class PlanTest(TestCase):
                     'distanceMin': None,
                     'distanceMax': None,
                     'tags': None,
-                    'includeRoute': None,
-                    'limit': None},
+                    'includeRoute': False},
                 limit=2)])
 
     def test_plan_like(self):
@@ -621,8 +619,8 @@ class PlanTest(TestCase):
             # check PlanAPI method made the correct request of FlightPlanDB
             correct_calls = [
                 call._post(
-                    '/auto/generate',
-                    json={
+                    path='/auto/generate',
+                    json_data={
                         'fromICAO': 'EHAL',
                         'toICAO': 'EHTX',
                         'useNAT': True,
@@ -634,7 +632,8 @@ class PlanTest(TestCase):
                         'ascentRate': 2500,
                         'ascentSpeed': 250,
                         'descentRate': 1500,
-                        'descentSpeed': 250})]
+                        'descentSpeed': 250,
+                        'includeRoute': 'false'})]
 
             instance.assert_has_calls(correct_calls)
 
@@ -723,25 +722,13 @@ class PlanTest(TestCase):
                 'waypoints': 5}
 
             sub_instance = PlanAPI(instance)
-            request_query = GenerateQuery(fromICAO="EHAL", toICAO="EHTX")
-            response = sub_instance.generate(request_query)
+            request_query = "KSAN BROWS TRM LRAIN KDEN"
+            response = sub_instance.decode(request_query)
             # check PlanAPI method made the correct request of FlightPlanDB
             correct_calls = [
                 call._post(
-                    '/auto/generate',
-                    json={
-                        'fromICAO': 'EHAL',
-                        'toICAO': 'EHTX',
-                        'useNAT': True,
-                        'usePACOT': True,
-                        'useAWYLO': True,
-                        'useAWYHI': True,
-                        'cruiseAlt': 35000,
-                        'cruiseSpeed': 420,
-                        'ascentRate': 2500,
-                        'ascentSpeed': 250,
-                        'descentRate': 1500,
-                        'descentSpeed': 250})]
+                    path='/auto/decode',
+                    json_data={'route': 'KSAN BROWS TRM LRAIN KDEN'})]
 
             instance.assert_has_calls(correct_calls)
 

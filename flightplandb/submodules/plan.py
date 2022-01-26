@@ -46,7 +46,7 @@ class PlanAPI():
         """
 
         request = self._fp._get(
-            f"/plan/{id_}",
+            path=f"/plan/{id_}",
             return_format=return_format
         )
 
@@ -55,8 +55,7 @@ class PlanAPI():
 
         return request  # if the format is not a dict
 
-    def create(self, plan: Plan,
-               return_format: str = "native") -> Union[Plan, bytes]:
+    def create(self, plan: Plan) -> Plan:
         """Creates a new flight plan.
 
         Requires authentication.
@@ -65,35 +64,23 @@ class PlanAPI():
         ----------
         plan : Plan
             The Plan object to register on the website
-        return_format : str
-            The API response format, defaults to ``"native"``.
-            Must be one of the keys in the table at the top of the page.
 
         Returns
         -------
-        Union[Plan, bytes]
-            :class:`~flightplandb.datatypes.Plan` by default or if ``"native"``
-            is specified as the ``return_format``.
-
-            ``bytes`` if a different format than ``"native"`` was specified.
+        Plan
+            The registered flight plan created on flight plan database
 
         Raises
         ------
         :class:`~flightplandb.exceptions.BadRequestException`
-            The plan submitted had incorrect arguments
-            or was otherwise unusable.
+            The plan submitted had incorrect arguments or was
+            otherwise unusable.
         """
 
-        request = self._fp._post(
-            "/plan/", return_format=return_format, json=plan._to_api_dict())
+        return Plan(**self._fp._post(
+            path="/plan/", json_data=plan._to_api_dict()))
 
-        if return_format == "native":
-            return Plan(**request)
-
-        return request
-
-    def edit(self, plan: Plan,
-             return_format: str = "native") -> Union[Plan, bytes]:
+    def edit(self, plan: Plan) -> Plan:
         """Edits a flight plan linked to your account.
 
         Requires authentication.
@@ -102,17 +89,12 @@ class PlanAPI():
         ----------
         plan : Plan
             The new Plan object to replace the old one associated with that ID
-        return_format : str
-            The API response format, defaults to ``"native"``.
-            Must be one of the keys in the table at the top of the page.
 
         Returns
         -------
-        Union[Plan, bytes]
-            :class:`~flightplandb.datatypes.Plan` by default or if ``"native"``
-            is specified as the ``return_format``.
-
-            ``bytes`` if a different format than ``"native"`` was specified.
+        Plan
+            The registered flight plan created on flight plan database,
+            corresponding to the route after being edited
 
         Raises
         ------
@@ -124,12 +106,10 @@ class PlanAPI():
         """
 
         plan_data = plan._to_api_dict()
-        request = self._fp._patch(f"/plan/{plan_data['id']}", json=plan_data)
-
-        if return_format == "native":
-            return Plan(**request)
-
-        return request
+        return Plan(
+            **self._fp._patch(
+                path=f"/plan/{plan_data['id']}",
+                json_data=plan_data))
 
     def delete(self, id_: int) -> StatusResponse:
         r"""Deletes a flight plan that is linked to your account.
@@ -152,11 +132,12 @@ class PlanAPI():
             No plan with the specified id was found.
         """
 
-        resp = self._fp._delete(f"/plan/{id_}")
+        resp = self._fp._delete(path=f"/plan/{id_}")
         return(StatusResponse(**resp))
 
     def search(self, plan_query: PlanQuery, sort: str = "created",
-               limit: int = 100) -> Generator[Plan, None, None]:
+               include_route: bool = False, limit: int = 100
+               ) -> Generator[Plan, None, None]:
         """Searches for flight plans.
         A number of search parameters are available.
         They will be combined to form a search request.
@@ -172,22 +153,22 @@ class PlanAPI():
             created, updated, popularity, and distance
         limit : int
             Maximum number of plans to return, defaults to 100
+        include_route : bool, optional
+            Include route in response, defaults to False
 
         Yields
         -------
         Generator[Plan, None, None]
             A generator containing :class:`~flightplandb.datatypes.Plan`
             objects.
-            Each plan's :py:obj:`~flightplandb.datatypes.Plan.route`
-            will be set to ``None`` unless otherwise specified in the
-            :py:obj:`~flightplandb.datatypes.PlanQuery.includeRoute` parameter
-            of the :class:`~flightplandb.datatypes.PlanQuery` used
-            to request it
         """
 
-        for i in self._fp._getiter("/search/plans",
+        request_json = plan_query._to_api_dict()
+        request_json["includeRoute"] = include_route
+
+        for i in self._fp._getiter(path="/search/plans",
                                    sort=sort,
-                                   params=plan_query._to_api_dict(),
+                                   params=request_json,
                                    limit=limit):
             yield Plan(**i)
 
@@ -208,7 +189,9 @@ class PlanAPI():
         """
 
         sr = StatusResponse(
-            **self._fp._get(f"/plan/{id_}/like", ignore_statuses=[404]))
+            **self._fp._get(
+                path=f"/plan/{id_}/like",
+                ignore_statuses=[404]))
         return sr.message != "Not Found"
 
     def like(self, id_: int) -> StatusResponse:
@@ -233,7 +216,7 @@ class PlanAPI():
             No plan with the specified id was found.
         """
 
-        return StatusResponse(**self._fp._post(f"/plan/{id_}/like"))
+        return StatusResponse(**self._fp._post(path=f"/plan/{id_}/like"))
 
     def unlike(self, id_: int) -> bool:
         r"""Removes a flight plan like.
@@ -257,11 +240,14 @@ class PlanAPI():
             or the plan was found but wasn't liked.
         """
 
-        self._fp._delete(f"/plan/{id_}/like")
+        self._fp._delete(path=f"/plan/{id_}/like")
         return True
 
-    def generate(self, gen_query: GenerateQuery,
-                 return_format: str = "native") -> Union[Plan, bytes]:
+    def generate(
+        self,
+        gen_query: GenerateQuery,
+        include_route: bool = False
+    ) -> Plan:
         """Creates a new flight plan using the route generator.
 
         Requires authentication.
@@ -270,22 +256,25 @@ class PlanAPI():
         ----------
         gen_query : GenerateQuery
             A dataclass with options for flight plan generation
-        return_format : str
-            The API response format, defaults to ``"native"``.
-            Must be one of the keys in the table at the top of the page.
 
         Returns
         -------
-        Union[Plan, bytes]
-            Plan by default or if ``"native"`` is specified as
-            the ``return_format``.
-
-            Bytes if a different format than ``"native"`` was specified
+        Plan
+            The registered flight plan created on flight plan database,
+            corresponding to the generated route
+        include_route : bool, optional
+            Include route in response, defaults to false
         """
+
+        request_json = gen_query._to_api_dict()
+
+        # due to an API bug this must be a string instead of a boolean
+        request_json["includeRoute"] = "true" if include_route else "false"
 
         return Plan(
             **self._fp._post(
-                "/auto/generate", json=gen_query._to_api_dict()))
+                path="/auto/generate",
+                json_data=request_json))
 
     def decode(self, route: str) -> Plan:
         """Creates a new flight plan using the route decoder.
@@ -317,4 +306,5 @@ class PlanAPI():
         """
 
         return Plan(**self._fp._post(
-            "/auto/decode", json={"route": route}))
+            path="/auto/decode",
+            json_data={"route": route}))

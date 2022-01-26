@@ -135,7 +135,6 @@ class PlanAPI():
         resp = self._fp._delete(path=f"/plan/{id_}")
         return(StatusResponse(**resp))
 
-
     def search(self, plan_query: PlanQuery, sort: str = "created",
                include_route: bool = False, limit: int = 100
                ) -> Generator[Plan, None, None]:
@@ -245,7 +244,10 @@ class PlanAPI():
         return True
 
     def generate(
-        self, gen_query: GenerateQuery, include_route: bool = False) -> Plan:
+        self,
+        gen_query: GenerateQuery,
+        include_route: bool = False
+    ) -> Plan:
         """Creates a new flight plan using the route generator.
 
         Requires authentication.
@@ -265,7 +267,7 @@ class PlanAPI():
         """
 
         request_json = gen_query._to_api_dict()
-        
+
         # due to an API bug this must be a string instead of a boolean
         request_json["includeRoute"] = "true" if include_route else "false"
 

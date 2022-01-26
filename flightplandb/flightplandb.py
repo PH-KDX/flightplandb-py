@@ -393,7 +393,11 @@ class FlightPlanDB:
         # initially no results have been fetched yet
         num_results = 0
 
-        r_fpdb = session.get(url=url, params=params, auth=auth, *args, **kwargs)
+        r_fpdb = session.get(
+            url=url,
+            params=params,
+            auth=auth,
+            *args, **kwargs)
         status_handler(r_fpdb.status_code, ignore_statuses)
 
         # I detest responses which "may" be paginated

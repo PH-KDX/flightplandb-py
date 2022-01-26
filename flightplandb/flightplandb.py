@@ -66,6 +66,7 @@ class FlightPlanDB:
                  path: str, return_format="native",
                  ignore_statuses: Optional[List] = None,
                  params: Optional[Dict] = None,
+                 json_data: Optional[Dict] = None,
                  *args, **kwargs) -> Union[Dict, bytes]:
         """General HTTP requests function for non-paginated results.
 
@@ -146,9 +147,12 @@ class FlightPlanDB:
         # then add it to the request headers
         params["Accept"] = return_format_encoded
 
-        resp = requests.request(method, urljoin(self.url_base, path),
+        resp = requests.request(method=method,
+                                url=urljoin(self.url_base, path),
                                 auth=HTTPBasicAuth(self.key, None),
-                                headers=params, *args, **kwargs)
+                                headers=params,
+                                json=json_data,
+                                *args, **kwargs)
 
         status_handler(resp.status_code, ignore_statuses)
 
@@ -195,16 +199,18 @@ class FlightPlanDB:
         if not params:
             params = {}
 
-        resp = self._request("get", path,
-                             return_format,
-                             ignore_statuses,
-                             params,
+        resp = self._request(method="get",
+                             path=path,
+                             return_format=return_format,
+                             ignore_statuses=ignore_statuses,
+                             params=params,
                              *args, **kwargs)
         return resp
 
     def _post(self, path: str, return_format="native",
               ignore_statuses: Optional[List] = None,
               params: Optional[Dict] = None,
+              json_data: Optional[Dict] = None,
               *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`_request()` for post requests.
 
@@ -235,17 +241,19 @@ class FlightPlanDB:
         if not params:
             params = {}
 
-        resp = self._request("post",
-                             path,
-                             return_format,
-                             ignore_statuses,
-                             params,
+        resp = self._request(method="post",
+                             path=path,
+                             return_format=return_format,
+                             ignore_statuses=ignore_statuses,
+                             params=params,
+                             json_data=json_data,
                              *args, **kwargs)
         return resp
 
     def _patch(self, path: str, return_format="native",
                ignore_statuses: Optional[List] = None,
                params: Optional[Dict] = None,
+               json_data: Optional[Dict] = None,
                *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`_request()` for patch requests.
 
@@ -277,11 +285,12 @@ class FlightPlanDB:
         if not params:
             params = {}
 
-        resp = self._request("patch",
-                             path,
-                             return_format,
-                             ignore_statuses,
-                             params,
+        resp = self._request(method="patch",
+                             path=path,
+                             return_format=return_format,
+                             ignore_statuses=ignore_statuses,
+                             params=params,
+                             json_data=json_data,
                              *args, **kwargs)
         return resp
 
@@ -319,11 +328,11 @@ class FlightPlanDB:
         if not params:
             params = {}
 
-        resp = self._request("delete",
-                             path,
-                             return_format,
-                             ignore_statuses,
-                             params,
+        resp = self._request(method="delete",
+                             path=path,
+                             return_format=return_format,
+                             ignore_statuses=ignore_statuses,
+                             params=params,
                              *args, **kwargs)
         return resp
 
@@ -384,7 +393,7 @@ class FlightPlanDB:
         # initially no results have been fetched yet
         num_results = 0
 
-        r_fpdb = session.get(url, params=params, auth=auth, *args, **kwargs)
+        r_fpdb = session.get(url=url, params=params, auth=auth, *args, **kwargs)
         status_handler(r_fpdb.status_code, ignore_statuses)
 
         # I detest responses which "may" be paginated
@@ -398,7 +407,7 @@ class FlightPlanDB:
         # while page <= num_pages...
         for page in range(0, num_pages):
             params['page'] = page
-            r_fpdb = session.get(url,
+            r_fpdb = session.get(url=url,
                                  params=params,
                                  auth=auth,
                                  *args, **kwargs)

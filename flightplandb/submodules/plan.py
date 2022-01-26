@@ -46,7 +46,7 @@ class PlanAPI():
         """
 
         request = self._fp._get(
-            f"/plan/{id_}",
+            path=f"/plan/{id_}",
             return_format=return_format
         )
 
@@ -78,7 +78,7 @@ class PlanAPI():
         """
 
         return Plan(**self._fp._post(
-            "/plan/", json=plan._to_api_dict()))
+            path="/plan/", json_data=plan._to_api_dict()))
 
     def edit(self, plan: Plan) -> Plan:
         """Edits a flight plan linked to your account.
@@ -107,7 +107,9 @@ class PlanAPI():
 
         plan_data = plan._to_api_dict()
         return Plan(
-            **self._fp._patch(f"/plan/{plan_data['id']}", json=plan_data))
+            **self._fp._patch(
+                path=f"/plan/{plan_data['id']}",
+                json_data=plan_data))
 
     def delete(self, id_: int) -> StatusResponse:
         r"""Deletes a flight plan that is linked to your account.
@@ -130,11 +132,13 @@ class PlanAPI():
             No plan with the specified id was found.
         """
 
-        resp = self._fp._delete(f"/plan/{id_}")
+        resp = self._fp._delete(path=f"/plan/{id_}")
         return(StatusResponse(**resp))
 
+
     def search(self, plan_query: PlanQuery, sort: str = "created",
-               limit: int = 100) -> Generator[Plan, None, None]:
+               include_route: bool = False, limit: int = 100
+               ) -> Generator[Plan, None, None]:
         """Searches for flight plans.
         A number of search parameters are available.
         They will be combined to form a search request.
@@ -163,9 +167,13 @@ class PlanAPI():
             to request it
         """
 
-        for i in self._fp._getiter("/search/plans",
+        request_json = plan_query._to_api_dict()
+        if include_route:
+            request_json["includeRoute"] = "true"
+
+        for i in self._fp._getiter(path="/search/plans",
                                    sort=sort,
-                                   params=plan_query._to_api_dict(),
+                                   params=request_json,
                                    limit=limit):
             yield Plan(**i)
 
@@ -186,7 +194,9 @@ class PlanAPI():
         """
 
         sr = StatusResponse(
-            **self._fp._get(f"/plan/{id_}/like", ignore_statuses=[404]))
+            **self._fp._get(
+                path=f"/plan/{id_}/like",
+                ignore_statuses=[404]))
         return sr.message != "Not Found"
 
     def like(self, id_: int) -> StatusResponse:
@@ -211,7 +221,7 @@ class PlanAPI():
             No plan with the specified id was found.
         """
 
-        return StatusResponse(**self._fp._post(f"/plan/{id_}/like"))
+        return StatusResponse(**self._fp._post(path=f"/plan/{id_}/like"))
 
     def unlike(self, id_: int) -> bool:
         r"""Removes a flight plan like.
@@ -235,10 +245,11 @@ class PlanAPI():
             or the plan was found but wasn't liked.
         """
 
-        self._fp._delete(f"/plan/{id_}/like")
+        self._fp._delete(path=f"/plan/{id_}/like")
         return True
 
-    def generate(self, gen_query: GenerateQuery) -> Plan:
+    def generate(
+        self, gen_query: GenerateQuery, include_route: bool = False) -> Plan:
         """Creates a new flight plan using the route generator.
 
         Requires authentication.
@@ -255,9 +266,14 @@ class PlanAPI():
             corresponding to the generated route
         """
 
+        request_json = gen_query._to_api_dict()
+        if include_route:
+            request_json["includeRoute"] = "true"
+
         return Plan(
             **self._fp._post(
-                "/auto/generate", json=gen_query._to_api_dict()))
+                path="/auto/generate",
+                json_data=request_json))
 
     def decode(self, route: str) -> Plan:
         """Creates a new flight plan using the route decoder.
@@ -289,4 +305,5 @@ class PlanAPI():
         """
 
         return Plan(**self._fp._post(
-            "/auto/decode", json={"route": route}))
+            path="/auto/decode",
+            json_data={"route": route}))

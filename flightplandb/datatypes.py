@@ -406,9 +406,6 @@ class PlanQuery:
         Maximum route distance, with units determined by the X-Units header
     tags : Optional[str]
         Tag names to search, comma separated
-    includeRoute : Optional[bool]
-        Include route objects for each plan in the response.
-        Setting to true requires the request be authenticated with an API key
     """
     q: Optional[str] = None
     From: Optional[str] = None
@@ -421,8 +418,6 @@ class PlanQuery:
     distanceMin: Optional[str] = None
     distanceMax: Optional[str] = None
     tags: Optional[str] = None
-    includeRoute: Optional[bool] = None
-    limit: Optional[int] = None
 
     def _to_api_dict(self):
         return self.__dict__

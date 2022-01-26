@@ -323,11 +323,11 @@ class Plan:
         Navigation data cycle associated with the item.
         ``None`` if no cycle linked
     """
-    id: int
     fromICAO: Optional[str]
     toICAO: Optional[str]
     fromName: Optional[str]
     toName: Optional[str]
+    id: Optional[int] = None
     flightNumber: Optional[str] = None
     distance: Optional[float] = None
     maxAltitude: Optional[float] = None

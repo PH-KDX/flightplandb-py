@@ -1,5 +1,5 @@
 name: Tests and lint
-on: [push]
+on: [push, workflow_dispatch]
 jobs:
   # no need to set up a matrix for the lint
   flake8-lint:

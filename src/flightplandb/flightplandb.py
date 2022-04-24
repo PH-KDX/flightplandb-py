@@ -56,6 +56,7 @@ class FlightPlanDB:
                  ignore_statuses: Optional[List] = None,
                  params: Optional[Dict] = None,
                  key: Optional[str] = None,
+                 json_data: Optional[Dict] = None,
                  *args, **kwargs) -> Union[Dict, bytes]:
         """General HTTP requests function for non-paginated results.
 
@@ -202,6 +203,7 @@ class FlightPlanDB:
               ignore_statuses: Optional[List] = None,
               params: Optional[Dict] = None,
               key: Optional[str] = None,
+              json_data: Optional[Dict] = None,
               *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`_request()` for post requests.
 
@@ -247,6 +249,7 @@ class FlightPlanDB:
                ignore_statuses: Optional[List] = None,
                params: Optional[Dict] = None,
                key: Optional[str] = None,
+               json_data: Optional[Dict] = None,
                *args, **kwargs) -> Union[Dict, bytes]:
         """Calls :meth:`_request()` for patch requests.
 
@@ -395,7 +398,11 @@ class FlightPlanDB:
         # initially no results have been fetched yet
         num_results = 0
 
-        r_fpdb = session.get(url, params=params, auth=auth, *args, **kwargs)
+        r_fpdb = session.get(
+            url=url,
+            params=params,
+            auth=auth,
+            *args, **kwargs)
         status_handler(r_fpdb.status_code, ignore_statuses)
 
         # I detest responses which "may" be paginated
@@ -409,7 +416,7 @@ class FlightPlanDB:
         # while page <= num_pages...
         for page in range(0, num_pages):
             params['page'] = page
-            r_fpdb = session.get(url,
+            r_fpdb = session.get(url=url,
                                  params=params,
                                  auth=auth,
                                  *args, **kwargs)

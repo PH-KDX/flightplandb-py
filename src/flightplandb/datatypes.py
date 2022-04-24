@@ -323,11 +323,11 @@ class Plan:
         Navigation data cycle associated with the item.
         ``None`` if no cycle linked
     """
-    id: int
     fromICAO: Optional[str]
     toICAO: Optional[str]
     fromName: Optional[str]
     toName: Optional[str]
+    id: Optional[int] = None
     flightNumber: Optional[str] = None
     distance: Optional[float] = None
     maxAltitude: Optional[float] = None
@@ -406,9 +406,6 @@ class PlanQuery:
         Maximum route distance, with units determined by the X-Units header
     tags : Optional[str]
         Tag names to search, comma separated
-    includeRoute : Optional[bool]
-        Include route objects for each plan in the response.
-        Setting to true requires the request be authenticated with an API key
     """
     q: Optional[str] = None
     From: Optional[str] = None
@@ -628,7 +625,7 @@ class Navaid:
     elevation: float
     range: float
 
-    validtypes = ['LOC-ILS', 'LOC-LOC', 'GS', 'DME']
+    validtypes = ['LOC-ILS', 'LOC-LOC', 'GS', 'DME', 'OM', 'MM', 'IM']
 
     def __post_init__(self):
         if self.type not in self.validtypes:

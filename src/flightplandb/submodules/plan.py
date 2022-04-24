@@ -66,23 +66,17 @@ class PlanAPI(FlightPlanDB):
         ----------
         plan : Plan
             The Plan object to register on the website
-        return_format : str
-            The API response format, defaults to ``"native"``.
-            Must be one of the keys in the table at the top of the page.
 
         Returns
         -------
-        Union[Plan, bytes]
-            :class:`~flightplandb.datatypes.Plan` by default or if ``"native"``
-            is specified as the ``return_format``.
-
-            ``bytes`` if a different format than ``"native"`` was specified.
+        Plan
+            The registered flight plan created on flight plan database
 
         Raises
         ------
         :class:`~flightplandb.exceptions.BadRequestException`
-            The plan submitted had incorrect arguments
-            or was otherwise unusable.
+            The plan submitted had incorrect arguments or was
+            otherwise unusable.
         """
 
         request = self._post(
@@ -107,17 +101,12 @@ class PlanAPI(FlightPlanDB):
         ----------
         plan : Plan
             The new Plan object to replace the old one associated with that ID
-        return_format : str
-            The API response format, defaults to ``"native"``.
-            Must be one of the keys in the table at the top of the page.
 
         Returns
         -------
-        Union[Plan, bytes]
-            :class:`~flightplandb.datatypes.Plan` by default or if ``"native"``
-            is specified as the ``return_format``.
-
-            ``bytes`` if a different format than ``"native"`` was specified.
+        Plan
+            The registered flight plan created on flight plan database,
+            corresponding to the route after being edited
 
         Raises
         ------
@@ -183,17 +172,14 @@ class PlanAPI(FlightPlanDB):
             created, updated, popularity, and distance
         limit : int
             Maximum number of plans to return, defaults to 100
+        include_route : bool, optional
+            Include route in response, defaults to False
 
         Yields
         -------
         Generator[Plan, None, None]
             A generator containing :class:`~flightplandb.datatypes.Plan`
             objects.
-            Each plan's :py:obj:`~flightplandb.datatypes.Plan.route`
-            will be set to ``None`` unless otherwise specified in the
-            :py:obj:`~flightplandb.datatypes.PlanQuery.includeRoute` parameter
-            of the :class:`~flightplandb.datatypes.PlanQuery` used
-            to request it
         """
 
         for i in self._getiter(path="/search/plans",
@@ -289,17 +275,14 @@ class PlanAPI(FlightPlanDB):
         ----------
         gen_query : GenerateQuery
             A dataclass with options for flight plan generation
-        return_format : str
-            The API response format, defaults to ``"native"``.
-            Must be one of the keys in the table at the top of the page.
 
         Returns
         -------
-        Union[Plan, bytes]
-            Plan by default or if ``"native"`` is specified as
-            the ``return_format``.
-
-            Bytes if a different format than ``"native"`` was specified
+        Plan
+            The registered flight plan created on flight plan database,
+            corresponding to the generated route
+        include_route : bool, optional
+            Include route in response, defaults to false
         """
 
         response = self._post(

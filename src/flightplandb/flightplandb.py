@@ -139,9 +139,12 @@ class FlightPlanDB:
         # then add it to the request headers
         params["Accept"] = return_format_encoded
 
-        resp = requests.request(method, urljoin(self.url_base, path),
+        resp = requests.request(method=method,
+                                url=urljoin(self.url_base, path),
                                 auth=HTTPBasicAuth(key, None),
-                                headers=params, *args, **kwargs)
+                                headers=params,
+                                json=json_data,
+                                *args, **kwargs)
 
         status_handler(resp.status_code, ignore_statuses)
 
@@ -191,11 +194,12 @@ class FlightPlanDB:
         if not params:
             params = {}
 
-        resp = self._request("get", path,
-                             return_format,
-                             ignore_statuses,
-                             params,
-                             key,
+        resp = self._request(method="get",
+                             path=path,
+                             return_format=return_format,
+                             ignore_statuses=ignore_statuses,
+                             params=params,
+                             key=key,
                              *args, **kwargs)
         return resp
 
@@ -236,12 +240,12 @@ class FlightPlanDB:
         if not params:
             params = {}
 
-        resp = self._request("post",
-                             path,
-                             return_format,
-                             ignore_statuses,
-                             params,
-                             key,
+        resp = self._request(method="post",
+                             path=path,
+                             return_format=return_format,
+                             ignore_statuses=ignore_statuses,
+                             params=params,
+                             json_data=json_data,
                              *args, **kwargs)
         return resp
 
@@ -283,12 +287,13 @@ class FlightPlanDB:
         if not params:
             params = {}
 
-        resp = self._request("patch",
-                             path,
-                             return_format,
-                             ignore_statuses,
-                             params,
-                             key,
+        resp = self._request(method="patch",
+                             path=path,
+                             return_format=return_format,
+                             ignore_statuses=ignore_statuses,
+                             params=params,
+                             key=key,
+                             json_data=json_data,
                              *args, **kwargs)
         return resp
 
@@ -329,12 +334,12 @@ class FlightPlanDB:
         if not params:
             params = {}
 
-        resp = self._request("delete",
-                             path,
-                             return_format,
-                             ignore_statuses,
-                             params,
-                             key,
+        resp = self._request(method="delete",
+                             path=path,
+                             return_format=return_format,
+                             ignore_statuses=ignore_statuses,
+                             params=params,
+                             key=key,
                              *args, **kwargs)
         return resp
 

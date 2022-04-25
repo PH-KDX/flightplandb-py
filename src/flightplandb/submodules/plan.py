@@ -155,7 +155,7 @@ class PlanAPI(FlightPlanDB):
         return(StatusResponse(**resp))
 
     def search(self, plan_query: PlanQuery, sort: str = "created",
-               limit: int = 100,
+               include_route: bool = False, limit: int = 100,
                key: Optional[str] = None) -> Generator[Plan, None, None]:
         """Searches for flight plans.
         A number of search parameters are available.
@@ -182,9 +182,12 @@ class PlanAPI(FlightPlanDB):
             objects.
         """
 
+        request_json = plan_query._to_api_dict()
+        request_json["includeRoute"] = include_route
+
         for i in self._getiter(path="/search/plans",
                                sort=sort,
-                               params=plan_query._to_api_dict(),
+                               params=request_json,
                                limit=limit,
                                key=key):
             yield Plan(**i)
@@ -265,7 +268,7 @@ class PlanAPI(FlightPlanDB):
         return True
 
     def generate(self, gen_query: GenerateQuery,
-                 return_format: str = "native",
+                 include_route: bool = False,
                  key: Optional[str] = None) -> Union[Plan, bytes]:
         """Creates a new flight plan using the route generator.
 
@@ -285,12 +288,16 @@ class PlanAPI(FlightPlanDB):
             Include route in response, defaults to false
         """
 
-        response = self._post(
-                    path="/auto/generate", return_format=return_format, json=gen_query._to_api_dict(), key=key)
-        if return_format == "native":
-            return Plan(**response)
-        else:
-            return response
+        request_json = gen_query._to_api_dict()
+
+        # due to an API bug this must be a string instead of a boolean
+        request_json["includeRoute"] = "true" if include_route else "false"
+
+        return Plan(
+            **self._post(
+                path="/auto/generate",
+                json_data=request_json,
+                key=key))
 
     def decode(self, route: str,
                key: Optional[str] = None) -> Plan:
@@ -323,4 +330,4 @@ class PlanAPI(FlightPlanDB):
         """
 
         return Plan(**self._post(
-            path="/auto/decode", json={"route": route}, key=key))
+            path="/auto/decode", json_data={"route": route}, key=key))

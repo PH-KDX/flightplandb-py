@@ -246,6 +246,7 @@ class FlightPlanDB:
                              ignore_statuses=ignore_statuses,
                              params=params,
                              json_data=json_data,
+                             key=key,
                              *args, **kwargs)
         return resp
 

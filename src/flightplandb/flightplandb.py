@@ -19,11 +19,11 @@
 from typing import Generator, List, Dict, Union, Optional
 
 from urllib.parse import urljoin
+import json
 import requests
 from requests.auth import HTTPBasicAuth
 from requests.structures import CaseInsensitiveDict
 
-import json
 from flightplandb.exceptions import status_handler
 
 
@@ -124,17 +124,18 @@ class FlightPlanDB:
             params = {}
 
         # the API only takes "true" or "false", not True or False
-        for k, v in params.items():
-            if v in (True, False):
-                params[k] = json.dumps(v)
+        for key, value in params.items():
+            if value in (True, False):
+                params[key] = json.dumps(value)
 
         # convert the API content return_format to an HTTP Accept type
         try:
             return_format_encoded = format_return_types[return_format]
         # unless it's not a valid return_format
-        except KeyError:
+        except KeyError as exc:
             raise ValueError(
-                f"'{return_format}' is not a valid data return type option")
+                f"'{return_format}' is not a valid data return type option"
+                ) from exc
 
         # then add it to the request headers
         params["Accept"] = return_format_encoded
@@ -386,9 +387,9 @@ class FlightPlanDB:
             params = {}
 
         # the API only takes "true" or "false", not True or False
-        for k, v in params.items():
-            if v in (True, False):
-                params[k] = json.dumps(v)
+        for key, value in params.items():
+            if value in (True, False):
+                params[key] = json.dumps(value)
 
         valid_sort_orders = ["created", "updated", "popularity", "distance"]
         if sort not in valid_sort_orders:

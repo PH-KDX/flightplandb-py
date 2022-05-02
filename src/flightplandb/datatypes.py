@@ -211,7 +211,7 @@ class RouteNode:
     def __post_init__(self):
         if self.type not in self.validtypes:
             raise ValueError(f"{self.type} is not a valid RouteNode type")
-        self.via = Via(**self.via) if type(self.via) == dict else self.via
+        self.via = Via(**self.via) if isinstance(self.via, dict) else self.via
 
     def to_api_dict(self):
         resp_dict = self.__dict__
@@ -239,7 +239,7 @@ class Route:
 
     def __post_init__(self):
         self.nodes = list(map(
-            lambda node: (RouteNode(**node) if (type(node) == dict) else node),
+            lambda node: (RouteNode(**node) if (isinstance(node, dict)) else node),
             self.nodes))
 
     def to_api_dict(self):
@@ -367,13 +367,13 @@ class Plan:
 
     def to_api_dict(self):
         plan_dict = self.__dict__
-        if type(plan_dict["createdAt"]) == datetime:
+        if isinstance(plan_dict["createdAt"], datetime):
             plan_dict["createdAt"] = _datetime_to_iso(plan_dict["createdAt"])
-        if type(plan_dict["updatedAt"]) == datetime:
+        if isinstance(plan_dict["updatedAt"], datetime):
             plan_dict["updatedAt"] = _datetime_to_iso(plan_dict["updatedAt"])
-        if type(plan_dict["user"]) == User:
+        if isinstance(plan_dict["user"], User):
             plan_dict["user"] = plan_dict["user"].to_api_dict()
-        if type(plan_dict["route"]) == Route:
+        if isinstance(plan_dict["route"], Route):
             plan_dict["route"] = plan_dict["route"].to_api_dict()
         return plan_dict
 
@@ -537,16 +537,16 @@ class Times:
 
     def __post_init__(self):
         self.sunrise = (isoparse(self.sunrise)
-                        if type(self.sunrise) != datetime
+                        if not isinstance(self.sunrise, datetime)
                         else self.sunrise)
         self.sunset = (isoparse(self.sunset)
-                       if type(self.sunset) != datetime
+                       if not isinstance(self.sunset, datetime)
                        else self.sunset)
         self.dawn = (isoparse(self.dawn)
-                     if type(self.dawn) != datetime
+                     if not isinstance(self.dawn, datetime)
                      else self.dawn)
         self.dusk = (isoparse(self.dusk)
-                     if type(self.dusk) != datetime
+                     if not isinstance(self.dusk, datetime)
                      else self.dusk)
 
     def to_api_dict(self):
@@ -844,9 +844,9 @@ class Track:
 
     def to_api_dict(self):
         resp_dict = self.__dict__
-        if type(resp_dict["validFrom"]) == datetime:
+        if isinstance(resp_dict["validFrom"], datetime):
             resp_dict["validFrom"] = _datetime_to_iso(resp_dict["validFrom"])
-        if type(resp_dict["validTo"]) == datetime:
+        if isinstance(resp_dict["validTo"], datetime):
             resp_dict["validTo"] = _datetime_to_iso(resp_dict["validTo"])
         return resp_dict
 

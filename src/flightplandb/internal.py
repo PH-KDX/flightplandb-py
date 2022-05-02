@@ -16,6 +16,10 @@
 # You should have received a copy of the GNU General Public License along
 # with FlightplanDB-py.  If not, see <https://www.gnu.org/licenses/>.
 
+"""This file mostly contains internal functions called by the API.
+However, the internal functions are hidden, so unless you look at
+the source code, you're unlikely to see them."""
+
 from typing import Generator, List, Dict, Union, Optional
 
 from urllib.parse import urljoin
@@ -32,11 +36,6 @@ from flightplandb.exceptions import status_handler
 
 url_base: str = "https://api.flightplandatabase.com"
 
-
-"""This file mostly contains internal functions called by the API.
-However, the internal functions are hidden, so unless you look at
-the source code, you're unlikely to see them.
-"""
 
 def _request(method: str,
              path: str, return_format="native",

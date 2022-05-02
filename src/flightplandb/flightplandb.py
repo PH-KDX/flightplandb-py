@@ -33,406 +33,393 @@ from flightplandb.exceptions import status_handler
 url_base: str = "https://api.flightplandatabase.com"
 
 
-class FlightPlanDB:
+"""This file mostly contains internal functions called by the API.
+However, the internal functions are hidden, so unless you look at
+the source code, you're unlikely to see them.
+"""
 
-    """This class mostly contains internal functions called by the API.
-    However, the internal functions are hidden, so unless you look at
-    the source code, you're unlikely to see them.
-
-    Submodules are accessed via the alias properties at the end; for instance,
-    ``flightplandb.plan.fetch()``
-
-    Parameters
-    ----------
-    key : Optional[str]
-        API token, defaults to None (which makes it unauthenticated)
-    """
-
-    def __init__(self):
-        self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
-
-    def _request(self, method: str,
-                 path: str, return_format="native",
-                 ignore_statuses: Optional[List] = None,
-                 params: Optional[Dict] = None,
-                 key: Optional[str] = None,
-                 json_data: Optional[Dict] = None,
-                 *args, **kwargs) -> Union[Dict, bytes]:
-        """General HTTP requests function for non-paginated results.
-
-        Parameters
-        ----------
-        method : str
-            An HTTP request type. One of GET, POST, PATCH, or DELETE
-        path : str
-            The endpoint's path to which the request is being made
-        return_format : str, optional
-            The API response format, defaults to ``"native"``
-        ignore_statuses : Optional[List], optional
-            Statuses (together with 200 OK) which don't
-            raise an HTTPError, defaults to None
-        params : Optional[Dict], optional
-            Any other HTTP request parameters, defaults to None
-        key : Optional[str]
-            API token, defaults to None (which makes it unauthenticated)
-        *args
-            Variable length argument list.
-        **kwargs
-            Arbitrary keyword arguments.
-
-        Returns
-        -------
-        Union[Dict, bytes]
-            A ``dataclass`` if ``return_format`` is ``"native"``,
-            otherwise ``bytes``
-
-        Raises
-        ------
-        ValueError
-            Invalid return_format option
-        HTTPError
-            Invalid HTTP status in response
-        """
-
-        format_return_types = {
-            # if a dict is requested, the JSON will later be converted to that
-            "native": "application/vnd.fpd.v1+json",
-            # otherwise, pure JSON will be returned
-            "json": "application/vnd.fpd.v1+json",
-            "xml": "application/vnd.fpd.v1+xml",
-            "csv": "text/vnd.fpd.export.v1.csv+csv",
-            "pdf": "application/vnd.fpd.export.v1.pdf",
-            "kml": "application/vnd.fpd.export.v1.kml+xml",
-            "xplane": "application/vnd.fpd.export.v1.xplane",
-            "xplane11": "application/vnd.fpd.export.v1.xplane11",
-            "fs9": "application/vnd.fpd.export.v1.fs9",
-            "fsx": "application/vnd.fpd.export.v1.fsx",
-            "squawkbox": "application/vnd.fpd.export.v1.squawkbox",
-            "xfmc": "application/vnd.fpd.export.v1.xfmc",
-            "pmdg": "application/vnd.fpd.export.v1.pmdg",
-            "airbusx": "application/vnd.fpd.export.v1.airbusx",
-            "qualitywings": "application/vnd.fpd.export.v1.qualitywings",
-            "ifly747": "application/vnd.fpd.export.v1.ifly747",
-            "flightgear": "application/vnd.fpd.export.v1.flightgear",
-            "tfdi717": "application/vnd.fpd.export.v1.tfdi717",
-            "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
-        }
-
-        if not ignore_statuses:
-            ignore_statuses = []
-        if not params:
-            params = {}
-
-        # the API only takes "true" or "false", not True or False
-        for key, value in params.items():
-            if value in (True, False):
-                params[key] = json.dumps(value)
-
-        # convert the API content return_format to an HTTP Accept type
-        try:
-            return_format_encoded = format_return_types[return_format]
-        # unless it's not a valid return_format
-        except KeyError as exc:
-            raise ValueError(
-                f"'{return_format}' is not a valid data return type option"
-                ) from exc
-
-        # then add it to the request headers
-        params["Accept"] = return_format_encoded
-
-        resp = requests.request(method=method,
-                                url=urljoin(url_base, path),
-                                auth=HTTPBasicAuth(key, None),
-                                headers=params,
-                                json=json_data,
-                                *args, **kwargs)
-
-        status_handler(resp.status_code, ignore_statuses)
-
-        self._header = resp.headers
-
-        if return_format == "native":
-            return resp.json()
-
-        return resp.text  # if the format is not a dict
-
-    # and here go the specific non-paginated HTTP calls
-    def _get(self, path: str, return_format="native",
-             ignore_statuses: Optional[List] = None,
-             params: Optional[Dict] = None,
-             key: Optional[str] = None,
-             *args, **kwargs) -> Union[Dict, bytes]:
-        """Calls :meth:`_request()` for get requests.
-
-        Parameters
-        ----------
-        path : str
-            The endpoint's path to which the request is being made
-        return_format : str, optional
-            The API response format, defaults to ``"native"``
-        ignore_statuses : Optional[List], optional
-            Statuses (together with 200 OK) which don't
-            raise an HTTPError, defaults to None
-        params : Optional[Dict], optional
-            Any other HTTP request parameters, defaults to None
-        key : Optional[str]
-            API token, defaults to None (which makes it unauthenticated)
-        *args
-            Variable length argument list.
-        **kwargs
-            Arbitrary keyword arguments.
-
-        Returns
-        -------
-        Union[Dict, bytes]
-            A ``dataclass`` if ``return_format`` is ``"native"``,
-            otherwise ``bytes``
-        """
-
-        # I HATE not being able to set empty lists as default arguments
-        if not ignore_statuses:
-            ignore_statuses = []
-        if not params:
-            params = {}
-
-        resp = self._request(method="get",
-                             path=path,
-                             return_format=return_format,
-                             ignore_statuses=ignore_statuses,
-                             params=params,
-                             key=key,
-                             *args, **kwargs)
-        return resp
-
-    def _post(self, path: str, return_format="native",
-              ignore_statuses: Optional[List] = None,
-              params: Optional[Dict] = None,
-              key: Optional[str] = None,
-              json_data: Optional[Dict] = None,
-              *args, **kwargs) -> Union[Dict, bytes]:
-        """Calls :meth:`_request()` for post requests.
-
-        Parameters
-        ----------
-        path : str
-            The endpoint's path to which the request is being made
-        return_format : str, optional
-            The API response format, defaults to ``"native"``
-        ignore_statuses : Optional[List], optional
-            Statuses (together with 200 OK) which don't
-            raise an HTTPError, defaults to None
-        params : Optional[Dict], optional
-            Any other HTTP request parameters, defaults to None
-        key : Optional[str]
-            API token, defaults to None (which makes it unauthenticated)
-        *args
-            Variable length argument list.
-        **kwargs
-            Arbitrary keyword arguments.
-
-        Returns
-        -------
-        Union[Dict, bytes]
-            A ``dataclass`` if ``return_format`` is ``"native"``,
-            otherwise ``bytes``
-        """
-        if not ignore_statuses:
-            ignore_statuses = []
-        if not params:
-            params = {}
-
-        resp = self._request(method="post",
-                             path=path,
-                             return_format=return_format,
-                             ignore_statuses=ignore_statuses,
-                             params=params,
-                             json_data=json_data,
-                             key=key,
-                             *args, **kwargs)
-        return resp
-
-    def _patch(self, path: str, return_format="native",
-               ignore_statuses: Optional[List] = None,
-               params: Optional[Dict] = None,
-               key: Optional[str] = None,
-               json_data: Optional[Dict] = None,
-               *args, **kwargs) -> Union[Dict, bytes]:
-        """Calls :meth:`_request()` for patch requests.
-
-        Parameters
-        ----------
-        path : str
-            The endpoint's path to which the request is being made
-        return_format : str, optional
-            The API response format, defaults to ``"native"``
-        ignore_statuses : Optional[List], optional
-            Statuses (together with 200 OK) which don't
-            raise an HTTPError, defaults to None
-        params : Optional[Dict], optional
-            Any other HTTP request parameters, defaults to None
-        key : Optional[str]
-            API token, defaults to None (which makes it unauthenticated)
-        *args
-            Variable length argument list.
-        **kwargs
-            Arbitrary keyword arguments.
-
-        Returns
-        -------
-        Union[Dict, bytes]
-            A ``dataclass`` if ``return_format`` is ``"native"``,
-            otherwise ``bytes``
-        """
-
-        if not ignore_statuses:
-            ignore_statuses = []
-        if not params:
-            params = {}
-
-        resp = self._request(method="patch",
-                             path=path,
-                             return_format=return_format,
-                             ignore_statuses=ignore_statuses,
-                             params=params,
-                             key=key,
-                             json_data=json_data,
-                             *args, **kwargs)
-        return resp
-
-    def _delete(self, path: str, return_format="native",
+def _request(method: str,
+                path: str, return_format="native",
                 ignore_statuses: Optional[List] = None,
                 params: Optional[Dict] = None,
                 key: Optional[str] = None,
+                json_data: Optional[Dict] = None,
                 *args, **kwargs) -> Union[Dict, bytes]:
-        """Calls :meth:`_request()` for delete requests.
+    """General HTTP requests function for non-paginated results.
 
-        Parameters
-        ----------
-        path : str
-            The endpoint's path to which the request is being made
-        return_format : str, optional
-            The API response format, defaults to ``"native"``
-        ignore_statuses : Optional[List], optional
-            Statuses (together with 200 OK) which don't
-            raise an HTTPError, defaults to None
-        params : Optional[Dict], optional
-            Any other HTTP request parameters, defaults to None
-        key : Optional[str]
-            API token, defaults to None (which makes it unauthenticated)
-        *args
-            Variable length argument list.
-        **kwargs
-            Arbitrary keyword arguments.
+    Parameters
+    ----------
+    method : str
+        An HTTP request type. One of GET, POST, PATCH, or DELETE
+    path : str
+        The endpoint's path to which the request is being made
+    return_format : str, optional
+        The API response format, defaults to ``"native"``
+    ignore_statuses : Optional[List], optional
+        Statuses (together with 200 OK) which don't
+        raise an HTTPError, defaults to None
+    params : Optional[Dict], optional
+        Any other HTTP request parameters, defaults to None
+    key : Optional[str]
+        API token, defaults to None (which makes it unauthenticated)
+    *args
+        Variable length argument list.
+    **kwargs
+        Arbitrary keyword arguments.
 
-        Returns
-        -------
-        Union[Dict, bytes]
-            A ``dataclass`` if ``return_format`` is ``"native"``,
-            otherwise ``bytes``
-        """
+    Returns
+    -------
+    Union[Dict, bytes]
+        A ``dataclass`` if ``return_format`` is ``"native"``,
+        otherwise ``bytes``
 
-        if not ignore_statuses:
-            ignore_statuses = []
-        if not params:
-            params = {}
+    Raises
+    ------
+    ValueError
+        Invalid return_format option
+    HTTPError
+        Invalid HTTP status in response
+    """
 
-        resp = self._request(method="delete",
-                             path=path,
-                             return_format=return_format,
-                             ignore_statuses=ignore_statuses,
-                             params=params,
-                             key=key,
-                             *args, **kwargs)
-        return resp
+    format_return_types = {
+        # if a dict is requested, the JSON will later be converted to that
+        "native": "application/vnd.fpd.v1+json",
+        # otherwise, pure JSON will be returned
+        "json": "application/vnd.fpd.v1+json",
+        "xml": "application/vnd.fpd.v1+xml",
+        "csv": "text/vnd.fpd.export.v1.csv+csv",
+        "pdf": "application/vnd.fpd.export.v1.pdf",
+        "kml": "application/vnd.fpd.export.v1.kml+xml",
+        "xplane": "application/vnd.fpd.export.v1.xplane",
+        "xplane11": "application/vnd.fpd.export.v1.xplane11",
+        "fs9": "application/vnd.fpd.export.v1.fs9",
+        "fsx": "application/vnd.fpd.export.v1.fsx",
+        "squawkbox": "application/vnd.fpd.export.v1.squawkbox",
+        "xfmc": "application/vnd.fpd.export.v1.xfmc",
+        "pmdg": "application/vnd.fpd.export.v1.pmdg",
+        "airbusx": "application/vnd.fpd.export.v1.airbusx",
+        "qualitywings": "application/vnd.fpd.export.v1.qualitywings",
+        "ifly747": "application/vnd.fpd.export.v1.ifly747",
+        "flightgear": "application/vnd.fpd.export.v1.flightgear",
+        "tfdi717": "application/vnd.fpd.export.v1.tfdi717",
+        "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
+    }
 
-    def _getiter(self, path: str,
-                 limit: int = 100,
-                 sort: str = "created",
-                 ignore_statuses: Optional[List] = None,
-                 params: Optional[Dict] = None,
-                 key: Optional[str] = None,
-                 *args, **kwargs) -> Generator[Dict, None, None]:
-        """Get :meth:`_request()` for paginated results.
+    if not ignore_statuses:
+        ignore_statuses = []
+    if not params:
+        params = {}
 
-        Parameters
-        ----------
-        path : str
-            The endpoint's path to which the request is being made
-        limit : int, optional
-            Maximum number of results to return, defaults to 100
-        sort : str, optional
-            Sort order to return results in. Valid sort orders are
-            created, updated, popularity, and distance
-        ignore_statuses : Optional[List], optional
-            Statuses (together with 200 OK) which don't
-            raise an HTTPError, defaults to None
-        params : Optional[Dict], optional
-            Any other HTTP request parameters, defaults to None
-        key : Optional[str]
-            API token, defaults to None (which makes it unauthenticated)
-        *args
-            Variable length argument list.
-        **kwargs
-            Arbitrary keyword arguments.
+    # the API only takes "true" or "false", not True or False
+    for key, value in params.items():
+        if value in (True, False):
+            params[key] = json.dumps(value)
 
-        Returns
-        -------
-        Generator[Dict, None, None]
-            A generator of dicts. Return format cannot be specified.
-        """
+    # convert the API content return_format to an HTTP Accept type
+    try:
+        return_format_encoded = format_return_types[return_format]
+    # unless it's not a valid return_format
+    except KeyError as exc:
+        raise ValueError(
+            f"'{return_format}' is not a valid data return type option"
+            ) from exc
 
-        if not ignore_statuses:
-            ignore_statuses = []
-        if not params:
-            params = {}
+    # then add it to the request headers
+    params["Accept"] = return_format_encoded
 
-        # the API only takes "true" or "false", not True or False
-        for key, value in params.items():
-            if value in (True, False):
-                params[key] = json.dumps(value)
+    resp = requests.request(method=method,
+                            url=urljoin(url_base, path),
+                            auth=HTTPBasicAuth(key, None),
+                            headers=params,
+                            json=json_data,
+                            *args, **kwargs)
 
-        valid_sort_orders = ["created", "updated", "popularity", "distance"]
-        if sort not in valid_sort_orders:
-            raise ValueError(
-                f"sort argument must be one of {', '.join(valid_sort_orders)}")
-        else:
-            params["sort"] = sort
+    status_handler(resp.status_code, ignore_statuses)
 
-        url = urljoin(url_base, path)
-        auth = HTTPBasicAuth(key, None)
+    header = resp.headers
 
-        session = requests.Session()
-        # initially no results have been fetched yet
-        num_results = 0
+    if return_format == "native":
+        return header, resp.json()
+    else:
+        return header, resp.text  # if the format is not a dict
 
-        r_fpdb = session.get(
-            url=url,
-            params=params,
-            auth=auth,
-            *args, **kwargs)
+# and here go the specific non-paginated HTTP calls
+def _get(path: str, return_format="native",
+            ignore_statuses: Optional[List] = None,
+            params: Optional[Dict] = None,
+            key: Optional[str] = None,
+            *args, **kwargs) -> Union[Dict, bytes]:
+    """Calls :meth:`_request()` for get requests.
+
+    Parameters
+    ----------
+    path : str
+        The endpoint's path to which the request is being made
+    return_format : str, optional
+        The API response format, defaults to ``"native"``
+    ignore_statuses : Optional[List], optional
+        Statuses (together with 200 OK) which don't
+        raise an HTTPError, defaults to None
+    params : Optional[Dict], optional
+        Any other HTTP request parameters, defaults to None
+    key : Optional[str]
+        API token, defaults to None (which makes it unauthenticated)
+    *args
+        Variable length argument list.
+    **kwargs
+        Arbitrary keyword arguments.
+
+    Returns
+    -------
+    Union[Dict, bytes]
+        A ``dataclass`` if ``return_format`` is ``"native"``,
+        otherwise ``bytes``
+    """
+
+    # I HATE not being able to set empty lists as default arguments
+    if not ignore_statuses:
+        ignore_statuses = []
+    if not params:
+        params = {}
+
+    header, resp = _request(method="get",
+                            path=path,
+                            return_format=return_format,
+                            ignore_statuses=ignore_statuses,
+                            params=params,
+                            key=key,
+                            *args, **kwargs)
+    return header, resp
+
+def _post(path: str, return_format="native",
+            ignore_statuses: Optional[List] = None,
+            params: Optional[Dict] = None,
+            key: Optional[str] = None,
+            json_data: Optional[Dict] = None,
+            *args, **kwargs) -> Union[Dict, bytes]:
+    """Calls :meth:`_request()` for post requests.
+
+    Parameters
+    ----------
+    path : str
+        The endpoint's path to which the request is being made
+    return_format : str, optional
+        The API response format, defaults to ``"native"``
+    ignore_statuses : Optional[List], optional
+        Statuses (together with 200 OK) which don't
+        raise an HTTPError, defaults to None
+    params : Optional[Dict], optional
+        Any other HTTP request parameters, defaults to None
+    key : Optional[str]
+        API token, defaults to None (which makes it unauthenticated)
+    *args
+        Variable length argument list.
+    **kwargs
+        Arbitrary keyword arguments.
+
+    Returns
+    -------
+    Union[Dict, bytes]
+        A ``dataclass`` if ``return_format`` is ``"native"``,
+        otherwise ``bytes``
+    """
+    if not ignore_statuses:
+        ignore_statuses = []
+    if not params:
+        params = {}
+
+    header, resp = _request(method="post",
+                            path=path,
+                            return_format=return_format,
+                            ignore_statuses=ignore_statuses,
+                            params=params,
+                            json_data=json_data,
+                            key=key,
+                            *args, **kwargs)
+    return header, resp
+
+def _patch(path: str, return_format="native",
+            ignore_statuses: Optional[List] = None,
+            params: Optional[Dict] = None,
+            key: Optional[str] = None,
+            json_data: Optional[Dict] = None,
+            *args, **kwargs) -> Union[Dict, bytes]:
+    """Calls :meth:`_request()` for patch requests.
+
+    Parameters
+    ----------
+    path : str
+        The endpoint's path to which the request is being made
+    return_format : str, optional
+        The API response format, defaults to ``"native"``
+    ignore_statuses : Optional[List], optional
+        Statuses (together with 200 OK) which don't
+        raise an HTTPError, defaults to None
+    params : Optional[Dict], optional
+        Any other HTTP request parameters, defaults to None
+    key : Optional[str]
+        API token, defaults to None (which makes it unauthenticated)
+    *args
+        Variable length argument list.
+    **kwargs
+        Arbitrary keyword arguments.
+
+    Returns
+    -------
+    Union[Dict, bytes]
+        A ``dataclass`` if ``return_format`` is ``"native"``,
+        otherwise ``bytes``
+    """
+
+    if not ignore_statuses:
+        ignore_statuses = []
+    if not params:
+        params = {}
+
+    header, resp = _request(method="patch",
+                            path=path,
+                            return_format=return_format,
+                            ignore_statuses=ignore_statuses,
+                            params=params,
+                            key=key,
+                            json_data=json_data,
+                            *args, **kwargs)
+    return header, resp
+
+def _delete(path: str, return_format="native",
+            ignore_statuses: Optional[List] = None,
+            params: Optional[Dict] = None,
+            key: Optional[str] = None,
+            *args, **kwargs) -> Union[Dict, bytes]:
+    """Calls :meth:`_request()` for delete requests.
+
+    Parameters
+    ----------
+    path : str
+        The endpoint's path to which the request is being made
+    return_format : str, optional
+        The API response format, defaults to ``"native"``
+    ignore_statuses : Optional[List], optional
+        Statuses (together with 200 OK) which don't
+        raise an HTTPError, defaults to None
+    params : Optional[Dict], optional
+        Any other HTTP request parameters, defaults to None
+    key : Optional[str]
+        API token, defaults to None (which makes it unauthenticated)
+    *args
+        Variable length argument list.
+    **kwargs
+        Arbitrary keyword arguments.
+
+    Returns
+    -------
+    Union[Dict, bytes]
+        A ``dataclass`` if ``return_format`` is ``"native"``,
+        otherwise ``bytes``
+    """
+
+    if not ignore_statuses:
+        ignore_statuses = []
+    if not params:
+        params = {}
+
+    header, resp = _request(method="delete",
+                            path=path,
+                            return_format=return_format,
+                            ignore_statuses=ignore_statuses,
+                            params=params,
+                            key=key,
+                            *args, **kwargs)
+    return header, resp
+
+def _getiter(path: str,
+                limit: int = 100,
+                sort: str = "created",
+                ignore_statuses: Optional[List] = None,
+                params: Optional[Dict] = None,
+                key: Optional[str] = None,
+                *args, **kwargs) -> Generator[Dict, None, None]:
+    """Get :meth:`_request()` for paginated results.
+
+    Parameters
+    ----------
+    path : str
+        The endpoint's path to which the request is being made
+    limit : int, optional
+        Maximum number of results to return, defaults to 100
+    sort : str, optional
+        Sort order to return results in. Valid sort orders are
+        created, updated, popularity, and distance
+    ignore_statuses : Optional[List], optional
+        Statuses (together with 200 OK) which don't
+        raise an HTTPError, defaults to None
+    params : Optional[Dict], optional
+        Any other HTTP request parameters, defaults to None
+    key : Optional[str]
+        API token, defaults to None (which makes it unauthenticated)
+    *args
+        Variable length argument list.
+    **kwargs
+        Arbitrary keyword arguments.
+
+    Returns
+    -------
+    Generator[Dict, None, None]
+        A generator of dicts. Return format cannot be specified.
+    """
+
+    if not ignore_statuses:
+        ignore_statuses = []
+    if not params:
+        params = {}
+
+    # the API only takes "true" or "false", not True or False
+    for key, value in params.items():
+        if value in (True, False):
+            params[key] = json.dumps(value)
+
+    valid_sort_orders = ["created", "updated", "popularity", "distance"]
+    if sort not in valid_sort_orders:
+        raise ValueError(
+            f"sort argument must be one of {', '.join(valid_sort_orders)}")
+    else:
+        params["sort"] = sort
+
+    url = urljoin(url_base, path)
+    auth = HTTPBasicAuth(key, None)
+
+    session = requests.Session()
+    # initially no results have been fetched yet
+    num_results = 0
+
+    r_fpdb = session.get(
+        url=url,
+        params=params,
+        auth=auth,
+        *args, **kwargs)
+    status_handler(r_fpdb.status_code, ignore_statuses)
+
+    # I detest responses which "may" be paginated
+    # therefore I choose to pretend that all pages are paginated
+    # if it is unpaginated I say it is paginated with 1 page
+    if 'X-Page-Count' in r_fpdb.headers:
+        num_pages = int(r_fpdb.headers['X-Page-Count'])
+    else:
+        num_pages = 1
+
+    # while page <= num_pages...
+    for page in range(0, num_pages):
+        params['page'] = page
+        r_fpdb = session.get(url=url,
+                                params=params,
+                                auth=auth,
+                                *args, **kwargs)
         status_handler(r_fpdb.status_code, ignore_statuses)
-
-        # I detest responses which "may" be paginated
-        # therefore I choose to pretend that all pages are paginated
-        # if it is unpaginated I say it is paginated with 1 page
-        if 'X-Page-Count' in r_fpdb.headers:
-            num_pages = int(r_fpdb.headers['X-Page-Count'])
-        else:
-            num_pages = 1
-
-        # while page <= num_pages...
-        for page in range(0, num_pages):
-            params['page'] = page
-            r_fpdb = session.get(url=url,
-                                 params=params,
-                                 auth=auth,
-                                 *args, **kwargs)
-            status_handler(r_fpdb.status_code, ignore_statuses)
-            # ...keep cycling through pages...
-            for i in r_fpdb.json():
-                # ...and return every dictionary in there...
-                yield i
-                num_results += 1
-                # ...unless the result limit has been reached
-                if num_results == limit:
-                    return
+        # ...keep cycling through pages...
+        for i in r_fpdb.json():
+            # ...and return every dictionary in there...
+            yield i
+            num_results += 1
+            # ...unless the result limit has been reached
+            if num_results == limit:
+                return

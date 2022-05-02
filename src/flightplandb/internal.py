@@ -16,9 +16,8 @@
 # You should have received a copy of the GNU General Public License along
 # with FlightplanDB-py.  If not, see <https://www.gnu.org/licenses/>.
 
-"""This file mostly contains internal functions called by the API.
-However, the internal functions are hidden, so unless you look at
-the source code, you're unlikely to see them."""
+"""This file mostly contains internal functions called by the API,
+so you're unlikely to ever use them."""
 
 from typing import Generator, List, Dict, Union, Optional
 
@@ -37,13 +36,13 @@ from flightplandb.exceptions import status_handler
 url_base: str = "https://api.flightplandatabase.com"
 
 
-def _request(method: str,
-             path: str, return_format="native",
-             ignore_statuses: Optional[List] = None,
-             params: Optional[Dict] = None,
-             key: Optional[str] = None,
-             json_data: Optional[Dict] = None,
-             *args, **kwargs) -> Union[Dict, bytes]:
+def request(method: str,
+            path: str, return_format="native",
+            ignore_statuses: Optional[List] = None,
+            params: Optional[Dict] = None,
+            key: Optional[str] = None,
+            json_data: Optional[Dict] = None,
+            *args, **kwargs) -> Union[Dict, bytes]:
     """General HTTP requests function for non-paginated results.
 
     Parameters
@@ -144,19 +143,19 @@ def _request(method: str,
 
 
 # and here go the specific non-paginated HTTP calls
-def _get_headers(key: Optional[str] = None) -> CaseInsensitiveDict:
-    headers, _ = _request(method="get",
-                          path="",
-                          key=key)
+def get_headers(key: Optional[str] = None) -> CaseInsensitiveDict:
+    headers, _ = request(method="get",
+                         path="",
+                         key=key)
     return headers
 
 
-def _get(path: str, return_format="native",
-         ignore_statuses: Optional[List] = None,
-         params: Optional[Dict] = None,
-         key: Optional[str] = None,
-         *args, **kwargs) -> Union[Dict, bytes]:
-    """Calls :meth:`_request()` for get requests.
+def get(path: str, return_format="native",
+        ignore_statuses: Optional[List] = None,
+        params: Optional[Dict] = None,
+        key: Optional[str] = None,
+        *args, **kwargs) -> Union[Dict, bytes]:
+    """Calls :meth:`request()` for get requests.
 
     Parameters
     ----------
@@ -189,23 +188,71 @@ def _get(path: str, return_format="native",
     if not params:
         params = {}
 
-    _, resp = _request(method="get",
-                       path=path,
-                       return_format=return_format,
-                       ignore_statuses=ignore_statuses,
-                       params=params,
-                       key=key,
-                       *args, **kwargs)
+    _, resp = request(method="get",
+                      path=path,
+                      return_format=return_format,
+                      ignore_statuses=ignore_statuses,
+                      params=params,
+                      key=key,
+                      *args, **kwargs)
     return resp
 
 
-def _post(path: str, return_format="native",
+def post(path: str, return_format="native",
+         ignore_statuses: Optional[List] = None,
+         params: Optional[Dict] = None,
+         key: Optional[str] = None,
+         json_data: Optional[Dict] = None,
+         *args, **kwargs) -> Union[Dict, bytes]:
+    """Calls :meth:`request()` for post requests.
+
+    Parameters
+    ----------
+    path : str
+        The endpoint's path to which the request is being made
+    return_format : str, optional
+        The API response format, defaults to ``"native"``
+    ignore_statuses : Optional[List], optional
+        Statuses (together with 200 OK) which don't
+        raise an HTTPError, defaults to None
+    params : Optional[Dict], optional
+        Any other HTTP request parameters, defaults to None
+    key : Optional[str]
+        API token, defaults to None (which makes it unauthenticated)
+    *args
+        Variable length argument list.
+    **kwargs
+        Arbitrary keyword arguments.
+
+    Returns
+    -------
+    Union[Dict, bytes]
+        A ``dataclass`` if ``return_format`` is ``"native"``,
+        otherwise ``bytes``
+    """
+    if not ignore_statuses:
+        ignore_statuses = []
+    if not params:
+        params = {}
+
+    _, resp = request(method="post",
+                      path=path,
+                      return_format=return_format,
+                      ignore_statuses=ignore_statuses,
+                      params=params,
+                      json_data=json_data,
+                      key=key,
+                      *args, **kwargs)
+    return resp
+
+
+def patch(path: str, return_format="native",
           ignore_statuses: Optional[List] = None,
           params: Optional[Dict] = None,
           key: Optional[str] = None,
           json_data: Optional[Dict] = None,
           *args, **kwargs) -> Union[Dict, bytes]:
-    """Calls :meth:`_request()` for post requests.
+    """Calls :meth:`request()` for patch requests.
 
     Parameters
     ----------
@@ -231,29 +278,29 @@ def _post(path: str, return_format="native",
         A ``dataclass`` if ``return_format`` is ``"native"``,
         otherwise ``bytes``
     """
+
     if not ignore_statuses:
         ignore_statuses = []
     if not params:
         params = {}
 
-    _, resp = _request(method="post",
-                       path=path,
-                       return_format=return_format,
-                       ignore_statuses=ignore_statuses,
-                       params=params,
-                       json_data=json_data,
-                       key=key,
-                       *args, **kwargs)
+    _, resp = request(method="patch",
+                      path=path,
+                      return_format=return_format,
+                      ignore_statuses=ignore_statuses,
+                      params=params,
+                      key=key,
+                      json_data=json_data,
+                      *args, **kwargs)
     return resp
 
 
-def _patch(path: str, return_format="native",
+def delete(path: str, return_format="native",
            ignore_statuses: Optional[List] = None,
            params: Optional[Dict] = None,
            key: Optional[str] = None,
-           json_data: Optional[Dict] = None,
            *args, **kwargs) -> Union[Dict, bytes]:
-    """Calls :meth:`_request()` for patch requests.
+    """Calls :meth:`request()` for delete requests.
 
     Parameters
     ----------
@@ -285,72 +332,24 @@ def _patch(path: str, return_format="native",
     if not params:
         params = {}
 
-    _, resp = _request(method="patch",
-                       path=path,
-                       return_format=return_format,
-                       ignore_statuses=ignore_statuses,
-                       params=params,
-                       key=key,
-                       json_data=json_data,
-                       *args, **kwargs)
+    _, resp = request(method="delete",
+                      path=path,
+                      return_format=return_format,
+                      ignore_statuses=ignore_statuses,
+                      params=params,
+                      key=key,
+                      *args, **kwargs)
     return resp
 
 
-def _delete(path: str, return_format="native",
+def getiter(path: str,
+            limit: int = 100,
+            sort: str = "created",
             ignore_statuses: Optional[List] = None,
             params: Optional[Dict] = None,
             key: Optional[str] = None,
-            *args, **kwargs) -> Union[Dict, bytes]:
-    """Calls :meth:`_request()` for delete requests.
-
-    Parameters
-    ----------
-    path : str
-        The endpoint's path to which the request is being made
-    return_format : str, optional
-        The API response format, defaults to ``"native"``
-    ignore_statuses : Optional[List], optional
-        Statuses (together with 200 OK) which don't
-        raise an HTTPError, defaults to None
-    params : Optional[Dict], optional
-        Any other HTTP request parameters, defaults to None
-    key : Optional[str]
-        API token, defaults to None (which makes it unauthenticated)
-    *args
-        Variable length argument list.
-    **kwargs
-        Arbitrary keyword arguments.
-
-    Returns
-    -------
-    Union[Dict, bytes]
-        A ``dataclass`` if ``return_format`` is ``"native"``,
-        otherwise ``bytes``
-    """
-
-    if not ignore_statuses:
-        ignore_statuses = []
-    if not params:
-        params = {}
-
-    _, resp = _request(method="delete",
-                       path=path,
-                       return_format=return_format,
-                       ignore_statuses=ignore_statuses,
-                       params=params,
-                       key=key,
-                       *args, **kwargs)
-    return resp
-
-
-def _getiter(path: str,
-             limit: int = 100,
-             sort: str = "created",
-             ignore_statuses: Optional[List] = None,
-             params: Optional[Dict] = None,
-             key: Optional[str] = None,
-             *args, **kwargs) -> Generator[Dict, None, None]:
-    """Get :meth:`_request()` for paginated results.
+            *args, **kwargs) -> Generator[Dict, None, None]:
+    """Get :meth:`request()` for paginated results.
 
     Parameters
     ----------

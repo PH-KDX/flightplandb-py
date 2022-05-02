@@ -19,8 +19,8 @@
 
 from typing import List, Union, Optional
 from dataclasses import dataclass
-from dateutil.parser import isoparse
 from datetime import datetime
+from dateutil.parser import isoparse
 
 
 def _datetime_to_iso(timestamp: datetime):
@@ -42,7 +42,7 @@ class StatusResponse:
     message: str
     errors: Optional[List[str]]
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -90,7 +90,7 @@ class User:
         if self.lastSeen and isinstance(self.lastSeen, str):
             self.lastSeen = isoparse(self.lastSeen)
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         resp_dict = self.__dict__
         if isinstance(resp_dict["joined"], datetime):
             resp_dict["joined"] = _datetime_to_iso(resp_dict["joined"])
@@ -119,7 +119,7 @@ class UserSmall:
     location: Optional[str] = None
     gravatarHash: Optional[str] = None
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -140,7 +140,7 @@ class Application:
     name: Optional[str] = None
     url: Optional[str] = None
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -166,7 +166,7 @@ class Via:
         if self.type not in self.validtypes:
             raise ValueError(f"{self.type} is not a valid Via type")
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -213,10 +213,10 @@ class RouteNode:
             raise ValueError(f"{self.type} is not a valid RouteNode type")
         self.via = Via(**self.via) if type(self.via) == dict else self.via
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         resp_dict = self.__dict__
         if resp_dict["via"] and isinstance(resp_dict["via"], Via):
-            resp_dict["via"] = resp_dict["via"]._to_api_dict()
+            resp_dict["via"] = resp_dict["via"].to_api_dict()
         return resp_dict
 
 
@@ -242,10 +242,10 @@ class Route:
             lambda node: (RouteNode(**node) if (type(node) == dict) else node),
             self.nodes))
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         resp_dict = self.__dict__
         resp_dict["nodes"] = list(map(
-            lambda node: node._to_api_dict(), resp_dict["nodes"]))
+            lambda node: node.to_api_dict(), resp_dict["nodes"]))
         return resp_dict
 
 
@@ -269,7 +269,7 @@ class Cycle:
     year: int
     release: int
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -365,16 +365,16 @@ class Plan:
         if self.cycle and isinstance(self.cycle, dict):
             self.cycle = Cycle(**self.cycle)
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         plan_dict = self.__dict__
         if type(plan_dict["createdAt"]) == datetime:
             plan_dict["createdAt"] = _datetime_to_iso(plan_dict["createdAt"])
         if type(plan_dict["updatedAt"]) == datetime:
             plan_dict["updatedAt"] = _datetime_to_iso(plan_dict["updatedAt"])
         if type(plan_dict["user"]) == User:
-            plan_dict["user"] = plan_dict["user"]._to_api_dict()
+            plan_dict["user"] = plan_dict["user"].to_api_dict()
         if type(plan_dict["route"]) == Route:
-            plan_dict["route"] = plan_dict["route"]._to_api_dict()
+            plan_dict["route"] = plan_dict["route"].to_api_dict()
         return plan_dict
 
 
@@ -420,7 +420,7 @@ class PlanQuery:
     tags: Optional[str] = None
     includeRoute: Optional[bool] = None
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -468,7 +468,7 @@ class GenerateQuery:
     descentRate: Optional[float] = 1500
     descentSpeed: Optional[float] = 250
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -492,7 +492,7 @@ class Tag:
     planCount: int
     popularity: int
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -511,7 +511,7 @@ class Timezone:
     name: Optional[str]
     offset: Optional[float]
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -549,7 +549,7 @@ class Times:
                      if type(self.dusk) != datetime
                      else self.dusk)
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         plan_dict = self.__dict__
         plan_dict["sunrise"] = _datetime_to_iso(plan_dict["sunrise"])
         plan_dict["sunset"] = _datetime_to_iso(plan_dict["sunset"])
@@ -575,7 +575,7 @@ class RunwayEnds:
     lat: float
     lon: float
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -631,7 +631,7 @@ class Navaid:
         if self.type not in self.validtypes:
             raise ValueError(f"{self.type} is not a valid Navaid type")
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -682,11 +682,11 @@ class Runway:
         if self.navaids and (isinstance(self.navaids[0], dict)):
             self.navaids = list(map(lambda n: Navaid(**n), self.navaids))
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         resp_dict = self.__dict__
-        resp_dict["ends"] = list(map(lambda end: end._to_api_dict(),
+        resp_dict["ends"] = list(map(lambda end: end.to_api_dict(),
                                      resp_dict["ends"]))
-        resp_dict["navaids"] = list(map(lambda aid: aid._to_api_dict(),
+        resp_dict["navaids"] = list(map(lambda aid: aid.to_api_dict(),
                                         resp_dict["navaids"]))
         return resp_dict
 
@@ -709,7 +709,7 @@ class Frequency:
     frequency: float
     name: Optional[str]
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -727,7 +727,7 @@ class Weather:
     METAR: Optional[str]
     TAF: Optional[str]
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__
 
 
@@ -802,15 +802,15 @@ class Airport:
         if self.weather and isinstance(self.weather, dict):
             self.weather = Weather(**self.weather)
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         resp_dict = self.__dict__
-        resp_dict["timezone"] = resp_dict["timezone"]._to_api_dict()
-        resp_dict["times"] = resp_dict["times"]._to_api_dict()
-        resp_dict["runways"] = list(map(lambda rwy: rwy._to_api_dict(),
+        resp_dict["timezone"] = resp_dict["timezone"].to_api_dict()
+        resp_dict["times"] = resp_dict["times"].to_api_dict()
+        resp_dict["runways"] = list(map(lambda rwy: rwy.to_api_dict(),
                                         resp_dict["runways"]))
-        resp_dict["frequencies"] = list(map(lambda freq: freq._to_api_dict(),
+        resp_dict["frequencies"] = list(map(lambda freq: freq.to_api_dict(),
                                             resp_dict["frequencies"]))
-        resp_dict["weather"] = resp_dict["weather"]._to_api_dict()
+        resp_dict["weather"] = resp_dict["weather"].to_api_dict()
         return resp_dict
 
 
@@ -842,7 +842,7 @@ class Track:
         if self.validTo and isinstance(self.validTo, str):
             self.validTo = isoparse(self.validTo)
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         resp_dict = self.__dict__
         if type(resp_dict["validFrom"]) == datetime:
             resp_dict["validFrom"] = _datetime_to_iso(resp_dict["validFrom"])
@@ -892,5 +892,5 @@ class SearchNavaid:
         if self.type not in self.validtypes:
             raise ValueError(f"{self.type} is not a valid SearchNavaid type")
 
-    def _to_api_dict(self):
+    def to_api_dict(self):
         return self.__dict__

@@ -18,7 +18,7 @@ def _header_value(header_key: str, key: Optional[str] = None) -> str:
         The value corresponding to the passed key
     """
 
-    headers = internal._get_headers(key=key)  # Make one request to fetch headers
+    headers = internal.get_headers(key=key)  # Make one request to fetch headers
     return headers[header_key]
 
 
@@ -85,7 +85,7 @@ def ping(key: Optional[str] = None) -> StatusResponse:
         OK 200 means the service is up and running.
     """
 
-    resp = internal._get(path="", key=key)
+    resp = internal.get(path="", key=key)
     return StatusResponse(**resp)
 
 
@@ -104,5 +104,5 @@ def revoke(key: Optional[str] = None) -> StatusResponse:
         occurred and the errors array will give further details.
     """
 
-    resp = internal._get(path="/auth/revoke", key=key)
+    resp = internal.get(path="/auth/revoke", key=key)
     return StatusResponse(**resp)

@@ -1,7 +1,7 @@
 """Commands related to registered users."""
 from typing import Generator, Optional
 from flightplandb.datatypes import Plan, User, UserSmall
-from flightplandb.internal import _get, _getiter
+from flightplandb.internal import get, getiter
 
 
 def me(key: Optional[str] = None) -> User:
@@ -20,7 +20,7 @@ def me(key: Optional[str] = None) -> User:
         Authentication failed.
     """
 
-    resp = _get(path="/me", key=key)
+    resp = get(path="/me", key=key)
     return User(**resp)
 
 
@@ -43,7 +43,7 @@ def fetch(username: str, key: Optional[str] = None) -> User:
         No user was found with this username.
     """
 
-    resp = _get(path=f"/user/{username}", key=key)
+    resp = get(path=f"/user/{username}", key=key)
     return User(**resp)
 
 
@@ -68,7 +68,7 @@ def plans(username: str, sort: str = "created",
         A generator with all the flight plans a user created,
         limited by ``limit``
     """
-    for i in _getiter(path=f"/user/{username}/plans",
+    for i in getiter(path=f"/user/{username}/plans",
                       sort=sort,
                       limit=limit,
                       key=key):
@@ -97,7 +97,7 @@ def likes(username: str, sort: str = "created",
         limited by ``limit``
     """
 
-    for i in _getiter(path=f"/user/{username}/likes",
+    for i in getiter(path=f"/user/{username}/likes",
                       sort=sort,
                       limit=limit,
                       key=key):
@@ -125,7 +125,7 @@ def search(username: str,
         User, because less info is returned.
     """
 
-    for i in _getiter(path="/search/users",
+    for i in getiter(path="/search/users",
                       limit=limit,
                       params={"q": username},
                       key=key):

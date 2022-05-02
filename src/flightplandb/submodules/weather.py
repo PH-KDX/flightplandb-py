@@ -1,6 +1,6 @@
 from flightplandb.datatypes import Weather
 from typing import Optional
-from flightplandb.flightplandb import FlightPlanDB
+from flightplandb.internal import FlightPlanDB
 
 
 class WeatherAPI(FlightPlanDB):

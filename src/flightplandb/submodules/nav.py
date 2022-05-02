@@ -1,5 +1,5 @@
 from typing import Generator, List, Optional
-from flightplandb.flightplandb import FlightPlanDB
+from flightplandb.internal import FlightPlanDB
 from flightplandb.datatypes import Airport, Track, SearchNavaid
 
 

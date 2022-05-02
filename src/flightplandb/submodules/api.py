@@ -1,5 +1,5 @@
 from typing import Optional
-from flightplandb.flightplandb import FlightPlanDB as flightplandb
+from flightplandb import internal
 from flightplandb.datatypes import StatusResponse
 
 
@@ -17,7 +17,7 @@ def _header_value(header_key: str, key: Optional[str] = None) -> str:
         The value corresponding to the passed key
     """
 
-    headers, _ = flightplandb._get(path="", key=key)  # Make one request to fetch headers
+    headers, _ = internal._get(path="", key=key)  # Make one request to fetch headers
     return headers[header_key]
 
 def version(key: Optional[str] = None) -> int:
@@ -79,7 +79,7 @@ def ping(key: Optional[str] = None) -> StatusResponse:
         OK 200 means the service is up and running.
     """
 
-    _, resp = flightplandb._get(path="", key=key)
+    _, resp = internal._get(path="", key=key)
     return StatusResponse(**resp)
 
 def revoke(key: Optional[str] = None) -> StatusResponse:
@@ -97,5 +97,5 @@ def revoke(key: Optional[str] = None) -> StatusResponse:
         occurred and the errors array will give further details.
     """
 
-    _, resp = flightplandb._get(path="/auth/revoke", key=key)
+    _, resp = internal._get(path="/auth/revoke", key=key)
     return StatusResponse(**resp)

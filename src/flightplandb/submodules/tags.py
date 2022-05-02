@@ -1,6 +1,6 @@
 from typing import List, Optional
 from flightplandb.datatypes import Tag
-from flightplandb.flightplandb import FlightPlanDB
+from flightplandb.internal import FlightPlanDB
 
 
 class TagsAPI(FlightPlanDB):

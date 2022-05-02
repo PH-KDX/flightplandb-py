@@ -1,6 +1,6 @@
 from typing import Generator, Optional
 from flightplandb.datatypes import Plan, User, UserSmall
-from flightplandb.flightplandb import FlightPlanDB
+from flightplandb.internal import FlightPlanDB
 
 
 class UserAPI(FlightPlanDB):

@@ -3,7 +3,7 @@ from flightplandb.datatypes import (
     StatusResponse, PlanQuery,
     Plan, GenerateQuery
 )
-from flightplandb.flightplandb import FlightPlanDB
+from flightplandb.internal import FlightPlanDB
 
 
 class PlanAPI(FlightPlanDB):

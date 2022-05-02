@@ -17,17 +17,16 @@ def test_weather_api(mocker):
             2507/2510 CAVOK BECMG 2608/2611 05009KT"
         )
 
-    def patched_get(self, path, key):
+    def patched_get(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.weather.WeatherAPI,
-        attribute="_get",
+    mocker.patch(
+        target='flightplandb.internal.get',
         new=patched_get)
-    instance = flightplandb.submodules.weather.WeatherAPI()
-    spy = mocker.spy(instance, "_get")
 
-    response = instance.fetch("EHAM")
+    spy = mocker.spy(flightplandb.internal, "get")
+
+    response = flightplandb.weather.fetch("EHAM")
     # check that TagsAPI method made correct request of FlightPlanDB
     spy.assert_called_once_with(path='/weather/EHAM', key=None)
     # check that TagsAPI method decoded data correctly for given response

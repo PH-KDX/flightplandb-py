@@ -1,7 +1,7 @@
 """Commands related to registered users."""
 from typing import Generator, Optional
 from flightplandb.datatypes import Plan, User, UserSmall
-from flightplandb.internal import get, getiter
+from flightplandb import internal
 
 
 def me(key: Optional[str] = None) -> User:
@@ -20,7 +20,7 @@ def me(key: Optional[str] = None) -> User:
         Authentication failed.
     """
 
-    resp = get(path="/me", key=key)
+    resp = internal.get(path="/me", key=key)
     return User(**resp)
 
 
@@ -43,7 +43,7 @@ def fetch(username: str, key: Optional[str] = None) -> User:
         No user was found with this username.
     """
 
-    resp = get(path=f"/user/{username}", key=key)
+    resp = internal.get(path=f"/user/{username}", key=key)
     return User(**resp)
 
 
@@ -68,16 +68,16 @@ def plans(username: str, sort: str = "created",
         A generator with all the flight plans a user created,
         limited by ``limit``
     """
-    for i in getiter(path=f"/user/{username}/plans",
-                      sort=sort,
-                      limit=limit,
-                      key=key):
+    for i in internal.getiter(path=f"/user/{username}/plans",
+                              sort=sort,
+                              limit=limit,
+                              key=key):
         yield Plan(**i)
 
 
 def likes(username: str, sort: str = "created",
-            limit: int = 100,
-            key: Optional[str] = None) -> Generator[Plan, None, None]:
+          limit: int = 100,
+          key: Optional[str] = None) -> Generator[Plan, None, None]:
     """Fetches flight plans liked by a user.
 
     Parameters
@@ -97,16 +97,16 @@ def likes(username: str, sort: str = "created",
         limited by ``limit``
     """
 
-    for i in getiter(path=f"/user/{username}/likes",
-                      sort=sort,
-                      limit=limit,
-                      key=key):
+    for i in internal.getiter(path=f"/user/{username}/likes",
+                              sort=sort,
+                              limit=limit,
+                              key=key):
         yield Plan(**i)
 
 
 def search(username: str,
-            limit=100,
-            key: Optional[str] = None) -> Generator[UserSmall, None, None]:
+           limit=100,
+           key: Optional[str] = None) -> Generator[UserSmall, None, None]:
     """Searches for users by username. For more detailed info on a
     specific user, use :meth:`fetch`
 
@@ -125,8 +125,8 @@ def search(username: str,
         User, because less info is returned.
     """
 
-    for i in getiter(path="/search/users",
-                      limit=limit,
-                      params={"q": username},
-                      key=key):
+    for i in internal.getiter(path="/search/users",
+                              limit=limit,
+                              params={"q": username},
+                              key=key):
         yield UserSmall(**i)

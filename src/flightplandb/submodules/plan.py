@@ -4,7 +4,7 @@ from flightplandb.datatypes import (
     StatusResponse, PlanQuery,
     Plan, GenerateQuery
 )
-from flightplandb.internal import get, patch, post, delete, getiter
+from flightplandb import internal
 
 
 def fetch(id_: int,
@@ -38,7 +38,7 @@ def fetch(id_: int,
         No plan with the specified id was found.
     """
 
-    request = get(
+    request = internal.get(
         path=f"/plan/{id_}",
         return_format=return_format,
         key=key
@@ -74,7 +74,7 @@ def create(plan: Plan,
         otherwise unusable.
     """
 
-    request = post(
+    request = internal.post(
         path="/plan/",
         return_format=return_format,
         json=plan.to_api_dict(),
@@ -114,7 +114,7 @@ def edit(plan: Plan,
     """
 
     plan_data = plan.to_api_dict()
-    request = patch(
+    request = internal.patch(
         path=f"/plan/{plan_data['id']}",
         return_format=return_format,
         json=plan_data,
@@ -148,7 +148,7 @@ def delete(id_: int,
         No plan with the specified id was found.
     """
 
-    resp = delete(path=f"/plan/{id_}", key=key)
+    resp = internal.delete(path=f"/plan/{id_}", key=key)
     return StatusResponse(**resp)
 
 
@@ -183,16 +183,16 @@ def search(plan_query: PlanQuery, sort: str = "created",
     request_json = plan_query.to_api_dict()
     request_json["includeRoute"] = include_route
 
-    for i in getiter(path="/search/plans",
-                      sort=sort,
-                      params=request_json,
-                      limit=limit,
-                      key=key):
+    for i in internal.getiter(path="/search/plans",
+                              sort=sort,
+                              params=request_json,
+                              limit=limit,
+                              key=key):
         yield Plan(**i)
 
 
 def has_liked(id_: int,
-                key: Optional[str] = None) -> bool:
+              key: Optional[str] = None) -> bool:
     r"""Fetches your like status for a flight plan.
 
     Requires authentication.
@@ -208,9 +208,9 @@ def has_liked(id_: int,
         ``True``/``False`` to indicate that the plan was liked / not liked
     """
 
-    resp = get(path=f"/plan/{id_}/like",
-                ignore_statuses=[404],
-                key=key)
+    resp = internal.get(path=f"/plan/{id_}/like",
+                        ignore_statuses=[404],
+                        key=key)
     sr = StatusResponse(**resp)
     return sr.message != "Not Found"
 
@@ -238,7 +238,7 @@ def like(id_: int,
         No plan with the specified id was found.
     """
 
-    resp = post(path=f"/plan/{id_}/like", key=key)
+    resp = internal.post(path=f"/plan/{id_}/like", key=key)
     return StatusResponse(**resp)
 
 
@@ -265,7 +265,7 @@ def unlike(id_: int,
         or the plan was found but wasn't liked.
     """
 
-    delete(path=f"/plan/{id_}/like", key=key)
+    internal.delete(path=f"/plan/{id_}/like", key=key)
     return True
 
 
@@ -295,9 +295,9 @@ def generate(gen_query: GenerateQuery,
     # due to an API bug this must be a string instead of a boolean
     request_json["includeRoute"] = "true" if include_route else "false"
 
-    resp = post(path="/auto/generate",
-                 json_data=request_json,
-                 key=key)
+    resp = internal.post(path="/auto/generate",
+                         json_data=request_json,
+                         key=key)
     return Plan(**resp)
 
 
@@ -331,5 +331,6 @@ def decode(route: str,
         arguments or was otherwise unusable.
     """
 
-    resp = post(path="/auto/decode", json_data={"route": route}, key=key)
+    resp = internal.post(
+        path="/auto/decode", json_data={"route": route}, key=key)
     return Plan(**resp)

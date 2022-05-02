@@ -18,7 +18,7 @@ def header_value(header_key: str, key: Optional[str] = None) -> str:
         The value corresponding to the passed key
     """
 
-    headers = internal.get_headers(key=key)  # Make one request to fetch headers
+    headers = internal.get_headers(key=key)  # Make 1 request to fetch headers
     return headers[header_key]
 
 

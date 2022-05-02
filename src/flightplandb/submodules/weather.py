@@ -1,7 +1,7 @@
 """Weather. I mean, how much is there to say?"""
 from typing import Optional
 from flightplandb.datatypes import Weather
-from flightplandb.internal import get
+from flightplandb import internal
 
 
 def fetch(icao: str, key: Optional[str] = None) -> Weather:
@@ -24,4 +24,4 @@ def fetch(icao: str, key: Optional[str] = None) -> Weather:
         No airport with the specified ICAO code was found.
     """
 
-    return Weather(**get(path=f"/weather/{icao}", key=key))
+    return Weather(**internal.get(path=f"/weather/{icao}", key=key))

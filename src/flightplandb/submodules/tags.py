@@ -1,7 +1,7 @@
 """Contains the command for fetching flight plan tags."""
 from typing import List, Optional
 from flightplandb.datatypes import Tag
-from flightplandb.internal import get
+from flightplandb import internal
 
 
 def fetch(key: Optional[str] = None) -> List[Tag]:
@@ -14,4 +14,4 @@ def fetch(key: Optional[str] = None) -> List[Tag]:
         A list of the current popular tags.
     """
 
-    return list(map(lambda t: Tag(**t), get(path="/tags", key=key)))
+    return list(map(lambda t: Tag(**t), internal.get(path="/tags", key=key)))

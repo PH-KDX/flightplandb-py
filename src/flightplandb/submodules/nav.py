@@ -1,7 +1,7 @@
 """Commands related to navigation aids and airports."""
 from typing import Generator, List, Optional
 from flightplandb.datatypes import Airport, Track, SearchNavaid
-from flightplandb.internal import get, getiter
+from flightplandb import internal
 
 
 def airport(icao: str, key: Optional[str] = None) -> Airport:
@@ -23,7 +23,7 @@ def airport(icao: str, key: Optional[str] = None) -> Airport:
         No airport with the specified ICAO code was found.
     """
 
-    resp = get(path=f"/nav/airport/{icao}", key=key)
+    resp = internal.get(path=f"/nav/airport/{icao}", key=key)
     return Airport(**resp)
 
 
@@ -37,7 +37,7 @@ def nats(key: Optional[str] = None) -> List[Track]:
     """
 
     return list(
-        map(lambda n: Track(**n), get("/nav/NATS", key=key)))
+        map(lambda n: Track(**n), internal.get("/nav/NATS", key=key)))
 
 
 def pacots(key: Optional[str] = None) -> List[Track]:
@@ -50,7 +50,7 @@ def pacots(key: Optional[str] = None) -> List[Track]:
     """
 
     return list(
-        map(lambda t: Track(**t), get(path="/nav/PACOTS", key=key)))
+        map(lambda t: Track(**t), internal.get(path="/nav/PACOTS", key=key)))
 
 
 def search(
@@ -81,5 +81,5 @@ def search(
             params["types"] = type_
         else:
             raise ValueError(f"{type_} is not a valid Navaid type")
-    for i in getiter(path="/search/nav", params=params, key=key):
+    for i in internal.getiter(path="/search/nav", params=params, key=key):
         yield SearchNavaid(**i)

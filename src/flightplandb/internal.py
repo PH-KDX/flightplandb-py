@@ -22,6 +22,7 @@ from urllib.parse import urljoin
 import json
 import requests
 from requests.auth import HTTPBasicAuth
+from requests.structures import CaseInsensitiveDict
 
 from flightplandb.exceptions import status_handler
 
@@ -38,12 +39,12 @@ the source code, you're unlikely to see them.
 """
 
 def _request(method: str,
-                path: str, return_format="native",
-                ignore_statuses: Optional[List] = None,
-                params: Optional[Dict] = None,
-                key: Optional[str] = None,
-                json_data: Optional[Dict] = None,
-                *args, **kwargs) -> Union[Dict, bytes]:
+             path: str, return_format="native",
+             ignore_statuses: Optional[List] = None,
+             params: Optional[Dict] = None,
+             key: Optional[str] = None,
+             json_data: Optional[Dict] = None,
+             *args, **kwargs) -> Union[Dict, bytes]:
     """General HTTP requests function for non-paginated results.
 
     Parameters
@@ -110,9 +111,9 @@ def _request(method: str,
         params = {}
 
     # the API only takes "true" or "false", not True or False
-    for key, value in params.items():
-        if value in (True, False):
-            params[key] = json.dumps(value)
+    for _key, _value in params.items():
+        if _value in (True, False):
+            params[_key] = json.dumps(_value)
 
     # convert the API content return_format to an HTTP Accept type
     try:
@@ -144,18 +145,18 @@ def _request(method: str,
 
 
 # and here go the specific non-paginated HTTP calls
-def _get_headers(key: Optional[str] = None):
+def _get_headers(key: Optional[str] = None) -> CaseInsensitiveDict:
     headers, _ = _request(method="get",
-                            path="",
-                            key=key)
+                          path="",
+                          key=key)
     return headers
 
 
 def _get(path: str, return_format="native",
-            ignore_statuses: Optional[List] = None,
-            params: Optional[Dict] = None,
-            key: Optional[str] = None,
-            *args, **kwargs) -> Union[Dict, bytes]:
+         ignore_statuses: Optional[List] = None,
+         params: Optional[Dict] = None,
+         key: Optional[str] = None,
+         *args, **kwargs) -> Union[Dict, bytes]:
     """Calls :meth:`_request()` for get requests.
 
     Parameters
@@ -190,21 +191,21 @@ def _get(path: str, return_format="native",
         params = {}
 
     _, resp = _request(method="get",
-                            path=path,
-                            return_format=return_format,
-                            ignore_statuses=ignore_statuses,
-                            params=params,
-                            key=key,
-                            *args, **kwargs)
+                       path=path,
+                       return_format=return_format,
+                       ignore_statuses=ignore_statuses,
+                       params=params,
+                       key=key,
+                       *args, **kwargs)
     return resp
 
 
 def _post(path: str, return_format="native",
-            ignore_statuses: Optional[List] = None,
-            params: Optional[Dict] = None,
-            key: Optional[str] = None,
-            json_data: Optional[Dict] = None,
-            *args, **kwargs) -> Union[Dict, bytes]:
+          ignore_statuses: Optional[List] = None,
+          params: Optional[Dict] = None,
+          key: Optional[str] = None,
+          json_data: Optional[Dict] = None,
+          *args, **kwargs) -> Union[Dict, bytes]:
     """Calls :meth:`_request()` for post requests.
 
     Parameters
@@ -237,22 +238,22 @@ def _post(path: str, return_format="native",
         params = {}
 
     _, resp = _request(method="post",
-                            path=path,
-                            return_format=return_format,
-                            ignore_statuses=ignore_statuses,
-                            params=params,
-                            json_data=json_data,
-                            key=key,
-                            *args, **kwargs)
+                       path=path,
+                       return_format=return_format,
+                       ignore_statuses=ignore_statuses,
+                       params=params,
+                       json_data=json_data,
+                       key=key,
+                       *args, **kwargs)
     return resp
 
 
 def _patch(path: str, return_format="native",
-            ignore_statuses: Optional[List] = None,
-            params: Optional[Dict] = None,
-            key: Optional[str] = None,
-            json_data: Optional[Dict] = None,
-            *args, **kwargs) -> Union[Dict, bytes]:
+           ignore_statuses: Optional[List] = None,
+           params: Optional[Dict] = None,
+           key: Optional[str] = None,
+           json_data: Optional[Dict] = None,
+           *args, **kwargs) -> Union[Dict, bytes]:
     """Calls :meth:`_request()` for patch requests.
 
     Parameters
@@ -286,13 +287,13 @@ def _patch(path: str, return_format="native",
         params = {}
 
     _, resp = _request(method="patch",
-                            path=path,
-                            return_format=return_format,
-                            ignore_statuses=ignore_statuses,
-                            params=params,
-                            key=key,
-                            json_data=json_data,
-                            *args, **kwargs)
+                       path=path,
+                       return_format=return_format,
+                       ignore_statuses=ignore_statuses,
+                       params=params,
+                       key=key,
+                       json_data=json_data,
+                       *args, **kwargs)
     return resp
 
 
@@ -334,22 +335,22 @@ def _delete(path: str, return_format="native",
         params = {}
 
     _, resp = _request(method="delete",
-                            path=path,
-                            return_format=return_format,
-                            ignore_statuses=ignore_statuses,
-                            params=params,
-                            key=key,
-                            *args, **kwargs)
+                       path=path,
+                       return_format=return_format,
+                       ignore_statuses=ignore_statuses,
+                       params=params,
+                       key=key,
+                       *args, **kwargs)
     return resp
 
 
 def _getiter(path: str,
-                limit: int = 100,
-                sort: str = "created",
-                ignore_statuses: Optional[List] = None,
-                params: Optional[Dict] = None,
-                key: Optional[str] = None,
-                *args, **kwargs) -> Generator[Dict, None, None]:
+             limit: int = 100,
+             sort: str = "created",
+             ignore_statuses: Optional[List] = None,
+             params: Optional[Dict] = None,
+             key: Optional[str] = None,
+             *args, **kwargs) -> Generator[Dict, None, None]:
     """Get :meth:`_request()` for paginated results.
 
     Parameters
@@ -422,9 +423,9 @@ def _getiter(path: str,
     for page in range(0, num_pages):
         params['page'] = page
         r_fpdb = session.get(url=url,
-                                params=params,
-                                auth=auth,
-                                *args, **kwargs)
+                             params=params,
+                             auth=auth,
+                             *args, **kwargs)
         status_handler(r_fpdb.status_code, ignore_statuses)
         # ...keep cycling through pages...
         for i in r_fpdb.json():

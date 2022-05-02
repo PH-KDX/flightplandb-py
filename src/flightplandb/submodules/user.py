@@ -23,6 +23,7 @@ def me(key: Optional[str] = None) -> User:
     resp = _get(path="/me", key=key)
     return User(**resp)
 
+
 def fetch(username: str, key: Optional[str] = None) -> User:
     """Fetches profile information for any registered user
 
@@ -45,9 +46,10 @@ def fetch(username: str, key: Optional[str] = None) -> User:
     resp = _get(path=f"/user/{username}", key=key)
     return User(**resp)
 
+
 def plans(username: str, sort: str = "created",
-            limit: int = 100,
-            key: Optional[str] = None) -> Generator[Plan, None, None]:
+          limit: int = 100,
+          key: Optional[str] = None) -> Generator[Plan, None, None]:
     """Fetches flight plans created by a user.
 
     Parameters
@@ -67,10 +69,11 @@ def plans(username: str, sort: str = "created",
         limited by ``limit``
     """
     for i in _getiter(path=f"/user/{username}/plans",
-                            sort=sort,
-                            limit=limit,
-                            key=key):
+                      sort=sort,
+                      limit=limit,
+                      key=key):
         yield Plan(**i)
+
 
 def likes(username: str, sort: str = "created",
             limit: int = 100,
@@ -95,10 +98,11 @@ def likes(username: str, sort: str = "created",
     """
 
     for i in _getiter(path=f"/user/{username}/likes",
-                            sort=sort,
-                            limit=limit,
-                            key=key):
+                      sort=sort,
+                      limit=limit,
+                      key=key):
         yield Plan(**i)
+
 
 def search(username: str,
             limit=100,
@@ -122,7 +126,7 @@ def search(username: str,
     """
 
     for i in _getiter(path="/search/users",
-                            limit=limit,
-                            params={"q": username},
-                            key=key):
+                      limit=limit,
+                      params={"q": username},
+                      key=key):
         yield UserSmall(**i)

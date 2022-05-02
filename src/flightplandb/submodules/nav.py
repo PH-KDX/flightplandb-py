@@ -26,6 +26,7 @@ def airport(icao: str, key: Optional[str] = None) -> Airport:
     resp = _get(path=f"/nav/airport/{icao}", key=key)
     return Airport(**resp)
 
+
 def nats(key: Optional[str] = None) -> List[Track]:
     """Fetches current North Atlantic Tracks.
 
@@ -37,6 +38,7 @@ def nats(key: Optional[str] = None) -> List[Track]:
 
     return list(
         map(lambda n: Track(**n), _get("/nav/NATS", key=key)))
+
 
 def pacots(key: Optional[str] = None) -> List[Track]:
     """Fetches current Pacific Organized Track System tracks.
@@ -50,9 +52,11 @@ def pacots(key: Optional[str] = None) -> List[Track]:
     return list(
         map(lambda t: Track(**t), _get(path="/nav/PACOTS", key=key)))
 
-def search(query: str,
-            type_: str = None, key: Optional[str] = None
-            ) -> Generator[SearchNavaid, None, None]:
+
+def search(
+        query: str,
+        type_: str = None, key: Optional[str] = None
+        ) -> Generator[SearchNavaid, None, None]:
     r"""Searches navaids using a query.
 
     Parameters

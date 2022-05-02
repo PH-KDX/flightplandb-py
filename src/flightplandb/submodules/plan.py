@@ -8,8 +8,8 @@ from flightplandb.internal import _get, _patch, _post, _delete, _getiter
 
 
 def fetch(id_: int,
-            return_format: str = "native",
-            key: Optional[str] = None) -> Union[Plan, None, bytes]:
+          return_format: str = "native",
+          key: Optional[str] = None) -> Union[Plan, None, bytes]:
     # Underscore for id_ must be escaped as id\_ so sphinx shows the _.
     # However, this would raise W605. To fix this, a raw string is used.
     r"""
@@ -51,8 +51,8 @@ def fetch(id_: int,
 
 
 def create(plan: Plan,
-            return_format: str = "native",
-            key: Optional[str] = None) -> Union[Plan, bytes]:
+           return_format: str = "native",
+           key: Optional[str] = None) -> Union[Plan, bytes]:
     """Creates a new flight plan.
 
     Requires authentication.
@@ -87,8 +87,8 @@ def create(plan: Plan,
 
 
 def edit(plan: Plan,
-            return_format: str = "native",
-            key: Optional[str] = None) -> Union[Plan, bytes]:
+         return_format: str = "native",
+         key: Optional[str] = None) -> Union[Plan, bytes]:
     """Edits a flight plan linked to your account.
 
     Requires authentication.
@@ -127,7 +127,7 @@ def edit(plan: Plan,
 
 
 def delete(id_: int,
-            key: Optional[str] = None) -> StatusResponse:
+           key: Optional[str] = None) -> StatusResponse:
     r"""Deletes a flight plan that is linked to your account.
 
     Requires authentication.
@@ -153,8 +153,8 @@ def delete(id_: int,
 
 
 def search(plan_query: PlanQuery, sort: str = "created",
-            include_route: bool = False, limit: int = 100,
-            key: Optional[str] = None) -> Generator[Plan, None, None]:
+           include_route: bool = False, limit: int = 100,
+           key: Optional[str] = None) -> Generator[Plan, None, None]:
     """Searches for flight plans.
     A number of search parameters are available.
     They will be combined to form a search request.
@@ -184,10 +184,10 @@ def search(plan_query: PlanQuery, sort: str = "created",
     request_json["includeRoute"] = include_route
 
     for i in _getiter(path="/search/plans",
-                            sort=sort,
-                            params=request_json,
-                            limit=limit,
-                            key=key):
+                      sort=sort,
+                      params=request_json,
+                      limit=limit,
+                      key=key):
         yield Plan(**i)
 
 
@@ -208,16 +208,15 @@ def has_liked(id_: int,
         ``True``/``False`` to indicate that the plan was liked / not liked
     """
 
-    resp = _get(
-            path=f"/plan/{id_}/like",
-            ignore_statuses=[404],
-            key=key)
+    resp = _get(path=f"/plan/{id_}/like",
+                ignore_statuses=[404],
+                key=key)
     sr = StatusResponse(**resp)
     return sr.message != "Not Found"
 
 
 def like(id_: int,
-            key: Optional[str] = None) -> StatusResponse:
+         key: Optional[str] = None) -> StatusResponse:
     r"""Likes a flight plan.
 
     Requires authentication.
@@ -244,7 +243,7 @@ def like(id_: int,
 
 
 def unlike(id_: int,
-            key: Optional[str] = None) -> bool:
+           key: Optional[str] = None) -> bool:
     r"""Removes a flight plan like.
 
     Requires authentication.
@@ -271,8 +270,8 @@ def unlike(id_: int,
 
 
 def generate(gen_query: GenerateQuery,
-                include_route: bool = False,
-                key: Optional[str] = None) -> Union[Plan, bytes]:
+             include_route: bool = False,
+             key: Optional[str] = None) -> Union[Plan, bytes]:
     """Creates a new flight plan using the route generator.
 
     Requires authentication.
@@ -296,15 +295,14 @@ def generate(gen_query: GenerateQuery,
     # due to an API bug this must be a string instead of a boolean
     request_json["includeRoute"] = "true" if include_route else "false"
 
-    resp = _post(
-            path="/auto/generate",
-            json_data=request_json,
-            key=key)
+    resp = _post(path="/auto/generate",
+                 json_data=request_json,
+                 key=key)
     return Plan(**resp)
 
 
 def decode(route: str,
-            key: Optional[str] = None) -> Plan:
+           key: Optional[str] = None) -> Plan:
     """Creates a new flight plan using the route decoder.
 
     Requires authentication.

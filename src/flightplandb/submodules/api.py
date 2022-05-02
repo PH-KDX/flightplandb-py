@@ -4,7 +4,7 @@ from flightplandb import internal
 from flightplandb.datatypes import StatusResponse
 
 
-def _header_value(header_key: str, key: Optional[str] = None) -> str:
+def header_value(header_key: str, key: Optional[str] = None) -> str:
     """Gets header value for key
 
     Parameters
@@ -31,7 +31,7 @@ def version(key: Optional[str] = None) -> int:
         API version
     """
 
-    return int(_header_value("X-API-Version", key=key))
+    return int(header_value("X-API-Version", key=key))
 
 
 def units(key: Optional[str] = None) -> str:
@@ -44,7 +44,7 @@ def units(key: Optional[str] = None) -> str:
         AVIATION, METRIC or SI
     """
 
-    return _header_value("X-Units", key=key)
+    return header_value("X-Units", key=key)
 
 
 def limit_cap(key: Optional[str] = None) -> int:
@@ -60,7 +60,7 @@ def limit_cap(key: Optional[str] = None) -> int:
         number of allowed requests per day
     """
 
-    return int(_header_value("X-Limit-Cap", key=key))
+    return int(header_value("X-Limit-Cap", key=key))
 
 
 def limit_used(key: Optional[str] = None) -> int:
@@ -73,7 +73,7 @@ def limit_used(key: Optional[str] = None) -> int:
         number of requests used in period
     """
 
-    return int(_header_value("X-Limit-Used", key=key))
+    return int(header_value("X-Limit-Used", key=key))
 
 
 def ping(key: Optional[str] = None) -> StatusResponse:

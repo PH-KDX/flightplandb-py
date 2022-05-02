@@ -144,6 +144,18 @@ def request(method: str,
 
 # and here go the specific non-paginated HTTP calls
 def get_headers(key: Optional[str] = None) -> CaseInsensitiveDict:
+    """Calls :meth:`request()` for request headers.
+
+    Parameters
+    ----------
+    key : Optional[str]
+        API token, defaults to None (which makes it unauthenticated)
+
+    Returns
+    -------
+    CaseInsensitiveDict
+        A dict of headers, but the keys are case-insensitive.
+    """
     headers, _ = request(method="get",
                          path="",
                          key=key)

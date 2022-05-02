@@ -1,33 +1,27 @@
-from flightplandb.datatypes import Weather
+"""Weather. I mean, how much is there to say?"""
 from typing import Optional
-from flightplandb.internal import FlightPlanDB
+from flightplandb.datatypes import Weather
+from flightplandb.internal import _get
 
 
-class WeatherAPI(FlightPlanDB):
+def fetch(icao: str, key: Optional[str] = None) -> Weather:
+    """
+    Fetches current weather conditions at an airport
 
-    """Weather. I mean, how much is there to say?
+    Parameters
+    ----------
+    icao : str
+        ICAO code of the airport for which the weather will be fetched
 
-    Accessed via :meth:`~flightplandb.flightplandb.FlightPlanDB.weather`.
+    Returns
+    -------
+    Weather
+        METAR and TAF for an airport
+
+    Raises
+    ------
+    :class:`~flightplandb.exceptions.NotFoundException`
+        No airport with the specified ICAO code was found.
     """
 
-    def fetch(self, icao: str, key: Optional[str] = None) -> Weather:
-        """
-        Fetches current weather conditions at an airport
-
-        Parameters
-        ----------
-        icao : str
-            ICAO code of the airport for which the weather will be fetched
-
-        Returns
-        -------
-        Weather
-            METAR and TAF for an airport
-
-        Raises
-        ------
-        :class:`~flightplandb.exceptions.NotFoundException`
-            No airport with the specified ICAO code was found.
-        """
-
-        return Weather(**self._get(path=f"/weather/{icao}", key=key))
+    return Weather(**_get(path=f"/weather/{icao}", key=key))

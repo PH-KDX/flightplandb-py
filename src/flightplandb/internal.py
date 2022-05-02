@@ -142,7 +142,15 @@ def _request(method: str,
     else:
         return header, resp.text  # if the format is not a dict
 
+
 # and here go the specific non-paginated HTTP calls
+def _get_headers(key: Optional[str] = None):
+    headers, _ = _request(method="get",
+                            path="",
+                            key=key)
+    return headers
+
+
 def _get(path: str, return_format="native",
             ignore_statuses: Optional[List] = None,
             params: Optional[Dict] = None,
@@ -181,14 +189,15 @@ def _get(path: str, return_format="native",
     if not params:
         params = {}
 
-    header, resp = _request(method="get",
+    _, resp = _request(method="get",
                             path=path,
                             return_format=return_format,
                             ignore_statuses=ignore_statuses,
                             params=params,
                             key=key,
                             *args, **kwargs)
-    return header, resp
+    return resp
+
 
 def _post(path: str, return_format="native",
             ignore_statuses: Optional[List] = None,
@@ -227,7 +236,7 @@ def _post(path: str, return_format="native",
     if not params:
         params = {}
 
-    header, resp = _request(method="post",
+    _, resp = _request(method="post",
                             path=path,
                             return_format=return_format,
                             ignore_statuses=ignore_statuses,
@@ -235,7 +244,8 @@ def _post(path: str, return_format="native",
                             json_data=json_data,
                             key=key,
                             *args, **kwargs)
-    return header, resp
+    return resp
+
 
 def _patch(path: str, return_format="native",
             ignore_statuses: Optional[List] = None,
@@ -275,7 +285,7 @@ def _patch(path: str, return_format="native",
     if not params:
         params = {}
 
-    header, resp = _request(method="patch",
+    _, resp = _request(method="patch",
                             path=path,
                             return_format=return_format,
                             ignore_statuses=ignore_statuses,
@@ -283,7 +293,8 @@ def _patch(path: str, return_format="native",
                             key=key,
                             json_data=json_data,
                             *args, **kwargs)
-    return header, resp
+    return resp
+
 
 def _delete(path: str, return_format="native",
             ignore_statuses: Optional[List] = None,
@@ -322,14 +333,15 @@ def _delete(path: str, return_format="native",
     if not params:
         params = {}
 
-    header, resp = _request(method="delete",
+    _, resp = _request(method="delete",
                             path=path,
                             return_format=return_format,
                             ignore_statuses=ignore_statuses,
                             params=params,
                             key=key,
                             *args, **kwargs)
-    return header, resp
+    return resp
+
 
 def _getiter(path: str,
                 limit: int = 100,

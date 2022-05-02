@@ -17,8 +17,9 @@ def _header_value(header_key: str, key: Optional[str] = None) -> str:
         The value corresponding to the passed key
     """
 
-    headers, _ = internal._get(path="", key=key)  # Make one request to fetch headers
+    headers = internal._get_headers(key=key)  # Make one request to fetch headers
     return headers[header_key]
+
 
 def version(key: Optional[str] = None) -> int:
     """API version that returned the response
@@ -31,6 +32,7 @@ def version(key: Optional[str] = None) -> int:
 
     return int(_header_value("X-API-Version", key=key))
 
+
 def units(key: Optional[str] = None) -> str:
     """The units system used for numeric values.
     https://flightplandatabase.com/dev/api#units
@@ -42,6 +44,7 @@ def units(key: Optional[str] = None) -> str:
     """
 
     return _header_value("X-Units", key=key)
+
 
 def limit_cap(key: Optional[str] = None) -> int:
     """The number of requests allowed per day, operated on an hourly rolling
@@ -58,6 +61,7 @@ def limit_cap(key: Optional[str] = None) -> int:
 
     return int(_header_value("X-Limit-Cap", key=key))
 
+
 def limit_used(key: Optional[str] = None) -> int:
     """The number of requests used in the current period
     by the presented API key or IP address
@@ -70,6 +74,7 @@ def limit_used(key: Optional[str] = None) -> int:
 
     return int(_header_value("X-Limit-Used", key=key))
 
+
 def ping(key: Optional[str] = None) -> StatusResponse:
     """Checks API status to see if it is up
 
@@ -79,8 +84,9 @@ def ping(key: Optional[str] = None) -> StatusResponse:
         OK 200 means the service is up and running.
     """
 
-    _, resp = internal._get(path="", key=key)
+    resp = internal._get(path="", key=key)
     return StatusResponse(**resp)
+
 
 def revoke(key: Optional[str] = None) -> StatusResponse:
     """Revoke the API key in use in the event it is compromised.
@@ -97,5 +103,5 @@ def revoke(key: Optional[str] = None) -> StatusResponse:
         occurred and the errors array will give further details.
     """
 
-    _, resp = internal._get(path="/auth/revoke", key=key)
+    resp = internal._get(path="/auth/revoke", key=key)
     return StatusResponse(**resp)

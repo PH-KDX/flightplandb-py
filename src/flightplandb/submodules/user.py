@@ -1,131 +1,128 @@
+"""Commands related to registered users."""
 from typing import Generator, Optional
 from flightplandb.datatypes import Plan, User, UserSmall
-from flightplandb.internal import FlightPlanDB
+from flightplandb.internal import _get, _getiter
 
 
-class UserAPI(FlightPlanDB):
+def me(key: Optional[str] = None) -> User:
+    """Fetches profile information for the currently authenticated user.
 
-    """Commands related to registered users.
-    Accessed via :meth:`~flightplandb.flightplandb.FlightPlanDB.user`.
+    Requires authentication.
+
+    Returns
+    -------
+    User
+        The User object of the currently authenticated user
+
+    Raises
+    ------
+    :class:`~flightplandb.exceptions.UnauthorizedException`
+        Authentication failed.
     """
 
-    def me(self, key: Optional[str] = None) -> User:
-        """Fetches profile information for the currently authenticated user.
+    resp = _get(path="/me", key=key)
+    return User(**resp)
 
-        Requires authentication.
+def fetch(username: str, key: Optional[str] = None) -> User:
+    """Fetches profile information for any registered user
 
-        Returns
-        -------
-        User
-            The User object of the currently authenticated user
+    Parameters
+    ----------
+    username : str
+        Username of the registered User
 
-        Raises
-        ------
-        :class:`~flightplandb.exceptions.UnauthorizedException`
-            Authentication failed.
-        """
+    Returns
+    -------
+    User
+        The User object of the user associated with the username
 
-        return User(**self._get(path="/me", key=key))
+    Raises
+    -------
+    :class:`~flightplandb.exceptions.NotFoundException`
+        No user was found with this username.
+    """
 
-    def fetch(self, username: str, key: Optional[str] = None) -> User:
-        """Fetches profile information for any registered user
+    resp = _get(path=f"/user/{username}", key=key)
+    return User(**resp)
 
-        Parameters
-        ----------
-        username : str
-            Username of the registered User
+def plans(username: str, sort: str = "created",
+            limit: int = 100,
+            key: Optional[str] = None) -> Generator[Plan, None, None]:
+    """Fetches flight plans created by a user.
 
-        Returns
-        -------
-        User
-            The User object of the user associated with the username
+    Parameters
+    ----------
+    username : str
+        Username of the user who created the flight plans
+    sort : str, optional
+        Sort order to return results in. Valid sort orders are
+        created, updated, popularity, and distance
+    limit: int
+        Maximum number of plans to fetch, defaults to ``100``
 
-        Raises
-        -------
-        :class:`~flightplandb.exceptions.NotFoundException`
-            No user was found with this username.
-        """
+    Yields
+    -------
+    Generator[Plan, None, None]
+        A generator with all the flight plans a user created,
+        limited by ``limit``
+    """
+    for i in _getiter(path=f"/user/{username}/plans",
+                            sort=sort,
+                            limit=limit,
+                            key=key):
+        yield Plan(**i)
 
-        return User(**self._get(path=f"/user/{username}", key=key))
+def likes(username: str, sort: str = "created",
+            limit: int = 100,
+            key: Optional[str] = None) -> Generator[Plan, None, None]:
+    """Fetches flight plans liked by a user.
 
-    def plans(self, username: str, sort: str = "created",
-              limit: int = 100,
-              key: Optional[str] = None) -> Generator[Plan, None, None]:
-        """Fetches flight plans created by a user.
+    Parameters
+    ----------
+    username : str
+        Username of the user who liked the flight plans
+    sort : str, optional
+        Sort order to return results in. Valid sort orders are
+        created, updated, popularity, and distance
+    limit : int
+        Maximum number of plans to fetch, defaults to ``100``
 
-        Parameters
-        ----------
-        username : str
-            Username of the user who created the flight plans
-        sort : str, optional
-            Sort order to return results in. Valid sort orders are
-            created, updated, popularity, and distance
-        limit: int
-            Maximum number of plans to fetch, defaults to ``100``
+    Yields
+    -------
+    Generator[Plan, None, None]
+        A generator with all the flight plans a user liked,
+        limited by ``limit``
+    """
 
-        Yields
-        -------
-        Generator[Plan, None, None]
-            A generator with all the flight plans a user created,
-            limited by ``limit``
-        """
-        for i in self._getiter(path=f"/user/{username}/plans",
-                               sort=sort,
-                               limit=limit,
-                               key=key):
-            yield Plan(**i)
+    for i in _getiter(path=f"/user/{username}/likes",
+                            sort=sort,
+                            limit=limit,
+                            key=key):
+        yield Plan(**i)
 
-    def likes(self, username: str, sort: str = "created",
-              limit: int = 100,
-              key: Optional[str] = None) -> Generator[Plan, None, None]:
-        """Fetches flight plans liked by a user.
+def search(username: str,
+            limit=100,
+            key: Optional[str] = None) -> Generator[UserSmall, None, None]:
+    """Searches for users by username. For more detailed info on a
+    specific user, use :meth:`fetch`
 
-        Parameters
-        ----------
-        username : str
-            Username of the user who liked the flight plans
-        sort : str, optional
-            Sort order to return results in. Valid sort orders are
-            created, updated, popularity, and distance
-        limit : int
-            Maximum number of plans to fetch, defaults to ``100``
+    Parameters
+    ----------
+    username : str
+        Username to search user database for
+    limit : type
+        Maximum number of users to fetch, defaults to ``100``
 
-        Yields
-        -------
-        Generator[Plan, None, None]
-            A generator with all the flight plans a user liked,
-            limited by ``limit``
-        """
+    Yields
+    -------
+    Generator[UserSmall, None, None]
+        A generator with a list of users approximately matching
+        ``username``, limited by ``limit``. UserSmall is used instead of
+        User, because less info is returned.
+    """
 
-        for i in self._getiter(path=f"/user/{username}/likes",
-                               sort=sort,
-                               limit=limit,
-                               key=key):
-            yield Plan(**i)
-
-    def search(self, username: str,
-               limit=100,
-               key: Optional[str] = None) -> Generator[UserSmall, None, None]:
-        """Searches for users by username. For more detailed info on a
-        specific user, use :meth:`fetch`
-
-        Parameters
-        ----------
-        username : str
-            Username to search user database for
-        limit : type
-            Maximum number of users to fetch, defaults to ``100``
-
-        Yields
-        -------
-        Generator[UserSmall, None, None]
-            A generator with a list of users approximately matching
-            ``username``, limited by ``limit``. UserSmall is used instead of
-            User, because less info is returned.
-        """
-
-        for i in self._getiter(path="/search/users",
-                               limit=limit,
-                               params={"q": username},
-                               key=key):
-            yield UserSmall(**i)
+    for i in _getiter(path="/search/users",
+                            limit=limit,
+                            params={"q": username},
+                            key=key):
+        yield UserSmall(**i)

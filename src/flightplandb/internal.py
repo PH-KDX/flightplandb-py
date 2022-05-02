@@ -22,7 +22,6 @@ from urllib.parse import urljoin
 import json
 import requests
 from requests.auth import HTTPBasicAuth
-from requests.structures import CaseInsensitiveDict
 
 from flightplandb.exceptions import status_handler
 

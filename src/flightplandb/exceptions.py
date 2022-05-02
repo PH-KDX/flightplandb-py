@@ -1,3 +1,6 @@
+"Contains all the internally defined exceptions used by the library."
+
+
 class BaseErrorHandler(Exception):
     """Base exception. The other exceptions all inherit from
     this one, but this exception will be raised directly if
@@ -97,6 +100,7 @@ class InternalServerException(BaseErrorHandler):
 
 
 def status_handler(status_code, ignore_statuses=None):
+    "Raises correct custom exception for appropriate HTTP status code."
     if status_code not in ignore_statuses and status_code >= 400:
         if status_code == 400:
             raise BadRequestException(

@@ -42,7 +42,7 @@ def request(method: str,
             params: Optional[Dict] = None,
             key: Optional[str] = None,
             json_data: Optional[Dict] = None,
-            *args, **kwargs) -> Union[Dict, bytes]:
+            **kwargs) -> Union[Dict, bytes]:
     """General HTTP requests function for non-paginated results.
 
     Parameters
@@ -130,7 +130,7 @@ def request(method: str,
                             auth=HTTPBasicAuth(key, None),
                             headers=params,
                             json=json_data,
-                            *args, **kwargs)
+                            **kwargs)
 
     status_handler(resp.status_code, ignore_statuses)
 
@@ -166,7 +166,7 @@ def get(path: str, return_format="native",
         ignore_statuses: Optional[List] = None,
         params: Optional[Dict] = None,
         key: Optional[str] = None,
-        *args, **kwargs) -> Union[Dict, bytes]:
+        **kwargs) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for get requests.
 
     Parameters
@@ -206,7 +206,7 @@ def get(path: str, return_format="native",
                       ignore_statuses=ignore_statuses,
                       params=params,
                       key=key,
-                      *args, **kwargs)
+                      **kwargs)
     return resp
 
 
@@ -215,7 +215,7 @@ def post(path: str, return_format="native",
          params: Optional[Dict] = None,
          key: Optional[str] = None,
          json_data: Optional[Dict] = None,
-         *args, **kwargs) -> Union[Dict, bytes]:
+         **kwargs) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for post requests.
 
     Parameters
@@ -254,7 +254,7 @@ def post(path: str, return_format="native",
                       params=params,
                       json_data=json_data,
                       key=key,
-                      *args, **kwargs)
+                      **kwargs)
     return resp
 
 
@@ -263,7 +263,7 @@ def patch(path: str, return_format="native",
           params: Optional[Dict] = None,
           key: Optional[str] = None,
           json_data: Optional[Dict] = None,
-          *args, **kwargs) -> Union[Dict, bytes]:
+          **kwargs) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for patch requests.
 
     Parameters
@@ -303,7 +303,7 @@ def patch(path: str, return_format="native",
                       params=params,
                       key=key,
                       json_data=json_data,
-                      *args, **kwargs)
+                      **kwargs)
     return resp
 
 
@@ -311,7 +311,7 @@ def delete(path: str, return_format="native",
            ignore_statuses: Optional[List] = None,
            params: Optional[Dict] = None,
            key: Optional[str] = None,
-           *args, **kwargs) -> Union[Dict, bytes]:
+           **kwargs) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for delete requests.
 
     Parameters
@@ -350,7 +350,7 @@ def delete(path: str, return_format="native",
                       ignore_statuses=ignore_statuses,
                       params=params,
                       key=key,
-                      *args, **kwargs)
+                      **kwargs)
     return resp
 
 
@@ -360,7 +360,7 @@ def getiter(path: str,
             ignore_statuses: Optional[List] = None,
             params: Optional[Dict] = None,
             key: Optional[str] = None,
-            *args, **kwargs) -> Generator[Dict, None, None]:
+            **kwargs) -> Generator[Dict, None, None]:
     """Get :meth:`request()` for paginated results.
 
     Parameters
@@ -418,7 +418,7 @@ def getiter(path: str,
         url=url,
         params=params,
         auth=auth,
-        *args, **kwargs)
+        **kwargs)
     status_handler(r_fpdb.status_code, ignore_statuses)
 
     # I detest responses which "may" be paginated
@@ -435,7 +435,7 @@ def getiter(path: str,
         r_fpdb = session.get(url=url,
                              params=params,
                              auth=auth,
-                             *args, **kwargs)
+                             **kwargs)
         status_handler(r_fpdb.status_code, ignore_statuses)
         # ...keep cycling through pages...
         for i in r_fpdb.json():

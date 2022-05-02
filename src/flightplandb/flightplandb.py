@@ -29,6 +29,10 @@ from flightplandb.exceptions import status_handler
 
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directive-autoclass
 # https://github.com/python/cpython/blob/main/Lib/random.py#L792
+
+url_base: str = "https://api.flightplandatabase.com"
+
+
 class FlightPlanDB:
 
     """This class mostly contains internal functions called by the API.
@@ -42,14 +46,10 @@ class FlightPlanDB:
     ----------
     key : Optional[str]
         API token, defaults to None (which makes it unauthenticated)
-    url_base : str
-        The host of the API endpoint URL,
-        defaults to https://api.flightplandatabase.com
     """
 
     def __init__(self):
         self._header: CaseInsensitiveDict[str] = CaseInsensitiveDict()
-        self.url_base: str = "https://api.flightplandatabase.com"
 
     def _request(self, method: str,
                  path: str, return_format="native",
@@ -141,7 +141,7 @@ class FlightPlanDB:
         params["Accept"] = return_format_encoded
 
         resp = requests.request(method=method,
-                                url=urljoin(self.url_base, path),
+                                url=urljoin(url_base, path),
                                 auth=HTTPBasicAuth(key, None),
                                 headers=params,
                                 json=json_data,
@@ -398,7 +398,7 @@ class FlightPlanDB:
         else:
             params["sort"] = sort
 
-        url = urljoin(self.url_base, path)
+        url = urljoin(url_base, path)
         auth = HTTPBasicAuth(key, None)
 
         session = requests.Session()

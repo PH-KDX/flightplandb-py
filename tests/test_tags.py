@@ -29,17 +29,16 @@ def test_tags_api(mocker):
             popularity=0.009036140132228622)
         ]
 
-    def patched_get(self, path, key):
+    def patched_get(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.tags.TagsAPI,
-        attribute="_get",
+    mocker.patch(
+        target='flightplandb.internal.get',
         new=patched_get)
-    instance = flightplandb.submodules.tags.TagsAPI()
-    spy = mocker.spy(instance, "_get")
 
-    response = instance.fetch()
+    spy = mocker.spy(flightplandb.internal, "get")
+
+    response = flightplandb.tags.fetch()
     # check that TagsAPI method made correct request of FlightPlanDB
     spy.assert_called_once_with(path='/tags', key=None)
     # check that TagsAPI method decoded data correctly for given response

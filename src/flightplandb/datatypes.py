@@ -239,7 +239,8 @@ class Route:
 
     def __post_init__(self):
         self.nodes = list(map(
-            lambda node: (RouteNode(**node) if (isinstance(node, dict)) else node),
+            lambda node: (
+                RouteNode(**node) if (isinstance(node, dict)) else node),
             self.nodes))
 
     def to_api_dict(self):

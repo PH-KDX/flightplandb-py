@@ -35,17 +35,16 @@ def test_self_info(mocker):
         plansLikes=0
     )
 
-    def patched_get(self, path, key):
+    def patched_get(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.user.UserAPI,
-        attribute="_get",
+    mocker.patch(
+        target="flightplandb.internal.get",
         new=patched_get)
-    instance = flightplandb.submodules.user.UserAPI()
-    spy = mocker.spy(instance, "_get")
+    
+    spy = mocker.spy(flightplandb.internal, "get")
 
-    response = instance.me()
+    response = flightplandb.user.me()
     # check that UserAPI method decoded data correctly for given response
     assert response == correct_response
     # check that UserAPI method made correct request of FlightPlanDB
@@ -83,17 +82,16 @@ def test_user_info(mocker):
             plansLikes=33
         )
 
-    def patched_get(self, path, key):
+    def patched_get(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.user.UserAPI,
-        attribute="_get",
+    mocker.patch(
+        target="flightplandb.internal.get",
         new=patched_get)
-    instance = flightplandb.submodules.user.UserAPI()
-    spy = mocker.spy(instance, "_get")
+    
+    spy = mocker.spy(flightplandb.internal, "get")
 
-    response = instance.fetch("lemon")
+    response = flightplandb.user.fetch("lemon")
     # check that UserAPI method decoded data correctly for given response
     assert response == correct_response
     # check that UserAPI method made correct request of FlightPlanDB
@@ -207,17 +205,16 @@ def test_user_plans(mocker):
             )
         ]
 
-    def patched_getiter(self, path, limit, sort, key):
+    def patched_getiter(path, limit, sort, key):
         return (i for i in json_response)
 
-    mocker.patch.object(
-        target=flightplandb.submodules.user.UserAPI,
-        attribute="_getiter",
+    mocker.patch(
+        target="flightplandb.internal.getiter",
         new=patched_getiter)
-    instance = flightplandb.submodules.user.UserAPI()
-    spy = mocker.spy(instance, "_getiter")
 
-    response = instance.plans("lemon")
+    spy = mocker.spy(flightplandb.internal, "getiter")
+
+    response = flightplandb.user.plans("lemon")
     # check that UserAPI method decoded data correctly for given response
     assert list(i for i in response) == correct_response_list
     # check that UserAPI method made correct request of FlightPlanDB
@@ -335,17 +332,16 @@ def test_user_likes(mocker):
                 )
         ]
 
-    def patched_getiter(self, path, limit, sort, key):
+    def patched_getiter(path, limit, sort, key):
         return (i for i in json_response)
 
-    mocker.patch.object(
-        target=flightplandb.submodules.user.UserAPI,
-        attribute="_getiter",
+    mocker.patch(
+        target="flightplandb.internal.getiter",
         new=patched_getiter)
-    instance = flightplandb.submodules.user.UserAPI()
-    spy = mocker.spy(instance, "_getiter")
 
-    response = instance.likes("lemon")
+    spy = mocker.spy(flightplandb.internal, "getiter")
+
+    response = flightplandb.user.likes("lemon")
     # check that UserAPI method decoded data correctly for given response
     assert list(i for i in response) == correct_response_list
     # check that UserAPI method made correct request of FlightPlanDB
@@ -390,17 +386,16 @@ def test_user_search(mocker):
                 gravatarHash='b807060d00c10513ce04b70918dd07a1')
         ]
 
-    def patched_getiter(self, path, limit, params=None, key=None):
+    def patched_getiter(path, limit, params, key):
         return (i for i in json_response)
 
-    mocker.patch.object(
-        target=flightplandb.submodules.user.UserAPI,
-        attribute="_getiter",
+    mocker.patch(
+        target="flightplandb.internal.getiter",
         new=patched_getiter)
-    instance = flightplandb.submodules.user.UserAPI()
-    spy = mocker.spy(instance, "_getiter")
 
-    response = instance.search("lemon")
+    spy = mocker.spy(flightplandb.internal, "getiter")
+
+    response = flightplandb.user.search("lemon")
     # check that UserAPI method decoded data correctly for given response
     assert list(i for i in response) == correct_response_list
     # check that UserAPI method made correct request of FlightPlanDB

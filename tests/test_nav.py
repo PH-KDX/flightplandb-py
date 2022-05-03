@@ -153,17 +153,16 @@ def test_airport_info(mocker):
         )
     )
 
-    def patched_get(self, path, key):
+    def patched_get(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.nav.NavAPI,
-        attribute="_get",
+    mocker.patch(
+        target="flightplandb.internal.get",
         new=patched_get)
-    instance = flightplandb.submodules.nav.NavAPI()
-    spy = mocker.spy(instance, "_get")
+    
+    spy = mocker.spy(flightplandb.internal, "get")
 
-    response = instance.airport("EHAL")
+    response = flightplandb.nav.airport("EHAL")
     # check that NavAPI method decoded data correctly for given response
     assert response == correct_response
     # check that NavAPI method made correct request of FlightPlanDB
@@ -290,17 +289,16 @@ def test_nats(mocker):
             validTo=datetime.datetime(
                 2021, 4, 28, 19, 0, tzinfo=tzutc()))]
 
-    def patched_get(self, path, key):
+    def patched_get(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.nav.NavAPI,
-        attribute="_get",
+    mocker.patch(
+        target="flightplandb.internal.get",
         new=patched_get)
-    instance = flightplandb.submodules.nav.NavAPI()
-    spy = mocker.spy(instance, "_get")
+    
+    spy = mocker.spy(flightplandb.internal, "get")
 
-    response = instance.nats()
+    response = flightplandb.nav.nats()
     # check that NavAPI method decoded data correctly for given response
     assert response == correct_response
     # check that NavAPI method made correct request of FlightPlanDB
@@ -422,17 +420,16 @@ def test_pacots(mocker):
             validTo=datetime.datetime(
                 2021, 4, 28, 19, 0, tzinfo=tzutc()))]
 
-    def patched_get(self, path, key):
+    def patched_get(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.nav.NavAPI,
-        attribute="_get",
+    mocker.patch(
+        target="flightplandb.internal.get",
         new=patched_get)
-    instance = flightplandb.submodules.nav.NavAPI()
-    spy = mocker.spy(instance, "_get")
+    
+    spy = mocker.spy(flightplandb.internal, "get")
 
-    response = instance.pacots()
+    response = flightplandb.nav.pacots()
     # check that NavAPI method decoded data correctly for given response
     assert response == correct_response
     # check that NavAPI method made correct request of FlightPlanDB
@@ -485,17 +482,16 @@ def test_navaid_search(mocker):
         params={'q': 'SPY'},
         key=None)]
 
-    def patched_getiter(self, path, params=None, key=None):
+    def patched_getiter(path, params=None, key=None):
         return (i for i in json_response)
 
-    mocker.patch.object(
-        target=flightplandb.submodules.nav.NavAPI,
-        attribute="_getiter",
+    mocker.patch(
+        target="flightplandb.internal.getiter",
         new=patched_getiter)
-    instance = flightplandb.submodules.nav.NavAPI()
-    spy = mocker.spy(instance, "_getiter")
+    
+    spy = mocker.spy(flightplandb.internal, "getiter")
 
-    response = instance.search("SPY")
+    response = flightplandb.nav.search("SPY")
     # check that PlanAPI method decoded data correctly for given response
     assert list(i for i in response) == correct_response_list
     # check that PlanAPI method made correct request of FlightPlanDB

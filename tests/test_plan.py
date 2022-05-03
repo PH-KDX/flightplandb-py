@@ -63,17 +63,16 @@ def test_plan_fetch(mocker):
                 location=None
             ))
 
-    def patched_get(self, path, return_format, key):
+    def patched_get(path, return_format, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.plan.PlanAPI,
-        attribute="_get",
+    mocker.patch(
+        target="flightplandb.internal.get",
         new=patched_get)
-    instance = flightplandb.submodules.plan.PlanAPI()
-    spy = mocker.spy(instance, "_get")
+    
+    spy = mocker.spy(flightplandb.internal, "get")
 
-    response = instance.fetch(62373)
+    response = flightplandb.plan.fetch(62373)
     # check that PlanAPI method decoded data correctly for given response
     assert response == correct_response
     # check that PlanAPI method made correct request of FlightPlanDB
@@ -207,17 +206,16 @@ def test_plan_create(mocker):
         'key': None
     }
 
-    def patched_post(self, path, return_format, json, key):
+    def patched_post(path, return_format, json, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.plan.PlanAPI,
-        attribute="_post",
+    mocker.patch(
+        target="flightplandb.internal.post",
         new=patched_post)
-    instance = flightplandb.submodules.plan.PlanAPI()
-    spy = mocker.spy(instance, "_post")
+    
+    spy = mocker.spy(flightplandb.internal, "post")
 
-    response = instance.create(request_data)
+    response = flightplandb.plan.create(request_data)
     # check that PlanAPI method decoded data correctly for given response
     assert response == correct_response
     # check that PlanAPI method made correct request of FlightPlanDB
@@ -232,17 +230,16 @@ def test_plan_delete(mocker):
 
     correct_response = StatusResponse(message="OK", errors=None)
 
-    def patched_delete(self, path, key):
+    def patched_delete(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.plan.PlanAPI,
-        attribute="_delete",
+    mocker.patch(
+        target="flightplandb.internal.delete",
         new=patched_delete)
-    instance = flightplandb.submodules.plan.PlanAPI()
-    spy = mocker.spy(instance, "_delete")
+    
+    spy = mocker.spy(flightplandb.internal, "delete")
 
-    response = instance.delete(62493)
+    response = flightplandb.plan.delete(62493)
     # check that TagsAPI method made correct request of FlightPlanDB
     spy.assert_called_once_with(path='/plan/62493', key=None)
     # check that TagsAPI method decoded data correctly for given response
@@ -384,17 +381,16 @@ def test_plan_edit(mocker):
         'key': None
     }
 
-    def patched_patch(self, path, return_format, json, key):
+    def patched_patch(path, return_format, json, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.plan.PlanAPI,
-        attribute="_patch",
+    mocker.patch(
+        target="flightplandb.internal.patch",
         new=patched_patch)
-    instance = flightplandb.submodules.plan.PlanAPI()
-    spy = mocker.spy(instance, "_patch")
+    
+    spy = mocker.spy(flightplandb.internal, "patch")
 
-    response = instance.edit(plan=request_data, return_format="native", key=None)
+    response = flightplandb.plan.edit(plan=request_data, return_format="native", key=None)
     # check that PlanAPI method decoded data correctly for given response
     assert response == correct_response
     # check that PlanAPI method made correct request of FlightPlanDB
@@ -521,22 +517,21 @@ def test_plan_search(mocker):
             'distanceMin': None,
             'distanceMax': None,
             'tags': None,
-            'includeRoute': None
+            'includeRoute': False
             },
         limit=2,
         key=None)]
 
-    def patched_getiter(self, path, sort="created", params=None, limit=100, key=None):
+    def patched_getiter(path, sort="created", params=None, limit=100, key=None):
         return (i for i in json_response)
 
-    mocker.patch.object(
-        target=flightplandb.submodules.plan.PlanAPI,
-        attribute="_getiter",
+    mocker.patch(
+        target="flightplandb.internal.getiter",
         new=patched_getiter)
-    instance = flightplandb.submodules.plan.PlanAPI()
-    spy = mocker.spy(instance, "_getiter")
+    
+    spy = mocker.spy(flightplandb.internal, "getiter")
 
-    response = instance.search(
+    response = flightplandb.plan.search(
             PlanQuery(
                 fromICAO="EHAM",
                 toICAO="EHAL"),
@@ -555,17 +550,16 @@ def test_plan_like(mocker):
 
     correct_response = StatusResponse(message='Not Found', errors=None)
 
-    def patched_post(self, path, key):
+    def patched_post(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.plan.PlanAPI,
-        attribute="_post",
+    mocker.patch(
+        target="flightplandb.internal.post",
         new=patched_post)
-    instance = flightplandb.submodules.plan.PlanAPI()
-    spy = mocker.spy(instance, "_post")
+    
+    spy = mocker.spy(flightplandb.internal, "post")
 
-    response = instance.like(42)
+    response = flightplandb.plan.like(42)
     # check that TagsAPI method made correct request of FlightPlanDB
     spy.assert_called_once_with(path='/plan/42/like', key=None)
     # check that TagsAPI method decoded data correctly for given response
@@ -580,17 +574,16 @@ def test_plan_unlike(mocker):
 
     correct_response = True
 
-    def patched_delete(self, path, key):
+    def patched_delete(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.plan.PlanAPI,
-        attribute="_delete",
+    mocker.patch(
+        target="flightplandb.internal.delete",
         new=patched_delete)
-    instance = flightplandb.submodules.plan.PlanAPI()
-    spy = mocker.spy(instance, "_delete")
+    
+    spy = mocker.spy(flightplandb.internal, "delete")
 
-    response = instance.unlike(42)
+    response = flightplandb.plan.unlike(42)
     # check that TagsAPI method made correct request of FlightPlanDB
     spy.assert_called_once_with(path='/plan/42/like', key=None)
     # check that TagsAPI method decoded data correctly for given response
@@ -605,17 +598,16 @@ def test_plan_has_liked(mocker):
 
     correct_response = True
 
-    def patched_get(self, path, ignore_statuses=None, key=None):
+    def patched_get(path, ignore_statuses=None, key=None):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.plan.PlanAPI,
-        attribute="_get",
+    mocker.patch(
+        target="flightplandb.internal.get",
         new=patched_get)
-    instance = flightplandb.submodules.plan.PlanAPI()
-    spy = mocker.spy(instance, "_get")
+    
+    spy = mocker.spy(flightplandb.internal, "get")
 
-    response = instance.has_liked(42)
+    response = flightplandb.plan.has_liked(42)
     # check that TagsAPI method made correct request of FlightPlanDB
     spy.assert_called_once_with(path='/plan/42/like', ignore_statuses=[404], key=None)
     # check that TagsAPI method decoded data correctly for given response
@@ -723,7 +715,7 @@ def test_plan_generate(mocker):
 
     correct_call = {
         "path": '/auto/generate',
-        "json": {
+        "json_data": {
             'fromICAO': 'EHAL',
             'toICAO': 'EHTX',
             'useNAT': True,
@@ -735,23 +727,22 @@ def test_plan_generate(mocker):
             'ascentRate': 2500,
             'ascentSpeed': 250,
             'descentRate': 1500,
-            'descentSpeed': 250
+            'descentSpeed': 250,
+            'includeRoute': 'false'
         },
-        "return_format": "native",
         "key": None
     }
 
-    def patched_post(self, path, return_format, json, key):
+    def patched_post(path, json_data, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.plan.PlanAPI,
-        attribute="_post",
+    mocker.patch(
+        target="flightplandb.internal.post",
         new=patched_post)
-    instance = flightplandb.submodules.plan.PlanAPI()
-    spy = mocker.spy(instance, "_post")
 
-    response = instance.generate(request_data)
+    spy = mocker.spy(flightplandb.internal, "post")
+
+    response = flightplandb.plan.generate(request_data)
     # check that PlanAPI method decoded data correctly for given response
     assert response == correct_response
     # check that PlanAPI method made correct request of FlightPlanDB
@@ -841,7 +832,7 @@ def test_plan_decode(mocker):
 
     correct_call = {
         "path": '/auto/decode',
-        "json": {
+        "json_data": {
             'route': {
                 'KSAN BROWS TRM LRAIN KDEN'
                 }
@@ -849,17 +840,16 @@ def test_plan_decode(mocker):
         "key": None
     }
 
-    def patched_post(self, path, json, key):
+    def patched_post(path, json_data, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.plan.PlanAPI,
-        attribute="_post",
+    mocker.patch(
+        target="flightplandb.internal.post",
         new=patched_post)
-    instance = flightplandb.submodules.plan.PlanAPI()
-    spy = mocker.spy(instance, "_post")
+    
+    spy = mocker.spy(flightplandb.internal, "post")
 
-    response = instance.decode(request_data)
+    response = flightplandb.plan.decode(request_data)
     # check that PlanAPI method decoded data correctly for given response
     assert response == correct_response
     # check that PlanAPI method made correct request of FlightPlanDB

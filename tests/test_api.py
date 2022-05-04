@@ -48,8 +48,70 @@ def test_api_version(mocker):
 
     response = flightplandb.api.version()
     # check that API method made correct request of FlightPlanDB
-    print(spy.mock_calls)
     spy.assert_called_once_with(header_key="X-API-Version", key=None)
+    # check that API method decoded data correctly for given response
+    assert response == correct_response
+
+
+def test_api_units(mocker):
+    header_response = "AVIATION"
+
+    correct_response = "AVIATION"
+
+    def patched_get(header_key, key):
+        return header_response
+
+    mocker.patch(
+        target="flightplandb.api.header_value",
+        new=patched_get)
+    
+    spy = mocker.spy(flightplandb.api, "header_value")
+
+    response = flightplandb.api.units()
+    # check that API method made correct request of FlightPlanDB
+    spy.assert_called_once_with(header_key="X-Units", key=None)
+    # check that API method decoded data correctly for given response
+    assert response == correct_response
+
+
+def test_api_limit_cap(mocker):
+    header_response = "100"
+
+    correct_response = 100
+
+    def patched_get(header_key, key):
+        return header_response
+
+    mocker.patch(
+        target="flightplandb.api.header_value",
+        new=patched_get)
+    
+    spy = mocker.spy(flightplandb.api, "header_value")
+
+    response = flightplandb.api.limit_cap()
+    # check that API method made correct request of FlightPlanDB
+    spy.assert_called_once_with(header_key="X-Limit-Cap", key=None)
+    # check that API method decoded data correctly for given response
+    assert response == correct_response
+
+
+def test_api_limit_used(mocker):
+    header_response = "50"
+
+    correct_response = 50
+
+    def patched_get(header_key, key):
+        return header_response
+
+    mocker.patch(
+        target="flightplandb.api.header_value",
+        new=patched_get)
+    
+    spy = mocker.spy(flightplandb.api, "header_value")
+
+    response = flightplandb.api.limit_used()
+    # check that API method made correct request of FlightPlanDB
+    spy.assert_called_once_with(header_key="X-Limit-Used", key=None)
     # check that API method decoded data correctly for given response
     assert response == correct_response
 

@@ -159,7 +159,7 @@ def test_airport_info(mocker):
     mocker.patch(
         target="flightplandb.internal.get",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.internal, "get")
 
     response = flightplandb.nav.airport("EHAL")
@@ -295,7 +295,7 @@ def test_nats(mocker):
     mocker.patch(
         target="flightplandb.internal.get",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.internal, "get")
 
     response = flightplandb.nav.nats()
@@ -426,7 +426,7 @@ def test_pacots(mocker):
     mocker.patch(
         target="flightplandb.internal.get",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.internal, "get")
 
     response = flightplandb.nav.pacots()
@@ -488,7 +488,7 @@ def test_navaid_search(mocker):
     mocker.patch(
         target="flightplandb.internal.getiter",
         new=patched_getiter)
-    
+
     spy = mocker.spy(flightplandb.internal, "getiter")
 
     response = flightplandb.nav.search("SPY")

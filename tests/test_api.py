@@ -43,7 +43,7 @@ def test_api_version(mocker):
     mocker.patch(
         target="flightplandb.api.header_value",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.api, "header_value")
 
     response = flightplandb.api.version()
@@ -64,7 +64,7 @@ def test_api_units(mocker):
     mocker.patch(
         target="flightplandb.api.header_value",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.api, "header_value")
 
     response = flightplandb.api.units()
@@ -85,7 +85,7 @@ def test_api_limit_cap(mocker):
     mocker.patch(
         target="flightplandb.api.header_value",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.api, "header_value")
 
     response = flightplandb.api.limit_cap()
@@ -106,7 +106,7 @@ def test_api_limit_used(mocker):
     mocker.patch(
         target="flightplandb.api.header_value",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.api, "header_value")
 
     response = flightplandb.api.limit_used()
@@ -130,7 +130,7 @@ def test_api_ping(mocker):
     mocker.patch(
         target="flightplandb.internal.get",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.internal, "get")
 
     response = flightplandb.api.ping()
@@ -154,7 +154,7 @@ def test_key_revoke(mocker):
     mocker.patch(
         target="flightplandb.internal.get",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.internal, "get")
 
     response = flightplandb.api.revoke(key="qwertyuiop")

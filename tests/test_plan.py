@@ -69,7 +69,7 @@ def test_plan_fetch(mocker):
     mocker.patch(
         target="flightplandb.internal.get",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.internal, "get")
 
     response = flightplandb.plan.fetch(62373)
@@ -212,7 +212,7 @@ def test_plan_create(mocker):
     mocker.patch(
         target="flightplandb.internal.post",
         new=patched_post)
-    
+
     spy = mocker.spy(flightplandb.internal, "post")
 
     response = flightplandb.plan.create(request_data)
@@ -236,7 +236,7 @@ def test_plan_delete(mocker):
     mocker.patch(
         target="flightplandb.internal.delete",
         new=patched_delete)
-    
+
     spy = mocker.spy(flightplandb.internal, "delete")
 
     response = flightplandb.plan.delete(62493)
@@ -387,7 +387,7 @@ def test_plan_edit(mocker):
     mocker.patch(
         target="flightplandb.internal.patch",
         new=patched_patch)
-    
+
     spy = mocker.spy(flightplandb.internal, "patch")
 
     response = flightplandb.plan.edit(plan=request_data, return_format="native", key=None)
@@ -528,7 +528,7 @@ def test_plan_search(mocker):
     mocker.patch(
         target="flightplandb.internal.getiter",
         new=patched_getiter)
-    
+
     spy = mocker.spy(flightplandb.internal, "getiter")
 
     response = flightplandb.plan.search(
@@ -556,7 +556,7 @@ def test_plan_like(mocker):
     mocker.patch(
         target="flightplandb.internal.post",
         new=patched_post)
-    
+
     spy = mocker.spy(flightplandb.internal, "post")
 
     response = flightplandb.plan.like(42)
@@ -580,7 +580,7 @@ def test_plan_unlike(mocker):
     mocker.patch(
         target="flightplandb.internal.delete",
         new=patched_delete)
-    
+
     spy = mocker.spy(flightplandb.internal, "delete")
 
     response = flightplandb.plan.unlike(42)
@@ -604,7 +604,7 @@ def test_plan_has_liked(mocker):
     mocker.patch(
         target="flightplandb.internal.get",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.internal, "get")
 
     response = flightplandb.plan.has_liked(42)
@@ -846,7 +846,7 @@ def test_plan_decode(mocker):
     mocker.patch(
         target="flightplandb.internal.post",
         new=patched_post)
-    
+
     spy = mocker.spy(flightplandb.internal, "post")
 
     response = flightplandb.plan.decode(request_data)

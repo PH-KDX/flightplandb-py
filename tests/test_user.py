@@ -41,7 +41,7 @@ def test_self_info(mocker):
     mocker.patch(
         target="flightplandb.internal.get",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.internal, "get")
 
     response = flightplandb.user.me()
@@ -88,7 +88,7 @@ def test_user_info(mocker):
     mocker.patch(
         target="flightplandb.internal.get",
         new=patched_get)
-    
+
     spy = mocker.spy(flightplandb.internal, "get")
 
     response = flightplandb.user.fetch("lemon")

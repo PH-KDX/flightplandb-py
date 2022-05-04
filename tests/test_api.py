@@ -1,40 +1,56 @@
 import flightplandb
 from flightplandb.datatypes import StatusResponse
-import pytest
 
 
-@pytest.mark.parametrize(
-    "header_key,ping_headers,existing_headers,correct_response,correct_mock_calls",
-    [
-        ("X-API-Version", {"X-API-Version": 1}, {"X-API-Version": 1}, 1, None),
-        ("X-API-Version", {"X-API-Version": 1}, {}, 1, {"key": None}),
-        ("X-Units", {"X-Units": "AVIATION"}, {"X-Units": "AVIATION"}, "AVIATION", None),
-        ("X-Units", {"X-Units": "AVIATION"}, {}, "AVIATION", {"key": None}),
-        ("X-Limit-Cap", {"X-Limit-Cap": 100}, {"X-Limit-Cap": 100}, 100, None),
-        ("X-Limit-Cap", {"X-Limit-Cap": 100}, {}, 100, {"key": None}),
-        ("X-Limit-Used", {"X-Limit-Used": 1}, {"X-Limit-Used": 1}, 1, None),
-        ("X-Limit-Used", {"X-Limit-Used": 1}, {}, 1, {"key": None}),
-    ],
-)
-def test_api_headers(header_key, mocker, ping_headers, existing_headers, correct_response, correct_mock_calls):
+# parametrise this for key and no key, perhaps
+def test_api_header_value(mocker):
+    json_response = {
+        "X-Limit-Cap": "2000",
+        "X-Limit-Used": "150"
+        }
 
-    def patched_ping(self, key):
-        self._header = ping_headers
+    correct_response = "150"
 
-    mocker.patch.object(
-        target=flightplandb.submodules.api.API,
-        attribute="ping",
-        new=patched_ping)
-    instance = flightplandb.submodules.api.API()
-    spy = mocker.spy(instance, "ping")
+    def patched_get_headers(key):
+        return json_response
 
-    instance._header = existing_headers
+    mocker.patch(
+        target="flightplandb.internal.get_headers",
+        new=patched_get_headers)
 
-    response = instance._header_value(header_key=header_key, key=None)
-    if correct_mock_calls is None:
-        spy.assert_not_called()
-    else:
-        spy.assert_called_once_with(**correct_mock_calls)
+    spy = mocker.spy(flightplandb.internal, "get_headers")
+
+    response = flightplandb.api.header_value(
+        header_key="X-Limit-Used",
+        key="qwertyuiop"
+        )
+    # check that API method made correct request of FlightPlanDB
+    spy.assert_called_once_with(
+        key="qwertyuiop"
+        )
+    # check that API method decoded data correctly for given response
+    assert response == correct_response
+
+
+def test_api_version(mocker):
+    header_response = "1"
+
+    correct_response = 1
+
+    def patched_get(header_key, key):
+        return header_response
+
+    mocker.patch(
+        target="flightplandb.api.header_value",
+        new=patched_get)
+    
+    spy = mocker.spy(flightplandb.api, "header_value")
+
+    response = flightplandb.api.version()
+    # check that API method made correct request of FlightPlanDB
+    print(spy.mock_calls)
+    spy.assert_called_once_with(header_key="X-API-Version", key=None)
+    # check that API method decoded data correctly for given response
     assert response == correct_response
 
 
@@ -46,18 +62,16 @@ def test_api_ping(mocker):
 
     correct_response = StatusResponse(message="OK", errors=None)
 
-    def patched_get(self, path, key):
+    def patched_get(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.api.API,
-        attribute="_get",
-        new=patched_get
-        )
-    instance = flightplandb.submodules.api.API()
-    spy = mocker.spy(instance, "_get")
+    mocker.patch(
+        target="flightplandb.internal.get",
+        new=patched_get)
+    
+    spy = mocker.spy(flightplandb.internal, "get")
 
-    response = instance.ping()
+    response = flightplandb.api.ping()
     # check that API method made correct request of FlightPlanDB
     spy.assert_called_once_with(path='', key=None)
     # check that API method decoded data correctly for given response
@@ -72,18 +86,16 @@ def test_key_revoke(mocker):
 
     correct_response = StatusResponse(message="OK", errors=None)
 
-    def patched_get(self, path, key):
+    def patched_get(path, key):
         return json_response
 
-    mocker.patch.object(
-        target=flightplandb.submodules.api.API,
-        attribute="_get",
-        new=patched_get
-        )
-    instance = flightplandb.submodules.api.API()
-    spy = mocker.spy(instance, "_get")
+    mocker.patch(
+        target="flightplandb.internal.get",
+        new=patched_get)
+    
+    spy = mocker.spy(flightplandb.internal, "get")
 
-    response = instance.revoke(key="qwertyuiop")
+    response = flightplandb.api.revoke(key="qwertyuiop")
     # check that API method made correct request of FlightPlanDB
     spy.assert_called_once_with(path='/auth/revoke', key="qwertyuiop")
     # check that API method decoded data correctly for given response

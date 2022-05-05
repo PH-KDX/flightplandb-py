@@ -89,7 +89,7 @@ def ping(key: Optional[str] = None) -> StatusResponse:
     return StatusResponse(**resp)
 
 
-def revoke(key: Optional[str] = None) -> StatusResponse:
+def revoke(key: str) -> StatusResponse:
     """Revoke the API key in use in the event it is compromised.
 
     Requires authentication.

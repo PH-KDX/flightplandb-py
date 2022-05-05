@@ -1,6 +1,6 @@
 Weather docs
 =====================
 
-.. automodule:: flightplandb.submodules.weather
+.. automodule:: flightplandb.weather
    :members:
    :undoc-members:

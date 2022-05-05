@@ -46,4 +46,4 @@ This is a small example program which demonstrates basic usage of the library.
 Try saving it in a file called ``test.py`` in your project directory and running it.
 Experiment around with different commands to get a feel for the library.
 
-For specific commands, check out the :doc:`../api/api`.
+For specific commands, check out the :doc:`../api/main`.

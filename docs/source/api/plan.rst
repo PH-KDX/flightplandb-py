@@ -26,6 +26,6 @@ Plan docs
    "Infinite Flight", "infiniteflight"
 
 
-.. automodule:: flightplandb.submodules.plan
+.. automodule:: flightplandb.plan
    :members:
    :undoc-members:

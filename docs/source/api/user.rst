@@ -1,6 +1,6 @@
-Nav docs
+User docs
 ====================
 
-.. automodule:: flightplandb.submodules.nav
+.. automodule:: flightplandb.user
    :members:
    :undoc-members:

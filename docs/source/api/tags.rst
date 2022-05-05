@@ -1,6 +1,6 @@
 Tags docs
 ====================
 
-.. automodule:: flightplandb.submodules.tags
+.. automodule:: flightplandb.tags
    :members:
    :undoc-members:

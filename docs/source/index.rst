@@ -16,7 +16,7 @@ If you're new, check out the :doc:`user/introduction` or :doc:`user/quickstart` 
 
    user/userdocs
 
-   api/api
+   api/main
 
 
 

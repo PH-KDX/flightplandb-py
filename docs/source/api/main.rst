@@ -9,6 +9,11 @@ API docs
 .. toctree::
    :maxdepth: 5
 
-   flightplandb
+   nav
+   plan
+   tags
+   user
+   weather
    datatypes
    exceptions
+   internal

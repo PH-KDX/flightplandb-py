@@ -74,6 +74,8 @@ which should return
 if all has gone well.
 
 
+.. _request-limits:
+
 Request Limits
 ^^^^^^^^^^^^^^^^^^^^
 API requests are rate limited on a 24 hour rolling basis to ensure fair access to all users.
@@ -87,6 +89,8 @@ These calls, together with :meth:`flightplandb.api.ping()`, will not increment y
 The limit for unauthenticated users is IP-based, and is currently set to 100.
 The limit for authenticated users is key-based, and is currently set to 2500.
 
+
+.. _authentication:
 
 Authentication
 ^^^^^^^^^^^^^^^^^^^^

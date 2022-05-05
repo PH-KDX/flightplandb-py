@@ -11,6 +11,8 @@ def header_value(header_key: str, key: Optional[str] = None) -> str:
     ----------
     header_key : str
         One of the HTTP header keys
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -25,6 +27,11 @@ def header_value(header_key: str, key: Optional[str] = None) -> str:
 def version(key: Optional[str] = None) -> int:
     """API version that returned the response.
 
+    Parameters
+    ----------
+    key : `str`, optional
+        API authentication key.
+
     Returns
     -------
     int
@@ -37,6 +44,11 @@ def version(key: Optional[str] = None) -> int:
 def units(key: Optional[str] = None) -> str:
     """The units system used for numeric values.
     https://flightplandatabase.com/dev/api#units
+
+    Parameters
+    ----------
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -52,7 +64,12 @@ def limit_cap(key: Optional[str] = None) -> int:
     basis. i.e requests used between 19:00 and 20:00 will become available
     again at 19:00 the following day. API key authenticated requests get a
     higher daily rate limit and can be raised if a compelling
-    use case is presented.
+    use case is presented. See :ref:`request-limits` for more details.
+
+    Parameters
+    ----------
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -65,7 +82,13 @@ def limit_cap(key: Optional[str] = None) -> int:
 
 def limit_used(key: Optional[str] = None) -> int:
     """The number of requests used in the current period
-    by the presented API key or IP address
+    by the presented API key or IP address.
+    See :ref:`request-limits` for more details.
+
+    Parameters
+    ----------
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -79,6 +102,11 @@ def limit_used(key: Optional[str] = None) -> int:
 def ping(key: Optional[str] = None) -> StatusResponse:
     """Checks API status to see if it is up
 
+    Parameters
+    ----------
+    key : `str`, optional
+        API authentication key.
+
     Returns
     -------
     StatusResponse
@@ -91,8 +119,14 @@ def ping(key: Optional[str] = None) -> StatusResponse:
 
 def revoke(key: str) -> StatusResponse:
     """Revoke the API key in use in the event it is compromised.
+    See :ref:`authentication` for more details.
 
     Requires authentication.
+
+    Parameters
+    ----------
+    key : str
+        API authentication key.
 
     Returns
     -------

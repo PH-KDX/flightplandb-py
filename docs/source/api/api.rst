@@ -1,4 +1,4 @@
-API docs
+API
 ====================
 
 .. automodule:: flightplandb.api

@@ -1,4 +1,4 @@
-Nav docs
+Nav
 ====================
 
 .. automodule:: flightplandb.nav

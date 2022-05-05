@@ -1,4 +1,4 @@
-User docs
+User
 ====================
 
 .. automodule:: flightplandb.user

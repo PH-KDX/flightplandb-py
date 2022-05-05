@@ -1,4 +1,4 @@
-Tags docs
+Tags
 ====================
 
 .. automodule:: flightplandb.tags

@@ -1,4 +1,4 @@
-Plan docs
+Plan
 ====================
 
 .. csv-table:: Permitted plan return types

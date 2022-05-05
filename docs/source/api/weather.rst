@@ -1,4 +1,4 @@
-Weather docs
+Weather
 =====================
 
 .. automodule:: flightplandb.weather

@@ -1,4 +1,4 @@
-API docs
+API reference
 ====================
 
 .. automodule:: flightplandb
@@ -9,6 +9,7 @@ API docs
 .. toctree::
    :maxdepth: 5
 
+   api
    nav
    plan
    tags

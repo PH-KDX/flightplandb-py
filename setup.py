@@ -43,7 +43,7 @@ setup(
     ],
     extras_require={
         "dev": [
-            "Sphinx==4.2.0",
+            "Sphinx==4.5.0",
             "sphinx-rtd-theme==1.0.0"
         ],
         "test": [

@@ -62,8 +62,6 @@ def request(method: str,
         Custom JSON data to be formatted into the request body
     key : str
         API token, defaults to None (which makes it unauthenticated)
-    *args
-        Variable length argument list.
     **kwargs
         Arbitrary keyword arguments.
 
@@ -184,8 +182,6 @@ def get(path: str, return_format="native",
         Any other HTTP request parameters, defaults to None
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
-    *args
-        Variable length argument list.
     **kwargs
         Arbitrary keyword arguments.
 
@@ -235,8 +231,6 @@ def post(path: str, return_format="native",
         Custom JSON data to be formatted into the request body
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
-    *args
-        Variable length argument list.
     **kwargs
         Arbitrary keyword arguments.
 
@@ -285,8 +279,6 @@ def patch(path: str, return_format="native",
         Custom JSON data to be formatted into the request body
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
-    *args
-        Variable length argument list.
     **kwargs
         Arbitrary keyword arguments.
 
@@ -333,8 +325,6 @@ def delete(path: str, return_format="native",
         Any other HTTP request parameters, defaults to None
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
-    *args
-        Variable length argument list.
     **kwargs
         Arbitrary keyword arguments.
 
@@ -385,8 +375,6 @@ def getiter(path: str,
         Any other HTTP request parameters, defaults to None
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
-    *args
-        Variable length argument list.
     **kwargs
         Arbitrary keyword arguments.
 

@@ -60,7 +60,7 @@ def request(method: str,
         Any other HTTP request parameters, defaults to None
     json_data : `Dict`, optional
         Custom JSON data to be formatted into the request body
-    key : `str`
+    key : str
         API token, defaults to None (which makes it unauthenticated)
     *args
         Variable length argument list.
@@ -175,12 +175,12 @@ def get(path: str, return_format="native",
     ----------
     path : str
         The endpoint's path to which the request is being made
-    return_format : str, optional
+    return_format : `str`, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : `List`, optional, optional
+    ignore_statuses : `List`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
-    params : `Dict`, optional, optional
+    params : `Dict`, optional
         Any other HTTP request parameters, defaults to None
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
@@ -224,12 +224,12 @@ def post(path: str, return_format="native",
     ----------
     path : str
         The endpoint's path to which the request is being made
-    return_format : str, optional
+    return_format : `str`, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : `List`, optional, optional
+    ignore_statuses : `List`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
-    params : `Dict`, optional, optional
+    params : `Dict`, optional
         Any other HTTP request parameters, defaults to None
     json_data : `Dict`, optional
         Custom JSON data to be formatted into the request body
@@ -274,12 +274,12 @@ def patch(path: str, return_format="native",
     ----------
     path : str
         The endpoint's path to which the request is being made
-    return_format : str, optional
+    return_format : `str`, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : `List`, optional, optional
+    ignore_statuses : `List`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
-    params : `Dict`, optional, optional
+    params : `Dict`, optional
         Any other HTTP request parameters, defaults to None
     json_data : `Dict`, optional
         Custom JSON data to be formatted into the request body
@@ -324,12 +324,12 @@ def delete(path: str, return_format="native",
     ----------
     path : str
         The endpoint's path to which the request is being made
-    return_format : str, optional
+    return_format : `str`, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : `List`, optional, optional
+    ignore_statuses : `List`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
-    params : `Dict`, optional, optional
+    params : `Dict`, optional
         Any other HTTP request parameters, defaults to None
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
@@ -375,13 +375,13 @@ def getiter(path: str,
         The endpoint's path to which the request is being made
     limit : int, optional
         Maximum number of results to return, defaults to 100
-    sort : str, optional
+    sort : `str`, optional
         Sort order to return results in. Valid sort orders are
         created, updated, popularity, and distance
-    ignore_statuses : `List`, optional, optional
+    ignore_statuses : `List`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
-    params : `Dict`, optional, optional
+    params : `Dict`, optional
         Any other HTTP request parameters, defaults to None
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)

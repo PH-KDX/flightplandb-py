@@ -8,6 +8,11 @@ def fetch(key: Optional[str] = None) -> List[Tag]:
     """Fetches current popular tags from all flight plans.
     Only tags with sufficient popularity are included.
 
+    Parameters
+    ----------
+    key : `str`, optional
+        API authentication key.
+
     Returns
     ----------
     List[Tag]

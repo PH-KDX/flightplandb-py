@@ -11,6 +11,8 @@ def airport(icao: str, key: Optional[str] = None) -> Airport:
     ----------
     icao : str
         The airport ICAO to fetch information for
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -30,6 +32,11 @@ def airport(icao: str, key: Optional[str] = None) -> Airport:
 def nats(key: Optional[str] = None) -> List[Track]:
     """Fetches current North Atlantic Tracks.
 
+    Parameters
+    ----------
+    key : `str`, optional
+        API authentication key.
+
     Returns
     -------
     List[Track]
@@ -42,6 +49,11 @@ def nats(key: Optional[str] = None) -> List[Track]:
 
 def pacots(key: Optional[str] = None) -> List[Track]:
     """Fetches current Pacific Organized Track System tracks.
+
+    Parameters
+    ----------
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -67,6 +79,8 @@ def search(
         Navaid type.
         Must be either ``None`` (default value, returns all types) or one
         of :py:obj:`~flightplandb.datatypes.SearchNavaid.validtypes`
+    key : `str`, optional
+        API authentication key.
 
     Yields
     -------

@@ -1,7 +1,8 @@
 Plan
 ====================
 
-.. csv-table:: Permitted plan return types
+.. _permitted-return-types:
+.. csv-table:: Table of permitted plan return types
    :header: "Plan format", "Key"
    :widths: 25, 10
 

@@ -22,7 +22,7 @@ def fetch(id_: int,
         The ID of the flight plan to fetch
     return_format : str
         The API response format, defaults to ``"native"``.
-        Must be one of the keys in the table at the top of the page.
+        Must be one of the keys in the :ref:`permitted-return-types`.
     key : `str`, optional
         API authentication key.
 
@@ -65,7 +65,7 @@ def create(plan: Plan,
         The Plan object to register on the website
     return_format : str
         The API response format, defaults to ``"native"``.
-        Must be one of the keys in the table at the top of the page.
+        Must be one of the keys in the :ref:`permitted-return-types`.
     key : `str`, optional
         API authentication key.
 
@@ -106,7 +106,7 @@ def edit(plan: Plan,
         The new Plan object to replace the old one associated with that ID
     return_format : str
         The API response format, defaults to ``"native"``.
-        Must be one of the keys in the table at the top of the page.
+        Must be one of the keys in the :ref:`permitted-return-types`.
     key : `str`, optional
         API authentication key.
 

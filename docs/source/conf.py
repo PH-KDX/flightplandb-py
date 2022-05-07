@@ -22,6 +22,8 @@ author = 'PH-KDX'
 
 # The full version, including alpha/beta/rc tags
 release = '0.6.0'
+# readthedocs.io insists on the version field being filled for epub builds
+version = release
 
 
 # -- General configuration ---------------------------------------------------

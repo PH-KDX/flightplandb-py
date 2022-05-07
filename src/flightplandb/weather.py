@@ -12,6 +12,8 @@ def fetch(icao: str, key: Optional[str] = None) -> Weather:
     ----------
     icao : str
         ICAO code of the airport for which the weather will be fetched
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------

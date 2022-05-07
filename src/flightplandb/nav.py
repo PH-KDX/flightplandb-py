@@ -67,7 +67,7 @@ def pacots(key: Optional[str] = None) -> List[Track]:
 
 def search(
         query: str,
-        type_: str = None, key: Optional[str] = None
+        type_: Optional[str] = None, key: Optional[str] = None
         ) -> Generator[SearchNavaid, None, None]:
     r"""Searches navaids using a query.
 
@@ -75,7 +75,7 @@ def search(
     ----------
     query : str
         The search query. Searches the navaid identifier and navaid name
-    type\_ : str
+    type\_ : `str`, optional
         Navaid type.
         Must be either ``None`` (default value, returns all types) or one
         of :py:obj:`~flightplandb.datatypes.SearchNavaid.validtypes`

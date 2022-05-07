@@ -40,8 +40,8 @@ def request(method: str,
             path: str, return_format="native",
             ignore_statuses: Optional[List] = None,
             params: Optional[Dict] = None,
-            key: Optional[str] = None,
             json_data: Optional[Dict] = None,
+            key: Optional[str] = None,
             **kwargs) -> Union[Dict, bytes]:
     """General HTTP requests function for non-paginated results.
 
@@ -51,14 +51,16 @@ def request(method: str,
         An HTTP request type. One of GET, POST, PATCH, or DELETE
     path : str
         The endpoint's path to which the request is being made
-    return_format : str, optional
+    return_format : `str`, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : Optional[List], optional
+    ignore_statuses : `List`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
-    params : Optional[Dict], optional
+    params : `Dict`, optional
         Any other HTTP request parameters, defaults to None
-    key : Optional[str]
+    json_data : `Dict`, optional
+        Custom JSON data to be formatted into the request body
+    key : `str`
         API token, defaults to None (which makes it unauthenticated)
     *args
         Variable length argument list.
@@ -148,7 +150,7 @@ def get_headers(key: Optional[str] = None) -> CaseInsensitiveDict:
 
     Parameters
     ----------
-    key : Optional[str]
+    key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
 
     Returns
@@ -175,12 +177,12 @@ def get(path: str, return_format="native",
         The endpoint's path to which the request is being made
     return_format : str, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : Optional[List], optional
+    ignore_statuses : `List`, optional, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
-    params : Optional[Dict], optional
+    params : `Dict`, optional, optional
         Any other HTTP request parameters, defaults to None
-    key : Optional[str]
+    key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
     *args
         Variable length argument list.
@@ -213,8 +215,8 @@ def get(path: str, return_format="native",
 def post(path: str, return_format="native",
          ignore_statuses: Optional[List] = None,
          params: Optional[Dict] = None,
-         key: Optional[str] = None,
          json_data: Optional[Dict] = None,
+         key: Optional[str] = None,
          **kwargs) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for post requests.
 
@@ -224,12 +226,14 @@ def post(path: str, return_format="native",
         The endpoint's path to which the request is being made
     return_format : str, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : Optional[List], optional
+    ignore_statuses : `List`, optional, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
-    params : Optional[Dict], optional
+    params : `Dict`, optional, optional
         Any other HTTP request parameters, defaults to None
-    key : Optional[str]
+    json_data : `Dict`, optional
+        Custom JSON data to be formatted into the request body
+    key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
     *args
         Variable length argument list.
@@ -261,8 +265,8 @@ def post(path: str, return_format="native",
 def patch(path: str, return_format="native",
           ignore_statuses: Optional[List] = None,
           params: Optional[Dict] = None,
-          key: Optional[str] = None,
           json_data: Optional[Dict] = None,
+          key: Optional[str] = None,
           **kwargs) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for patch requests.
 
@@ -272,12 +276,14 @@ def patch(path: str, return_format="native",
         The endpoint's path to which the request is being made
     return_format : str, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : Optional[List], optional
+    ignore_statuses : `List`, optional, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
-    params : Optional[Dict], optional
+    params : `Dict`, optional, optional
         Any other HTTP request parameters, defaults to None
-    key : Optional[str]
+    json_data : `Dict`, optional
+        Custom JSON data to be formatted into the request body
+    key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
     *args
         Variable length argument list.
@@ -320,12 +326,12 @@ def delete(path: str, return_format="native",
         The endpoint's path to which the request is being made
     return_format : str, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : Optional[List], optional
+    ignore_statuses : `List`, optional, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
-    params : Optional[Dict], optional
+    params : `Dict`, optional, optional
         Any other HTTP request parameters, defaults to None
-    key : Optional[str]
+    key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
     *args
         Variable length argument list.
@@ -372,12 +378,12 @@ def getiter(path: str,
     sort : str, optional
         Sort order to return results in. Valid sort orders are
         created, updated, popularity, and distance
-    ignore_statuses : Optional[List], optional
+    ignore_statuses : `List`, optional, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
-    params : Optional[Dict], optional
+    params : `Dict`, optional, optional
         Any other HTTP request parameters, defaults to None
-    key : Optional[str]
+    key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
     *args
         Variable length argument list.

@@ -9,6 +9,11 @@ def me(key: Optional[str] = None) -> User:
 
     Requires authentication.
 
+    Parameters
+    ----------
+    key : `str`, optional
+        API authentication key.
+
     Returns
     -------
     User
@@ -31,6 +36,8 @@ def fetch(username: str, key: Optional[str] = None) -> User:
     ----------
     username : str
         Username of the registered User
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -56,11 +63,13 @@ def plans(username: str, sort: str = "created",
     ----------
     username : str
         Username of the user who created the flight plans
-    sort : str, optional
+    sort : str
         Sort order to return results in. Valid sort orders are
         created, updated, popularity, and distance
     limit: int
         Maximum number of plans to fetch, defaults to ``100``
+    key : `str`, optional
+        API authentication key.
 
     Yields
     -------
@@ -84,11 +93,13 @@ def likes(username: str, sort: str = "created",
     ----------
     username : str
         Username of the user who liked the flight plans
-    sort : str, optional
+    sort : str
         Sort order to return results in. Valid sort orders are
         created, updated, popularity, and distance
     limit : int
         Maximum number of plans to fetch, defaults to ``100``
+    key : `str`, optional
+        API authentication key.
 
     Yields
     -------
@@ -116,6 +127,8 @@ def search(username: str,
         Username to search user database for
     limit : type
         Maximum number of users to fetch, defaults to ``100``
+    key : `str`, optional
+        API authentication key.
 
     Yields
     -------

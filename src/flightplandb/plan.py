@@ -23,6 +23,8 @@ def fetch(id_: int,
     return_format : str
         The API response format, defaults to ``"native"``.
         Must be one of the keys in the table at the top of the page.
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -61,6 +63,11 @@ def create(plan: Plan,
     ----------
     plan : Plan
         The Plan object to register on the website
+    return_format : str
+        The API response format, defaults to ``"native"``.
+        Must be one of the keys in the table at the top of the page.
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -97,6 +104,11 @@ def edit(plan: Plan,
     ----------
     plan : Plan
         The new Plan object to replace the old one associated with that ID
+    return_format : str
+        The API response format, defaults to ``"native"``.
+        Must be one of the keys in the table at the top of the page.
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -136,6 +148,8 @@ def delete(id_: int,
     ----------
     id\_ : int
         The ID of the flight plan to delete
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -165,13 +179,15 @@ def search(plan_query: PlanQuery, sort: str = "created",
     ----------
     plan_query : PlanQuery
         A dataclass containing multiple options for plan searches
-    sort : str, optional
+    sort : str
         Sort order to return results in. Valid sort orders are
         created, updated, popularity, and distance
     limit : int
         Maximum number of plans to return, defaults to 100
-    include_route : bool, optional
+    include_route : bool
         Include route in response, defaults to False
+    key : `str`, optional
+        API authentication key.
 
     Yields
     -------
@@ -201,6 +217,8 @@ def has_liked(id_: int,
     ----------
     id\_ : int
         ID of the flightplan to be checked
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -225,6 +243,8 @@ def like(id_: int,
     ----------
     id\_ : int
         ID of the flightplan to be liked
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -252,6 +272,8 @@ def unlike(id_: int,
     ----------
     id\_ : int
         ID of the flightplan to be unliked
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -280,6 +302,10 @@ def generate(gen_query: GenerateQuery,
     ----------
     gen_query : GenerateQuery
         A dataclass with options for flight plan generation
+    include_route : bool
+        Include route in response, defaults to False
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------
@@ -317,6 +343,8 @@ def decode(route: str,
         (e.g. 06TRA UL851 BEGAR). SID and STAR procedures are not
         currently supported and will be skipped, along with any
         other unmatched waypoints.
+    key : `str`, optional
+        API authentication key.
 
     Returns
     -------

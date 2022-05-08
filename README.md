@@ -14,20 +14,9 @@ This is a Python 3 wrapper for the [Flight Plan Database API](https://flightplan
 
 For more information on Flight Plan Database, see their excellent [About page](https://flightplandatabase.com/about).
 
-## API
-All the API commands can be called via the `flightplandb.FlightPlanDB` class.
-It is organized into subsections as specified in the docs; i.e. `FlightPlanDB.plan` has all the plan API commands.
-
-## Data Types
-All datatypes can be found in `flightplandb.datatypes`.
-
-## Exceptions
-All exceptions can be found in `flightplandb.exceptions`.
-
 ## Documentation
 The documentation for this library can be found on readthedocs.io [here](https://flightplandb-py.readthedocs.io/).
 
 ## Installation
 The library can be installed from PyPi using `pip install flightplandb`;
-the installation page link is [here](https://pypi.org/project/flightplandb/). For more details on
-installing bleeding-edge versions, see the Installation section of the documentation.
+the PyPi installation page link is [here](https://pypi.org/project/flightplandb/). For more details, see the Installation section of the documentation.

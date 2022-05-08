@@ -161,7 +161,7 @@ def test_plan_create(mocker):
                 "via": None})]))
     correct_call = {
         'path': '/plan/',
-        'json': {
+        'json_data': {
             'id': None,
             'fromICAO': 'EHAM',
             'toICAO': 'KJFK',
@@ -206,7 +206,7 @@ def test_plan_create(mocker):
         'key': None
     }
 
-    def patched_post(path, return_format, json, key):
+    def patched_post(path, return_format, json_data, key):
         return json_response
 
     mocker.patch(
@@ -336,7 +336,7 @@ def test_plan_edit(mocker):
     )
     correct_call = {
         'path': '/plan/23896',
-        'json': {
+        'json_data': {
             'id': 23896,
             'fromICAO': 'EHAM',
             'toICAO': 'KJFK',
@@ -381,7 +381,7 @@ def test_plan_edit(mocker):
         'key': None
     }
 
-    def patched_patch(path, return_format, json, key):
+    def patched_patch(path, return_format, json_data, key):
         return json_response
 
     mocker.patch(

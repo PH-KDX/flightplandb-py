@@ -44,7 +44,7 @@ def nats(key: Optional[str] = None) -> List[Track]:
     """
 
     return list(
-        map(lambda n: Track(**n), internal.get("/nav/NATS", key=key)))
+        map(lambda n: Track(**n), internal.get(path="/nav/NATS", key=key)))
 
 
 def pacots(key: Optional[str] = None) -> List[Track]:

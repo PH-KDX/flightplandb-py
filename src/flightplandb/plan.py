@@ -84,7 +84,7 @@ def create(plan: Plan,
     request = internal.post(
         path="/plan/",
         return_format=return_format,
-        json=plan.to_api_dict(),
+        json_data=plan.to_api_dict(),
         key=key)
 
     if return_format == "native":
@@ -129,7 +129,7 @@ def edit(plan: Plan,
     request = internal.patch(
         path=f"/plan/{plan_data['id']}",
         return_format=return_format,
-        json=plan_data,
+        json_data=plan_data,
         key=key)
 
     if return_format == "native":

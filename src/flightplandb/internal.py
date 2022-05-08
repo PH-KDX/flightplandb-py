@@ -41,8 +41,7 @@ def request(method: str,
             ignore_statuses: Optional[List] = None,
             params: Optional[Dict] = None,
             json_data: Optional[Dict] = None,
-            key: Optional[str] = None,
-            **kwargs) -> Union[Dict, bytes]:
+            key: Optional[str] = None) -> Union[Dict, bytes]:
     """General HTTP requests function for non-paginated results.
 
     Parameters
@@ -62,8 +61,6 @@ def request(method: str,
         Custom JSON data to be formatted into the request body
     key : str
         API token, defaults to None (which makes it unauthenticated)
-    **kwargs
-        Arbitrary keyword arguments.
 
     Returns
     -------
@@ -129,8 +126,7 @@ def request(method: str,
                             url=urljoin(url_base, path),
                             auth=HTTPBasicAuth(key, None),
                             headers=params,
-                            json=json_data,
-                            **kwargs)
+                            json=json_data)
 
     status_handler(resp.status_code, ignore_statuses)
 
@@ -165,8 +161,7 @@ def get_headers(key: Optional[str] = None) -> CaseInsensitiveDict:
 def get(path: str, return_format="native",
         ignore_statuses: Optional[List] = None,
         params: Optional[Dict] = None,
-        key: Optional[str] = None,
-        **kwargs) -> Union[Dict, bytes]:
+        key: Optional[str] = None) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for get requests.
 
     Parameters
@@ -182,8 +177,6 @@ def get(path: str, return_format="native",
         Any other HTTP request parameters, defaults to None
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
-    **kwargs
-        Arbitrary keyword arguments.
 
     Returns
     -------
@@ -203,8 +196,7 @@ def get(path: str, return_format="native",
                       return_format=return_format,
                       ignore_statuses=ignore_statuses,
                       params=params,
-                      key=key,
-                      **kwargs)
+                      key=key)
     return resp
 
 
@@ -212,8 +204,7 @@ def post(path: str, return_format="native",
          ignore_statuses: Optional[List] = None,
          params: Optional[Dict] = None,
          json_data: Optional[Dict] = None,
-         key: Optional[str] = None,
-         **kwargs) -> Union[Dict, bytes]:
+         key: Optional[str] = None) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for post requests.
 
     Parameters
@@ -231,8 +222,6 @@ def post(path: str, return_format="native",
         Custom JSON data to be formatted into the request body
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
-    **kwargs
-        Arbitrary keyword arguments.
 
     Returns
     -------
@@ -251,8 +240,7 @@ def post(path: str, return_format="native",
                       ignore_statuses=ignore_statuses,
                       params=params,
                       json_data=json_data,
-                      key=key,
-                      **kwargs)
+                      key=key)
     return resp
 
 
@@ -260,8 +248,7 @@ def patch(path: str, return_format="native",
           ignore_statuses: Optional[List] = None,
           params: Optional[Dict] = None,
           json_data: Optional[Dict] = None,
-          key: Optional[str] = None,
-          **kwargs) -> Union[Dict, bytes]:
+          key: Optional[str] = None) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for patch requests.
 
     Parameters
@@ -279,8 +266,6 @@ def patch(path: str, return_format="native",
         Custom JSON data to be formatted into the request body
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
-    **kwargs
-        Arbitrary keyword arguments.
 
     Returns
     -------
@@ -300,16 +285,14 @@ def patch(path: str, return_format="native",
                       ignore_statuses=ignore_statuses,
                       params=params,
                       key=key,
-                      json_data=json_data,
-                      **kwargs)
+                      json_data=json_data)
     return resp
 
 
 def delete(path: str, return_format="native",
            ignore_statuses: Optional[List] = None,
            params: Optional[Dict] = None,
-           key: Optional[str] = None,
-           **kwargs) -> Union[Dict, bytes]:
+           key: Optional[str] = None) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for delete requests.
 
     Parameters
@@ -325,8 +308,6 @@ def delete(path: str, return_format="native",
         Any other HTTP request parameters, defaults to None
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
-    **kwargs
-        Arbitrary keyword arguments.
 
     Returns
     -------
@@ -345,8 +326,7 @@ def delete(path: str, return_format="native",
                       return_format=return_format,
                       ignore_statuses=ignore_statuses,
                       params=params,
-                      key=key,
-                      **kwargs)
+                      key=key)
     return resp
 
 
@@ -355,8 +335,7 @@ def getiter(path: str,
             sort: str = "created",
             ignore_statuses: Optional[List] = None,
             params: Optional[Dict] = None,
-            key: Optional[str] = None,
-            **kwargs) -> Generator[Dict, None, None]:
+            key: Optional[str] = None) -> Generator[Dict, None, None]:
     """Get :meth:`request()` for paginated results.
 
     Parameters
@@ -375,8 +354,6 @@ def getiter(path: str,
         Any other HTTP request parameters, defaults to None
     key : `str`, optional
         API token, defaults to None (which makes it unauthenticated)
-    **kwargs
-        Arbitrary keyword arguments.
 
     Returns
     -------
@@ -411,8 +388,7 @@ def getiter(path: str,
     r_fpdb = session.get(
         url=url,
         params=params,
-        auth=auth,
-        **kwargs)
+        auth=auth)
     status_handler(r_fpdb.status_code, ignore_statuses)
 
     # I detest responses which "may" be paginated
@@ -428,8 +404,7 @@ def getiter(path: str,
         params['page'] = page
         r_fpdb = session.get(url=url,
                              params=params,
-                             auth=auth,
-                             **kwargs)
+                             auth=auth)
         status_handler(r_fpdb.status_code, ignore_statuses)
         # ...keep cycling through pages...
         for i in r_fpdb.json():

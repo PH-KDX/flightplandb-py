@@ -7,3 +7,4 @@ User docs
 
    introduction
    quickstart
+   changelog

@@ -3,9 +3,9 @@
 This is a Python 3 wrapper for the Flight Plan Database API. Flight Plan
 Database is a website for creating and sharing flight plans for use in
 flight simulation.
-For more information on Flight Plan Database, see their excellent About page
+For more information on Flight Plan Database, read their excellent About page
 at https://flightplandatabase.com/about. For more information about this
-library, check out the documentation at https://flightplandb-py.readthedocs.io/.
+library, read the documentation at https://flightplandb-py.readthedocs.io/.
 """
 
 

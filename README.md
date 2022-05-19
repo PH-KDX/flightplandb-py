@@ -20,3 +20,6 @@ The documentation for this library can be found on readthedocs.io [here](https:/
 ## Installation
 The library can be installed from PyPi using `pip install flightplandb`;
 the PyPi installation page link is [here](https://pypi.org/project/flightplandb/). For more details, see the Installation section of the documentation.
+
+## Changelog
+Before upgrading to a newer version, please read the appropriate changelog for your upgrade [here](https://flightplandb-py.readthedocs.io/en/stable/user/changelog.html).

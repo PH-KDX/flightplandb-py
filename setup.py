@@ -24,7 +24,7 @@ def get_version(rel_path):
 
 setup(
     name="flightplandb",
-    version=get_version("flightplandb/__init__.py"),
+    version=get_version("src/flightplandb/__init__.py"),
     author="PH-KDX",
     url="https://github.com/PH-KDX/flightplandb-py/",
     project_urls={
@@ -34,16 +34,22 @@ setup(
     description="Python wrapper for the Flight Plan Database API",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(),
+    package_dir={"": "src"},
+    packages=find_packages(where="src"),
     include_package_data=True,
     install_requires=[
-        "requests==2.25.1",
-        "python-dateutil==2.8.1"
+        "requests==2.26.0",
+        "python-dateutil==2.8.2"
     ],
     extras_require={
         "dev": [
-            "Sphinx==4.0.2",
-            "sphinx-rtd-theme==0.5.2"
+            "Sphinx==4.5.0",
+            "sphinx-rtd-theme==1.0.0"
+        ],
+        "test": [
+            "pytest~=6.2.5",
+            "pytest-mock~=3.6.1",
+            "pytest_socket~=0.4.1"
         ]
     },
     python_requires='>=3.7.0',
@@ -54,6 +60,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Operating System :: OS Independent",
         "Topic :: Internet",
         "Topic :: Software Development :: Libraries",

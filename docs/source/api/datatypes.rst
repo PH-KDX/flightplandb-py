@@ -1,4 +1,4 @@
-Datatypes docs
+Datatypes
 ====================
 
 .. automodule:: flightplandb.datatypes

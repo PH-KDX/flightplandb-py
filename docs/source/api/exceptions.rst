@@ -1,4 +1,4 @@
-Exceptions docs
+Exceptions
 ====================
 
 .. automodule:: flightplandb.exceptions

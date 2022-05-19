@@ -1,14 +1,5 @@
-API docs
+API
 ====================
 
-.. automodule:: flightplandb
+.. automodule:: flightplandb.api
    :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. toctree::
-   :maxdepth: 5
-
-   flightplandb
-   datatypes
-   exceptions

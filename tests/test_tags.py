@@ -1,41 +1,45 @@
-from unittest import TestCase, main
-from unittest.mock import patch, call
-from flightplandb.submodules.tags import TagsAPI
+import flightplandb
 from flightplandb.datatypes import Tag
 
 
-class TagsTest(TestCase):
-    def test_tags_api(self):
+def test_tags_api(mocker):
+    json_response = [
+        {
+            "name": "Decoded",
+            "description": "Flight plans decoded",
+            "planCount": 7430,
+            "popularity": 0.010143822356129395
+        },
+        {
+            "name": "Generated",
+            "description": "Computer generated plans",
+            "planCount": 35343,
+            "popularity": 0.009036140132228622
+        }
+                    ]
 
-        with patch("flightplandb.flightplandb.FlightPlanDB",
-                   autospec=True) as MockClass:
-            instance = MockClass.return_value
-            instance._get.return_value = [
-                {"name": "Decoded",
-                 "description": "Flight plans decoded",
-                 "planCount": 7430,
-                 "popularity": 0.010143822356129395},
-                {"name": "Generated",
-                 "description": "Computer generated plans",
-                 "planCount": 35343,
-                 "popularity": 0.009036140132228622}
-            ]
-            sub_instance = TagsAPI(instance)
-            response = sub_instance.fetch()
-            # check that TagsAPI method made the correct request of FlightPlanDB
-            instance.assert_has_calls([call._get('/tags')])
-            correct_response = [
-                Tag(name='Decoded',
-                    description='Flight plans decoded',
-                    planCount=7430,
-                    popularity=0.010143822356129395),
-                Tag(name='Generated',
-                    description='Computer generated plans',
-                    planCount=35343,
-                    popularity=0.009036140132228622)]
-            # check TagsAPI method decoded the data correctly for given response
-            assert response == correct_response
+    correct_response = [
+        Tag(name='Decoded',
+            description='Flight plans decoded',
+            planCount=7430,
+            popularity=0.010143822356129395),
+        Tag(name='Generated',
+            description='Computer generated plans',
+            planCount=35343,
+            popularity=0.009036140132228622)
+        ]
 
+    def patched_get(path, key):
+        return json_response
 
-if __name__ == "__main__":
-    main()
+    mocker.patch(
+        target='flightplandb.internal.get',
+        new=patched_get)
+
+    spy = mocker.spy(flightplandb.internal, "get")
+
+    response = flightplandb.tags.fetch()
+    # check that TagsAPI method made correct request of FlightPlanDB
+    spy.assert_called_once_with(path='/tags', key=None)
+    # check that TagsAPI method decoded data correctly for given response
+    assert response == correct_response

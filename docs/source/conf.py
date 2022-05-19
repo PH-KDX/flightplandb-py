@@ -21,7 +21,9 @@ copyright = '2021, PH-KDX'
 author = 'PH-KDX'
 
 # The full version, including alpha/beta/rc tags
-release = '0.5.0'
+release = '0.6.0'
+# readthedocs.io insists on the version field being filled for epub builds
+version = release
 
 
 # -- General configuration ---------------------------------------------------
@@ -41,7 +43,6 @@ autodoc_member_order = 'bysource'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
-add_module_names = False
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

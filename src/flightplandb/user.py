@@ -80,7 +80,7 @@ async def plans(
         A generator with all the flight plans a user created,
         limited by ``limit``
     """
-    for i in await internal.getiter(
+    async for i in internal.getiter(
         path=f"/user/{username}/plans",
         sort=sort,
         limit=limit,
@@ -116,7 +116,7 @@ async def likes(
         limited by ``limit``
     """
 
-    for i in await internal.getiter(
+    async for i in internal.getiter(
         path=f"/user/{username}/likes",
         sort=sort,
         limit=limit,
@@ -150,7 +150,7 @@ async def search(
         User, because less info is returned.
     """
 
-    for i in await internal.getiter(
+    async for i in internal.getiter(
         path="/search/users",
         limit=limit,
         params={"q": username},

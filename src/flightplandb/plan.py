@@ -211,7 +211,7 @@ async def search(
     request_json = plan_query.to_api_dict()
     request_json["includeRoute"] = include_route
 
-    for i in await internal.getiter(
+    async for i in internal.getiter(
         path="/search/plans",
         sort=sort,
         params=request_json,

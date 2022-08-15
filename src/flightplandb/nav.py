@@ -103,7 +103,7 @@ async def search(
             params["types"] = type_
         else:
             raise ValueError(f"{type_} is not a valid Navaid type")
-    for i in await internal.getiter(
+    async for i in internal.getiter(
         path="/search/nav", params=params, key=key
     ):
         yield SearchNavaid(**i)

@@ -23,9 +23,9 @@ from typing import Generator, List, Dict, Union, Optional
 
 from urllib.parse import urljoin
 import json
-import requests
-from requests.auth import HTTPBasicAuth
-from requests.structures import CaseInsensitiveDict
+import aiohttp
+
+from multidict import CIMultiDict
 
 from flightplandb.exceptions import status_handler
 
@@ -36,12 +36,15 @@ from flightplandb.exceptions import status_handler
 url_base: str = "https://api.flightplandatabase.com"
 
 
-def request(method: str,
-            path: str, return_format="native",
-            ignore_statuses: Optional[List] = None,
-            params: Optional[Dict] = None,
-            json_data: Optional[Dict] = None,
-            key: Optional[str] = None) -> Union[Dict, bytes]:
+async def request(
+    method: str,
+    path: str,
+    return_format="native",
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Union[Dict, bytes]:
     """General HTTP requests function for non-paginated results.
 
     Parameters
@@ -122,24 +125,29 @@ def request(method: str,
     # then add it to the request headers
     params["Accept"] = return_format_encoded
 
-    resp = requests.request(method=method,
-                            url=urljoin(url_base, path),
-                            auth=HTTPBasicAuth(key, None),
-                            headers=params,
-                            json=json_data)
+    async with aiohttp.ClientSession() as session:
+        async with session.request(
+            method=method,
+            url=urljoin(url_base, path),
+            auth=aiohttp.BasicAuth(key, None),
+            headers=params,
+            json=json_data
+        ) as resp:
 
-    status_handler(resp.status_code, ignore_statuses)
+            status_handler(resp.status_code, ignore_statuses)
 
-    header = resp.headers
+            header = resp.headers
 
-    if return_format == "native":
-        return header, resp.json()
-    else:
-        return header, resp.text  # if the format is not a dict
+            if return_format == "native":
+                return header, await resp.json()
+            else:
+                return header, await resp.text()  # if the format is not a dict
 
 
 # and here go the specific non-paginated HTTP calls
-def get_headers(key: Optional[str] = None) -> CaseInsensitiveDict:
+async def get_headers(
+    key: Optional[str] = None
+) -> CIMultiDict:
     """Calls :meth:`request()` for request headers.
 
     Parameters
@@ -152,16 +160,21 @@ def get_headers(key: Optional[str] = None) -> CaseInsensitiveDict:
     CaseInsensitiveDict
         A dict of headers, but the keys are case-insensitive.
     """
-    headers, _ = request(method="get",
-                         path="",
-                         key=key)
+    headers, _ = await request(
+        method="get",
+        path="",
+        key=key
+    )
     return headers
 
 
-def get(path: str, return_format="native",
-        ignore_statuses: Optional[List] = None,
-        params: Optional[Dict] = None,
-        key: Optional[str] = None) -> Union[Dict, bytes]:
+async def get(
+    path: str,
+    return_format="native",
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for get requests.
 
     Parameters
@@ -191,20 +204,25 @@ def get(path: str, return_format="native",
     if not params:
         params = {}
 
-    _, resp = request(method="get",
-                      path=path,
-                      return_format=return_format,
-                      ignore_statuses=ignore_statuses,
-                      params=params,
-                      key=key)
+    _, resp = await request(
+        method="get",
+        path=path,
+        return_format=return_format,
+        ignore_statuses=ignore_statuses,
+        params=params,
+        key=key
+    )
     return resp
 
 
-def post(path: str, return_format="native",
-         ignore_statuses: Optional[List] = None,
-         params: Optional[Dict] = None,
-         json_data: Optional[Dict] = None,
-         key: Optional[str] = None) -> Union[Dict, bytes]:
+async def post(
+    path: str,
+    return_format="native",
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for post requests.
 
     Parameters
@@ -234,21 +252,26 @@ def post(path: str, return_format="native",
     if not params:
         params = {}
 
-    _, resp = request(method="post",
-                      path=path,
-                      return_format=return_format,
-                      ignore_statuses=ignore_statuses,
-                      params=params,
-                      json_data=json_data,
-                      key=key)
+    _, resp = await request(
+        method="post",
+        path=path,
+        return_format=return_format,
+        ignore_statuses=ignore_statuses,
+        params=params,
+        json_data=json_data,
+        key=key
+    )
     return resp
 
 
-def patch(path: str, return_format="native",
-          ignore_statuses: Optional[List] = None,
-          params: Optional[Dict] = None,
-          json_data: Optional[Dict] = None,
-          key: Optional[str] = None) -> Union[Dict, bytes]:
+async def patch(
+    path: str,
+    return_format="native",
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for patch requests.
 
     Parameters
@@ -279,20 +302,25 @@ def patch(path: str, return_format="native",
     if not params:
         params = {}
 
-    _, resp = request(method="patch",
-                      path=path,
-                      return_format=return_format,
-                      ignore_statuses=ignore_statuses,
-                      params=params,
-                      key=key,
-                      json_data=json_data)
+    _, resp = await request(
+        method="patch",
+        path=path,
+        return_format=return_format,
+        ignore_statuses=ignore_statuses,
+        params=params,
+        key=key,
+        json_data=json_data
+    )
     return resp
 
 
-def delete(path: str, return_format="native",
-           ignore_statuses: Optional[List] = None,
-           params: Optional[Dict] = None,
-           key: Optional[str] = None) -> Union[Dict, bytes]:
+async def delete(
+    path: str,
+    return_format="native",
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Union[Dict, bytes]:
     """Calls :meth:`request()` for delete requests.
 
     Parameters
@@ -321,21 +349,25 @@ def delete(path: str, return_format="native",
     if not params:
         params = {}
 
-    _, resp = request(method="delete",
-                      path=path,
-                      return_format=return_format,
-                      ignore_statuses=ignore_statuses,
-                      params=params,
-                      key=key)
+    _, resp = await request(
+        method="delete",
+        path=path,
+        return_format=return_format,
+        ignore_statuses=ignore_statuses,
+        params=params,
+        key=key
+    )
     return resp
 
 
-def getiter(path: str,
-            limit: int = 100,
-            sort: str = "created",
-            ignore_statuses: Optional[List] = None,
-            params: Optional[Dict] = None,
-            key: Optional[str] = None) -> Generator[Dict, None, None]:
+async def getiter(
+    path: str,
+    limit: int = 100,
+    sort: str = "created",
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Generator[Dict, None, None]:
     """Get :meth:`request()` for paginated results.
 
     Parameters
@@ -379,38 +411,41 @@ def getiter(path: str,
         params["sort"] = sort
 
     url = urljoin(url_base, path)
-    auth = HTTPBasicAuth(key, None)
+    auth = aiohttp.BasicAuth(key, None)
 
-    session = requests.Session()
     # initially no results have been fetched yet
     num_results = 0
 
-    r_fpdb = session.get(
-        url=url,
-        params=params,
-        auth=auth)
-    status_handler(r_fpdb.status_code, ignore_statuses)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            url=url,
+            params=params,
+            auth=auth
+        ) as r_fpdb:
+            status_handler(r_fpdb.status_code, ignore_statuses)
 
-    # I detest responses which "may" be paginated
-    # therefore I choose to pretend that all pages are paginated
-    # if it is unpaginated I say it is paginated with 1 page
-    if 'X-Page-Count' in r_fpdb.headers:
-        num_pages = int(r_fpdb.headers['X-Page-Count'])
-    else:
-        num_pages = 1
+            # I detest responses which "may" be paginated
+            # therefore I choose to pretend that all pages are paginated
+            # if it is unpaginated I say it is paginated with 1 page
+            if 'X-Page-Count' in r_fpdb.headers:
+                num_pages = int(r_fpdb.headers['X-Page-Count'])
+            else:
+                num_pages = 1
 
-    # while page <= num_pages...
-    for page in range(0, num_pages):
-        params['page'] = page
-        r_fpdb = session.get(url=url,
-                             params=params,
-                             auth=auth)
-        status_handler(r_fpdb.status_code, ignore_statuses)
-        # ...keep cycling through pages...
-        for i in r_fpdb.json():
-            # ...and return every dictionary in there...
-            yield i
-            num_results += 1
-            # ...unless the result limit has been reached
-            if num_results == limit:
-                return
+        # while page <= num_pages...
+        for page in range(0, num_pages):
+            params['page'] = page
+            async with session.get(
+                url=url,
+                params=params,
+                auth=auth
+            ) as r_fpdb:
+                status_handler(r_fpdb.status_code, ignore_statuses)
+                # ...keep cycling through pages...
+                for i in await r_fpdb.json():
+                    # ...and return every dictionary in there...
+                    yield i
+                    num_results += 1
+                    # ...unless the result limit has been reached
+                    if num_results == limit:
+                        return

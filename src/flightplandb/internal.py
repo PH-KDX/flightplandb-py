@@ -153,7 +153,7 @@ async def request(
             json=json_data
         ) as resp:
 
-            status_handler(resp.status_code, ignore_statuses)
+            status_handler(resp.status, ignore_statuses)
 
             header = resp.headers
 
@@ -443,7 +443,7 @@ async def getiter(
             url=url,
             params=params,
         ) as r_fpdb:
-            status_handler(r_fpdb.status_code, ignore_statuses)
+            status_handler(r_fpdb.status, ignore_statuses)
 
             # I detest responses which "may" be paginated
             # therefore I choose to pretend that all pages are paginated
@@ -460,7 +460,7 @@ async def getiter(
                 url=url,
                 params=params
             ) as r_fpdb:
-                status_handler(r_fpdb.status_code, ignore_statuses)
+                status_handler(r_fpdb.status, ignore_statuses)
                 # ...keep cycling through pages...
                 for i in await r_fpdb.json():
                     # ...and return every dictionary in there...

@@ -430,7 +430,7 @@ async def getiter(
         params["sort"] = sort
 
     url = urljoin(url_base, path)
-    
+
     # set auth in headers if key is provided
     if key is not None:
         params["Authorization"] = _auth_str(key=key)

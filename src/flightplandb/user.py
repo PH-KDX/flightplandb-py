@@ -4,7 +4,7 @@ from flightplandb.datatypes import Plan, User, UserSmall
 from flightplandb import internal
 
 
-def me(key: Optional[str] = None) -> User:
+async def me(key: Optional[str] = None) -> User:
     """Fetches profile information for the currently authenticated user.
 
     Requires authentication.
@@ -25,11 +25,11 @@ def me(key: Optional[str] = None) -> User:
         Authentication failed.
     """
 
-    resp = internal.get(path="/me", key=key)
+    resp = await internal.get(path="/me", key=key)
     return User(**resp)
 
 
-def fetch(username: str, key: Optional[str] = None) -> User:
+async def fetch(username: str, key: Optional[str] = None) -> User:
     """Fetches profile information for any registered user
 
     Parameters
@@ -50,13 +50,16 @@ def fetch(username: str, key: Optional[str] = None) -> User:
         No user was found with this username.
     """
 
-    resp = internal.get(path=f"/user/{username}", key=key)
+    resp = await internal.get(path=f"/user/{username}", key=key)
     return User(**resp)
 
 
-def plans(username: str, sort: str = "created",
-          limit: int = 100,
-          key: Optional[str] = None) -> Generator[Plan, None, None]:
+async def plans(
+    username: str,
+    sort: str = "created",
+    limit: int = 100,
+    key: Optional[str] = None
+) -> Generator[Plan, None, None]:
     """Fetches flight plans created by a user.
 
     Parameters
@@ -77,16 +80,21 @@ def plans(username: str, sort: str = "created",
         A generator with all the flight plans a user created,
         limited by ``limit``
     """
-    for i in internal.getiter(path=f"/user/{username}/plans",
-                              sort=sort,
-                              limit=limit,
-                              key=key):
+    for i in await internal.getiter(
+        path=f"/user/{username}/plans",
+        sort=sort,
+        limit=limit,
+        key=key
+    ):
         yield Plan(**i)
 
 
-def likes(username: str, sort: str = "created",
-          limit: int = 100,
-          key: Optional[str] = None) -> Generator[Plan, None, None]:
+async def likes(
+    username: str,
+    sort: str = "created",
+    limit: int = 100,
+    key: Optional[str] = None
+) -> Generator[Plan, None, None]:
     """Fetches flight plans liked by a user.
 
     Parameters
@@ -108,16 +116,20 @@ def likes(username: str, sort: str = "created",
         limited by ``limit``
     """
 
-    for i in internal.getiter(path=f"/user/{username}/likes",
-                              sort=sort,
-                              limit=limit,
-                              key=key):
+    for i in await internal.getiter(
+        path=f"/user/{username}/likes",
+        sort=sort,
+        limit=limit,
+        key=key
+    ):
         yield Plan(**i)
 
 
-def search(username: str,
-           limit=100,
-           key: Optional[str] = None) -> Generator[UserSmall, None, None]:
+async def search(
+    username: str,
+    limit=100,
+    key: Optional[str] = None
+) -> Generator[UserSmall, None, None]:
     """Searches for users by username. For more detailed info on a
     specific user, use :meth:`fetch`
 
@@ -138,8 +150,10 @@ def search(username: str,
         User, because less info is returned.
     """
 
-    for i in internal.getiter(path="/search/users",
-                              limit=limit,
-                              params={"q": username},
-                              key=key):
+    for i in await internal.getiter(
+        path="/search/users",
+        limit=limit,
+        params={"q": username},
+        key=key
+    ):
         yield UserSmall(**i)

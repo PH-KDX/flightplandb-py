@@ -21,6 +21,7 @@ so you're unlikely to ever use them."""
 
 from typing import Generator, List, Dict, Union, Optional
 
+from base64 import b64encode
 from urllib.parse import urljoin
 import json
 import aiohttp
@@ -34,6 +35,21 @@ from flightplandb.exceptions import status_handler
 # https://github.com/python/cpython/blob/main/Lib/random.py#L792
 
 url_base: str = "https://api.flightplandatabase.com"
+
+
+def _auth_str(key):
+    """Returns a API auth string."""
+
+    if isinstance(key, str):
+        key = key.encode("latin1")
+    else:
+        raise ValueError("API key must be a string!")
+
+    authstr = "Basic " + (
+        b64encode(key + b":").strip().decode()
+    )
+
+    return authstr
 
 
 async def request(
@@ -125,11 +141,14 @@ async def request(
     # then add it to the request headers
     params["Accept"] = return_format_encoded
 
+    # set auth in headers if key is provided
+    if key is not None:
+        params["Authorization"] = _auth_str(key=key)
+
     async with aiohttp.ClientSession() as session:
         async with session.request(
             method=method,
             url=urljoin(url_base, path),
-            auth=aiohttp.BasicAuth(key, None),
             headers=params,
             json=json_data
         ) as resp:
@@ -411,7 +430,10 @@ async def getiter(
         params["sort"] = sort
 
     url = urljoin(url_base, path)
-    auth = aiohttp.BasicAuth(key, None)
+    
+    # set auth in headers if key is provided
+    if key is not None:
+        params["Authorization"] = _auth_str(key=key)
 
     # initially no results have been fetched yet
     num_results = 0
@@ -420,7 +442,6 @@ async def getiter(
         async with session.get(
             url=url,
             params=params,
-            auth=auth
         ) as r_fpdb:
             status_handler(r_fpdb.status_code, ignore_statuses)
 
@@ -437,8 +458,7 @@ async def getiter(
             params['page'] = page
             async with session.get(
                 url=url,
-                params=params,
-                auth=auth
+                params=params
             ) as r_fpdb:
                 status_handler(r_fpdb.status_code, ignore_statuses)
                 # ...keep cycling through pages...

@@ -4,7 +4,7 @@ from flightplandb import internal
 from flightplandb.datatypes import StatusResponse
 
 
-def header_value(header_key: str, key: Optional[str] = None) -> str:
+async def header_value(header_key: str, key: Optional[str] = None) -> str:
     """Gets header value for key. Do not call directly.
 
     Parameters
@@ -20,11 +20,12 @@ def header_value(header_key: str, key: Optional[str] = None) -> str:
         The value corresponding to the passed key
     """
 
-    headers = internal.get_headers(key=key)  # Make 1 request to fetch headers
+    # Make 1 request to fetch headers
+    headers = await internal.get_headers(key=key)
     return headers[header_key]
 
 
-def version(key: Optional[str] = None) -> int:
+async def version(key: Optional[str] = None) -> int:
     """API version that returned the response.
 
     Parameters
@@ -38,10 +39,10 @@ def version(key: Optional[str] = None) -> int:
         API version
     """
 
-    return int(header_value(header_key="X-API-Version", key=key))
+    return int(await header_value(header_key="X-API-Version", key=key))
 
 
-def units(key: Optional[str] = None) -> str:
+async def units(key: Optional[str] = None) -> str:
     """The units system used for numeric values.
     https://flightplandatabase.com/dev/api#units
 
@@ -56,10 +57,10 @@ def units(key: Optional[str] = None) -> str:
         AVIATION, METRIC or SI
     """
 
-    return header_value(header_key="X-Units", key=key)
+    return await header_value(header_key="X-Units", key=key)
 
 
-def limit_cap(key: Optional[str] = None) -> int:
+async def limit_cap(key: Optional[str] = None) -> int:
     """The number of requests allowed per day, operated on an hourly rolling
     basis. i.e requests used between 19:00 and 20:00 will become available
     again at 19:00 the following day. API key authenticated requests get a
@@ -77,10 +78,10 @@ def limit_cap(key: Optional[str] = None) -> int:
         number of allowed requests per day
     """
 
-    return int(header_value(header_key="X-Limit-Cap", key=key))
+    return int(await header_value(header_key="X-Limit-Cap", key=key))
 
 
-def limit_used(key: Optional[str] = None) -> int:
+async def limit_used(key: Optional[str] = None) -> int:
     """The number of requests used in the current period
     by the presented API key or IP address.
     See :ref:`request-limits` for more details.
@@ -96,10 +97,10 @@ def limit_used(key: Optional[str] = None) -> int:
         number of requests used in period
     """
 
-    return int(header_value(header_key="X-Limit-Used", key=key))
+    return int(await header_value(header_key="X-Limit-Used", key=key))
 
 
-def ping(key: Optional[str] = None) -> StatusResponse:
+async def ping(key: Optional[str] = None) -> StatusResponse:
     """Checks API status to see if it is up
 
     Parameters
@@ -113,11 +114,11 @@ def ping(key: Optional[str] = None) -> StatusResponse:
         OK 200 means the service is up and running.
     """
 
-    resp = internal.get(path="", key=key)
+    resp = await internal.get(path="", key=key)
     return StatusResponse(**resp)
 
 
-def revoke(key: str) -> StatusResponse:
+async def revoke(key: str) -> StatusResponse:
     """Revoke the API key in use in the event it is compromised.
     See :ref:`authentication` for more details.
 
@@ -138,5 +139,5 @@ def revoke(key: str) -> StatusResponse:
         occurred and the errors array will give further details.
     """
 
-    resp = internal.get(path="/auth/revoke", key=key)
+    resp = await internal.get(path="/auth/revoke", key=key)
     return StatusResponse(**resp)

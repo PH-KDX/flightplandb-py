@@ -38,8 +38,8 @@ setup(
     packages=find_packages(where="src"),
     include_package_data=True,
     install_requires=[
-        "requests==2.26.0",
-        "python-dateutil==2.8.2"
+        "aiohttp~=3.8.1",
+        "python-dateutil~=2.8.2"
     ],
     extras_require={
         "dev": [
@@ -47,9 +47,9 @@ setup(
             "sphinx-rtd-theme==1.0.0"
         ],
         "test": [
-            "pytest~=6.2.5",
-            "pytest-mock~=3.6.1",
-            "pytest_socket~=0.4.1"
+            "pytest~=7.1.2",
+            "pytest-socket~=0.5.1",
+            "pytest-asyncio~=0.19.0"
         ]
     },
     python_requires='>=3.7.0',

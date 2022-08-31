@@ -36,7 +36,7 @@ async def test_plan_fetch(patched_internal_get):
             "downloads": 1,
             "popularity": 1,
             "notes": "",
-            "encodedPolyline": "aaf{E`|y}T|Ftf@px\\hpe@lnCxw Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+            "encodedPolyline": "aaf{E`|y}T|Ftf@px\\hpe@lnCxw Dbsk@r",
             "createdAt": "2015-08-04T20:48:08.000Z",
             "updatedAt": "2015-08-04T20:48:08.000Z",
             "tags": [
@@ -64,7 +64,7 @@ async def test_plan_fetch(patched_internal_get):
             downloads=1,
             popularity=1,
             notes="",
-            encodedPolyline="aaf{E`|y}T|Ftf@px\\hpe@lnCxw Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+            encodedPolyline="aaf{E`|y}T|Ftf@px\\hpe@lnCxw Dbsk@r",
             createdAt="2015-08-04T20:48:08.000Z",
             updatedAt="2015-08-04T20:48:08.000Z",
             tags=[
@@ -242,7 +242,9 @@ async def test_plan_delete(patched_internal_delete):
 
     response = await flightplandb.plan.delete(62493)
     # check that TagsAPI method made correct request of FlightPlanDB
-    patched_internal_delete.assert_awaited_once_with(path='/plan/62493', key=None)
+    patched_internal_delete.assert_awaited_once_with(
+        path='/plan/62493', key=None
+    )
     # check that TagsAPI method decoded data correctly for given response
     assert response == correct_response
 

@@ -438,6 +438,7 @@ async def test_pacots(patched_internal_get):
         path='/nav/PACOTS', key=None
     )
 
+
 @pytest.mark.allow_hosts(['127.0.0.1', '::1'])
 @mock.patch("flightplandb.internal.getiter")
 async def test_navaid_search(patched_internal_getiter):

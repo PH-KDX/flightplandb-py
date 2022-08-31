@@ -122,7 +122,7 @@ async def test_user_plans(patched_internal_getiter):
             "downloads": 1,
             "popularity": 1,
             "notes": "",
-            "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hpe@lnCxw \Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+            "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hp e@`nnDd~f@zkmH",
             "createdAt": "2015-08-04T20:48:08.000Z",
             "updatedAt": "2015-08-04T20:48:08.000Z",
             "tags": [
@@ -175,7 +175,7 @@ async def test_user_plans(patched_internal_getiter):
             downloads=1,
             popularity=1,
             notes="",
-            encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hpe@lnCxw \Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+            encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hp e@`nnDd~f@zkmH",
             createdAt="2015-08-04T20:48:08.000Z",
             updatedAt="2015-08-04T20:48:08.000Z",
             tags=[
@@ -250,7 +250,7 @@ async def test_user_likes(patched_internal_getiter):
                 "downloads": 1,
                 "popularity": 1,
                 "notes": "",
-                "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hpe@lnCxwDbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+                "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hp e@`nnDd~f@zkmH",
                 "createdAt": "2015-08-04T20:48:08.000Z",
                 "updatedAt": "2015-08-04T20:48:08.000Z",
                 "tags": [
@@ -303,7 +303,7 @@ async def test_user_likes(patched_internal_getiter):
                 downloads=1,
                 popularity=1,
                 notes="",
-                encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hpe@lnCxwDbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+                encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hp e@`nnDd~f@zkmH",
                 createdAt="2015-08-04T20:48:08.000Z",
                 updatedAt="2015-08-04T20:48:08.000Z",
                 tags=[
@@ -340,7 +340,7 @@ async def test_user_likes(patched_internal_getiter):
                     )
                 )
         ]
-    
+
     correct_calls = [mock.call(
         path='/user/lemon/likes',
         limit=100,
@@ -395,7 +395,7 @@ async def test_user_search(patched_internal_getiter):
                 location=None,
                 gravatarHash='b807060d00c10513ce04b70918dd07a1')
         ]
-    
+
     correct_calls = [mock.call(
         path='/search/users',
         limit=100,

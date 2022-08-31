@@ -1,8 +1,13 @@
+from unittest import mock
+import pytest
 import flightplandb
 from flightplandb.datatypes import Tag
 
 
-def test_tags_api(mocker):
+# localhost is set on every test to allow async loops
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.get")
+async def test_tags_api(patched_internal_get):
     json_response = [
         {
             "name": "Decoded",
@@ -29,17 +34,12 @@ def test_tags_api(mocker):
             popularity=0.009036140132228622)
         ]
 
-    def patched_get(path, key):
-        return json_response
+    patched_internal_get.return_value = json_response
 
-    mocker.patch(
-        target='flightplandb.internal.get',
-        new=patched_get)
-
-    spy = mocker.spy(flightplandb.internal, "get")
-
-    response = flightplandb.tags.fetch()
+    response = await flightplandb.tags.fetch()
     # check that TagsAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(path='/tags', key=None)
+    patched_internal_get.assert_awaited_once_with(
+        path='/tags', key=None
+    )
     # check that TagsAPI method decoded data correctly for given response
     assert response == correct_response

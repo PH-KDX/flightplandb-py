@@ -10,6 +10,15 @@ import datetime
 from dateutil.tz import tzutc
 
 
+class AsyncIter:
+    def __init__(self, items):
+        self.items = items
+
+    async def __aiter__(self):
+        for item in self.items:
+            yield item
+
+
 # localhost is set on every test to allow async loops
 @pytest.mark.allow_hosts(['127.0.0.1', '::1'])
 @mock.patch("flightplandb.internal.get")
@@ -428,16 +437,6 @@ async def test_pacots(patched_internal_get):
     patched_internal_get.assert_awaited_once_with(
         path='/nav/PACOTS', key=None
     )
-
-
-class AsyncIter:
-    def __init__(self, items):
-        self.items = items
-
-    async def __aiter__(self):
-        for item in self.items:
-            yield item
-
 
 @pytest.mark.allow_hosts(['127.0.0.1', '::1'])
 @mock.patch("flightplandb.internal.getiter")

@@ -429,6 +429,7 @@ async def test_pacots(patched_internal_get):
         path='/nav/PACOTS', key=None
     )
 
+
 class AsyncIter:
     def __init__(self, items):
         self.items = items
@@ -436,6 +437,7 @@ class AsyncIter:
     async def __aiter__(self):
         for item in self.items:
             yield item
+
 
 @pytest.mark.allow_hosts(['127.0.0.1', '::1'])
 @mock.patch("flightplandb.internal.getiter")

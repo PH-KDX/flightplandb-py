@@ -1,3 +1,5 @@
+from unittest import mock
+import pytest
 import flightplandb
 from flightplandb.datatypes import (
     Plan, PlanQuery, User, Route, GenerateQuery,
@@ -7,7 +9,19 @@ import datetime
 from dateutil.tz import tzutc
 
 
-def test_plan_fetch(mocker):
+class AsyncIter:
+    def __init__(self, items):
+        self.items = items
+
+    async def __aiter__(self):
+        for item in self.items:
+            yield item
+
+
+# localhost is set on every test to allow async loops
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.get")
+async def test_plan_fetch(patched_internal_get):
     json_response = {
             "id": 62373,
             "fromICAO": "KLAS",
@@ -63,23 +77,20 @@ def test_plan_fetch(mocker):
                 location=None
             ))
 
-    def patched_get(path, return_format, key):
-        return json_response
+    patched_internal_get.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.get",
-        new=patched_get)
-
-    spy = mocker.spy(flightplandb.internal, "get")
-
-    response = flightplandb.plan.fetch(62373)
+    response = await flightplandb.plan.fetch(62373)
     # check that PlanAPI method decoded data correctly for given response
     assert response == correct_response
     # check that PlanAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(path='/plan/62373', return_format='native', key=None)
+    patched_internal_get.assert_awaited_once_with(
+        path='/plan/62373', return_format='native', key=None
+    )
 
 
-def test_plan_create(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.post")
+async def test_plan_create(patched_internal_post):
     json_response = {
         "id": None,
         "fromICAO": "EHAM",
@@ -206,23 +217,20 @@ def test_plan_create(mocker):
         'key': None
     }
 
-    def patched_post(path, return_format, json_data, key):
-        return json_response
+    patched_internal_post.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.post",
-        new=patched_post)
-
-    spy = mocker.spy(flightplandb.internal, "post")
-
-    response = flightplandb.plan.create(request_data)
+    response = await flightplandb.plan.create(request_data)
     # check that PlanAPI method decoded data correctly for given response
     assert response == correct_response
     # check that PlanAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(**correct_call)
+    patched_internal_post.assert_awaited_once_with(
+        **correct_call
+    )
 
 
-def test_plan_delete(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.delete")
+async def test_plan_delete(patched_internal_delete):
     json_response = {
         "message": "OK",
         "errors": None
@@ -230,23 +238,18 @@ def test_plan_delete(mocker):
 
     correct_response = StatusResponse(message="OK", errors=None)
 
-    def patched_delete(path, key):
-        return json_response
+    patched_internal_delete.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.delete",
-        new=patched_delete)
-
-    spy = mocker.spy(flightplandb.internal, "delete")
-
-    response = flightplandb.plan.delete(62493)
+    response = await flightplandb.plan.delete(62493)
     # check that TagsAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(path='/plan/62493', key=None)
+    patched_internal_delete.assert_awaited_once_with(path='/plan/62493', key=None)
     # check that TagsAPI method decoded data correctly for given response
     assert response == correct_response
 
 
-def test_plan_edit(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.patch")
+async def test_plan_edit(patched_internal_patch):
     json_response = {
         "id": 23896,
         "fromICAO": "EHAM",
@@ -381,23 +384,20 @@ def test_plan_edit(mocker):
         'key': None
     }
 
-    def patched_patch(path, return_format, json_data, key):
-        return json_response
+    patched_internal_patch.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.patch",
-        new=patched_patch)
-
-    spy = mocker.spy(flightplandb.internal, "patch")
-
-    response = flightplandb.plan.edit(plan=request_data, return_format="native", key=None)
+    response = await flightplandb.plan.edit(
+        plan=request_data, return_format="native", key=None
+    )
     # check that PlanAPI method decoded data correctly for given response
     assert response == correct_response
     # check that PlanAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(**correct_call)
+    patched_internal_patch.assert_called_once_with(**correct_call)
 
 
-def test_plan_search(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.getiter")
+async def test_plan_search(patched_internal_getiter):
     json_response = [
         {
             'application': None,
@@ -502,7 +502,7 @@ def test_plan_search(mocker):
             cycle=Cycle(id=5, ident='FPD1809', year=18, release=9))
 
     ]
-    correct_calls = [mocker.call(
+    correct_calls = [mock.call(
         path='/search/plans',
         sort='created',
         params={
@@ -522,14 +522,7 @@ def test_plan_search(mocker):
         limit=2,
         key=None)]
 
-    def patched_getiter(path, sort="created", params=None, limit=100, key=None):
-        return (i for i in json_response)
-
-    mocker.patch(
-        target="flightplandb.internal.getiter",
-        new=patched_getiter)
-
-    spy = mocker.spy(flightplandb.internal, "getiter")
+    patched_internal_getiter.return_value = AsyncIter(json_response)
 
     response = flightplandb.plan.search(
             PlanQuery(
@@ -537,12 +530,17 @@ def test_plan_search(mocker):
                 toICAO="EHAL"),
             limit=2)
     # check that PlanAPI method decoded data correctly for given response
-    assert list(i for i in response) == correct_response_list
+    response_list = []
+    async for i in response:
+        response_list.append(i)
+    assert response_list == correct_response_list
     # check that PlanAPI method made correct request of FlightPlanDB
-    spy.assert_has_calls(correct_calls)
+    patched_internal_getiter.assert_has_calls(correct_calls)
 
 
-def test_plan_like(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.post")
+async def test_plan_like(patched_internal_post):
     json_response = {
         "message": "Not Found",
         "errors": None
@@ -550,23 +548,20 @@ def test_plan_like(mocker):
 
     correct_response = StatusResponse(message='Not Found', errors=None)
 
-    def patched_post(path, key):
-        return json_response
+    patched_internal_post.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.post",
-        new=patched_post)
-
-    spy = mocker.spy(flightplandb.internal, "post")
-
-    response = flightplandb.plan.like(42)
+    response = await flightplandb.plan.like(42)
     # check that TagsAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(path='/plan/42/like', key=None)
+    patched_internal_post.assert_awaited_once_with(
+        path='/plan/42/like', key=None
+    )
     # check that TagsAPI method decoded data correctly for given response
     assert response == correct_response
 
 
-def test_plan_unlike(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.delete")
+async def test_plan_unlike(patched_internal_delete):
     json_response = {
         "message": "OK",
         "errors": None
@@ -574,23 +569,20 @@ def test_plan_unlike(mocker):
 
     correct_response = True
 
-    def patched_delete(path, key):
-        return json_response
+    patched_internal_delete.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.delete",
-        new=patched_delete)
-
-    spy = mocker.spy(flightplandb.internal, "delete")
-
-    response = flightplandb.plan.unlike(42)
+    response = await flightplandb.plan.unlike(42)
     # check that TagsAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(path='/plan/42/like', key=None)
+    patched_internal_delete.assert_awaited_once_with(
+        path='/plan/42/like', key=None
+    )
     # check that TagsAPI method decoded data correctly for given response
     assert response == correct_response
 
 
-def test_plan_has_liked(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.get")
+async def test_plan_has_liked(patched_internal_get):
     json_response = {
         "message": "OK",
         "errors": None
@@ -598,23 +590,20 @@ def test_plan_has_liked(mocker):
 
     correct_response = True
 
-    def patched_get(path, ignore_statuses=None, key=None):
-        return json_response
+    patched_internal_get.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.get",
-        new=patched_get)
-
-    spy = mocker.spy(flightplandb.internal, "get")
-
-    response = flightplandb.plan.has_liked(42)
+    response = await flightplandb.plan.has_liked(42)
     # check that TagsAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(path='/plan/42/like', ignore_statuses=[404], key=None)
+    patched_internal_get.assert_awaited_once_with(
+        path='/plan/42/like', ignore_statuses=[404], key=None
+    )
     # check that TagsAPI method decoded data correctly for given response
     assert response == correct_response
 
 
-def test_plan_generate(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.post")
+async def test_plan_generate(patched_internal_post):
     json_response = {
         'application': None,
         'createdAt': '2021-04-28T19:55:45.000Z',
@@ -733,23 +722,20 @@ def test_plan_generate(mocker):
         "key": None
     }
 
-    def patched_post(path, json_data, key):
-        return json_response
+    patched_internal_post.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.post",
-        new=patched_post)
-
-    spy = mocker.spy(flightplandb.internal, "post")
-
-    response = flightplandb.plan.generate(request_data)
+    response = await flightplandb.plan.generate(request_data)
     # check that PlanAPI method decoded data correctly for given response
     assert response == correct_response
     # check that PlanAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(**correct_call)
+    patched_internal_post.assert_awaited_once_with(
+        **correct_call
+    )
 
 
-def test_plan_decode(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.post")
+async def test_plan_decode(patched_internal_post):
     json_response = {
         "id": 4708699,
         "fromICAO": "KSAN",
@@ -840,17 +826,12 @@ def test_plan_decode(mocker):
         "key": None
     }
 
-    def patched_post(path, json_data, key):
-        return json_response
+    patched_internal_post.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.post",
-        new=patched_post)
-
-    spy = mocker.spy(flightplandb.internal, "post")
-
-    response = flightplandb.plan.decode(request_data)
+    response = await flightplandb.plan.decode(request_data)
     # check that PlanAPI method decoded data correctly for given response
     assert response == correct_response
     # check that PlanAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(**correct_call)
+    patched_internal_post.assert_awaited_once_with(
+        **correct_call
+    )

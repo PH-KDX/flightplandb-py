@@ -43,16 +43,16 @@ setup(
     ],
     extras_require={
         "dev": [
-            "Sphinx==4.5.0",
+            "Sphinx==5.1.1",
             "sphinx-rtd-theme==1.0.0"
         ],
         "test": [
-            "pytest~=7.1.2",
+            "pytest~=7.1.3",
             "pytest-socket~=0.5.1",
             "pytest-asyncio~=0.19.0"
         ]
     },
-    python_requires='>=3.7.0',
+    python_requires='>=3.8.0',
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Intended Audience :: Developers",

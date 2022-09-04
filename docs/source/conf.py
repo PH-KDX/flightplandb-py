@@ -17,11 +17,11 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'FlightplanDB-py'
-copyright = '2021, PH-KDX'
+copyright = '2022, PH-KDX'
 author = 'PH-KDX'
 
 # The full version, including alpha/beta/rc tags
-release = '0.6.0'
+release = '0.7.0'
 # readthedocs.io insists on the version field being filled for epub builds
 version = release
 

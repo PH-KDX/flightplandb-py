@@ -11,7 +11,7 @@ For more information on Flight Plan Database, see their excellent `About page <h
 
 Prerequisites
 ^^^^^^^^^^^^^^^^^^^^
-FlightplanDB-py is supported for Python 3.8 or higher. Python 3.7 will probably work with
+FlightplanDB-py is supported for Python 3.8 or higher. Python 3.7 would probably have worked with
 the library, but is not officially supported; the absence of AsyncMock means that the unittests
 will not execute.
 Python 3.6 or lower will not work due to dataclasses, which were introduced with

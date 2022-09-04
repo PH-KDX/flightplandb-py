@@ -1,5 +1,5 @@
 """Commands related to navigation aids and airports."""
-from typing import Generator, List, Optional
+from typing import AsyncIterable, List, Optional
 from flightplandb.datatypes import Airport, Track, SearchNavaid
 from flightplandb import internal
 
@@ -76,7 +76,7 @@ async def pacots(key: Optional[str] = None) -> List[Track]:
 async def search(
         query: str,
         type_: Optional[str] = None, key: Optional[str] = None
-        ) -> Generator[SearchNavaid, None, None]:
+        ) -> AsyncIterable[SearchNavaid]:
     r"""Searches navaids using a query.
 
     Parameters
@@ -92,8 +92,8 @@ async def search(
 
     Yields
     -------
-    Generator[SearchNavaid, None, None]
-        A generator of navaids with either a name or ident
+    AsyncIterable[SearchNavaid]
+        A iterable of navaids with either a name or ident
         matching the ``query``
     """
 

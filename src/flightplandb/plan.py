@@ -1,5 +1,5 @@
 """Flightplan-related commands."""
-from typing import Generator, Union, Optional
+from typing import AsyncIterable, Union, Optional
 from flightplandb.datatypes import (
     StatusResponse, PlanQuery,
     Plan, GenerateQuery
@@ -180,7 +180,7 @@ async def search(
     include_route: bool = False,
     limit: int = 100,
     key: Optional[str] = None
-) -> Generator[Plan, None, None]:
+) -> AsyncIterable[Plan]:
     """Searches for flight plans.
     A number of search parameters are available.
     They will be combined to form a search request.
@@ -203,8 +203,8 @@ async def search(
 
     Yields
     -------
-    Generator[Plan, None, None]
-        A generator containing :class:`~flightplandb.datatypes.Plan`
+    AsyncIterable[Plan]
+        An iterable containing :class:`~flightplandb.datatypes.Plan`
         objects.
     """
 

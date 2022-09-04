@@ -19,7 +19,7 @@
 """This file mostly contains internal functions called by the API,
 so you're unlikely to ever use them."""
 
-from typing import Generator, List, Dict, Union, Optional
+from typing import AsyncIterable, List, Dict, Union, Optional
 
 from base64 import b64encode
 from urllib.parse import urljoin
@@ -386,7 +386,7 @@ async def getiter(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     key: Optional[str] = None
-) -> Generator[Dict, None, None]:
+) -> AsyncIterable[Dict]:
     """Get :meth:`request()` for paginated results.
 
     Parameters
@@ -408,8 +408,8 @@ async def getiter(
 
     Returns
     -------
-    Generator[Dict, None, None]
-        A generator of dicts. Return format cannot be specified.
+    AsyncIterable[Dict]
+        An iterable of dicts. Return format cannot be specified.
     """
 
     if not ignore_statuses:

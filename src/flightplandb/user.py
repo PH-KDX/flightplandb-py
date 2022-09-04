@@ -1,5 +1,5 @@
 """Commands related to registered users."""
-from typing import Generator, Optional
+from typing import AsyncIterable, Optional
 from flightplandb.datatypes import Plan, User, UserSmall
 from flightplandb import internal
 
@@ -59,7 +59,7 @@ async def plans(
     sort: str = "created",
     limit: int = 100,
     key: Optional[str] = None
-) -> Generator[Plan, None, None]:
+) -> AsyncIterable[Plan]:
     """Fetches flight plans created by a user.
 
     Parameters
@@ -76,8 +76,8 @@ async def plans(
 
     Yields
     -------
-    Generator[Plan, None, None]
-        A generator with all the flight plans a user created,
+    AsyncIterable[Plan]
+        An iterator with all the flight plans a user created,
         limited by ``limit``
     """
     async for i in internal.getiter(
@@ -94,7 +94,7 @@ async def likes(
     sort: str = "created",
     limit: int = 100,
     key: Optional[str] = None
-) -> Generator[Plan, None, None]:
+) -> AsyncIterable[Plan]:
     """Fetches flight plans liked by a user.
 
     Parameters
@@ -111,8 +111,8 @@ async def likes(
 
     Yields
     -------
-    Generator[Plan, None, None]
-        A generator with all the flight plans a user liked,
+    AsyncIterable[Plan]
+        An iterable with all the flight plans a user liked,
         limited by ``limit``
     """
 
@@ -129,7 +129,7 @@ async def search(
     username: str,
     limit=100,
     key: Optional[str] = None
-) -> Generator[UserSmall, None, None]:
+) -> AsyncIterable[UserSmall]:
     """Searches for users by username. For more detailed info on a
     specific user, use :meth:`fetch`
 
@@ -144,8 +144,8 @@ async def search(
 
     Yields
     -------
-    Generator[UserSmall, None, None]
-        A generator with a list of users approximately matching
+    AsyncIterable[UserSmall]
+        An iterable with a list of users approximately matching
         ``username``, limited by ``limit``. UserSmall is used instead of
         User, because less info is returned.
     """

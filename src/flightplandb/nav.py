@@ -1,10 +1,10 @@
 """Commands related to navigation aids and airports."""
-from typing import Generator, List, Optional
+from typing import AsyncIterable, List, Optional
 from flightplandb.datatypes import Airport, Track, SearchNavaid
 from flightplandb import internal
 
 
-def airport(icao: str, key: Optional[str] = None) -> Airport:
+async def airport(icao: str, key: Optional[str] = None) -> Airport:
     """Fetches information about an airport.
 
     Parameters
@@ -25,11 +25,11 @@ def airport(icao: str, key: Optional[str] = None) -> Airport:
         No airport with the specified ICAO code was found.
     """
 
-    resp = internal.get(path=f"/nav/airport/{icao}", key=key)
+    resp = await internal.get(path=f"/nav/airport/{icao}", key=key)
     return Airport(**resp)
 
 
-def nats(key: Optional[str] = None) -> List[Track]:
+async def nats(key: Optional[str] = None) -> List[Track]:
     """Fetches current North Atlantic Tracks.
 
     Parameters
@@ -44,10 +44,13 @@ def nats(key: Optional[str] = None) -> List[Track]:
     """
 
     return list(
-        map(lambda n: Track(**n), internal.get(path="/nav/NATS", key=key)))
+        map(
+            lambda n: Track(**n), await internal.get(path="/nav/NATS", key=key)
+        )
+    )
 
 
-def pacots(key: Optional[str] = None) -> List[Track]:
+async def pacots(key: Optional[str] = None) -> List[Track]:
     """Fetches current Pacific Organized Track System tracks.
 
     Parameters
@@ -62,13 +65,18 @@ def pacots(key: Optional[str] = None) -> List[Track]:
     """
 
     return list(
-        map(lambda t: Track(**t), internal.get(path="/nav/PACOTS", key=key)))
+        map(
+            lambda t: Track(**t), await internal.get(
+                path="/nav/PACOTS", key=key
+            )
+        )
+    )
 
 
-def search(
+async def search(
         query: str,
         type_: Optional[str] = None, key: Optional[str] = None
-        ) -> Generator[SearchNavaid, None, None]:
+        ) -> AsyncIterable[SearchNavaid]:
     r"""Searches navaids using a query.
 
     Parameters
@@ -84,8 +92,8 @@ def search(
 
     Yields
     -------
-    Generator[SearchNavaid, None, None]
-        A generator of navaids with either a name or ident
+    AsyncIterable[SearchNavaid]
+        A iterable of navaids with either a name or ident
         matching the ``query``
     """
 
@@ -95,5 +103,7 @@ def search(
             params["types"] = type_
         else:
             raise ValueError(f"{type_} is not a valid Navaid type")
-    for i in internal.getiter(path="/search/nav", params=params, key=key):
+    async for i in internal.getiter(
+        path="/search/nav", params=params, key=key
+    ):
         yield SearchNavaid(**i)

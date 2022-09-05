@@ -1,3 +1,5 @@
+from unittest import mock
+import pytest
 import flightplandb
 from flightplandb.datatypes import (
     Airport, Timezone, Runway, RunwayEnds,
@@ -8,7 +10,19 @@ import datetime
 from dateutil.tz import tzutc
 
 
-def test_airport_info(mocker):
+class AsyncIter:
+    def __init__(self, items):
+        self.items = items
+
+    async def __aiter__(self):
+        for item in self.items:
+            yield item
+
+
+# localhost is set on every test to allow async loops
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.get")
+async def test_airport_info(patched_internal_get):
     json_response = {
         'ICAO': 'EHAL',
         'IATA': None,
@@ -153,23 +167,20 @@ def test_airport_info(mocker):
         )
     )
 
-    def patched_get(path, key):
-        return json_response
+    patched_internal_get.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.get",
-        new=patched_get)
-
-    spy = mocker.spy(flightplandb.internal, "get")
-
-    response = flightplandb.nav.airport("EHAL")
+    response = await flightplandb.nav.airport("EHAL")
     # check that NavAPI method decoded data correctly for given response
     assert response == correct_response
     # check that NavAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(path='/nav/airport/EHAL', key=None)
+    patched_internal_get.assert_awaited_once_with(
+        path='/nav/airport/EHAL', key=None
+    )
 
 
-def test_nats(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.get")
+async def test_nats(patched_internal_get):
     json_response = [
         {
             'ident': 'A',
@@ -289,23 +300,20 @@ def test_nats(mocker):
             validTo=datetime.datetime(
                 2021, 4, 28, 19, 0, tzinfo=tzutc()))]
 
-    def patched_get(path, key):
-        return json_response
+    patched_internal_get.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.get",
-        new=patched_get)
-
-    spy = mocker.spy(flightplandb.internal, "get")
-
-    response = flightplandb.nav.nats()
+    response = await flightplandb.nav.nats()
     # check that NavAPI method decoded data correctly for given response
     assert response == correct_response
     # check that NavAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(path='/nav/NATS', key=None)
+    patched_internal_get.assert_awaited_once_with(
+        path='/nav/NATS', key=None
+    )
 
 
-def test_pacots(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.get")
+async def test_pacots(patched_internal_get):
     json_response = [
         {
             'ident': 1,
@@ -420,23 +428,20 @@ def test_pacots(mocker):
             validTo=datetime.datetime(
                 2021, 4, 28, 19, 0, tzinfo=tzutc()))]
 
-    def patched_get(path, key):
-        return json_response
+    patched_internal_get.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.get",
-        new=patched_get)
-
-    spy = mocker.spy(flightplandb.internal, "get")
-
-    response = flightplandb.nav.pacots()
+    response = await flightplandb.nav.pacots()
     # check that NavAPI method decoded data correctly for given response
     assert response == correct_response
     # check that NavAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(path='/nav/PACOTS', key=None)
+    patched_internal_get.assert_awaited_once_with(
+        path='/nav/PACOTS', key=None
+    )
 
 
-def test_navaid_search(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.getiter")
+async def test_navaid_search(patched_internal_getiter):
     json_response = [
         {'airportICAO': None,
             'elevation': 1.0000000015200001,
@@ -477,22 +482,18 @@ def test_navaid_search(mocker):
             name='SPIJKERBOOR VOR-DME')
     ]
 
-    correct_calls = [mocker.call(
+    correct_calls = [mock.call(
         path='/search/nav',
         params={'q': 'SPY'},
         key=None)]
 
-    def patched_getiter(path, params=None, key=None):
-        return (i for i in json_response)
-
-    mocker.patch(
-        target="flightplandb.internal.getiter",
-        new=patched_getiter)
-
-    spy = mocker.spy(flightplandb.internal, "getiter")
+    patched_internal_getiter.return_value = AsyncIter(json_response)
 
     response = flightplandb.nav.search("SPY")
     # check that PlanAPI method decoded data correctly for given response
-    assert list(i for i in response) == correct_response_list
+    response_list = []
+    async for i in response:
+        response_list.append(i)
+    assert response_list == correct_response_list
     # check that PlanAPI method made correct request of FlightPlanDB
-    spy.assert_has_calls(correct_calls)
+    patched_internal_getiter.assert_has_calls(correct_calls)

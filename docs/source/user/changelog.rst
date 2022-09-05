@@ -1,6 +1,13 @@
 Changelog
 --------------------
 
+0.7.0
+^^^^^^^^^^^^^^^^^^^^
+This is another complete rewrite of the library, in which it is entirely converted to async.
+This should mean faster execution of parallel requests, and no blocking when called from
+another async library. Support for Python 3.7 has been dropped in this release. Python 3.11
+is not yet supported as aiohttp does not yet support Python 3.11 at the time of release.
+
 0.6.0
 ^^^^^^^^^^^^^^^^^^^^
 This is a complete rewrite of the library, which moves functions out of classes.

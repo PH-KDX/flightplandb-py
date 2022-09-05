@@ -1,5 +1,5 @@
 """Flightplan-related commands."""
-from typing import Generator, Union, Optional
+from typing import AsyncIterable, Union, Optional
 from flightplandb.datatypes import (
     StatusResponse, PlanQuery,
     Plan, GenerateQuery
@@ -7,9 +7,11 @@ from flightplandb.datatypes import (
 from flightplandb import internal
 
 
-def fetch(id_: int,
-          return_format: str = "native",
-          key: Optional[str] = None) -> Union[Plan, None, bytes]:
+async def fetch(
+    id_: int,
+    return_format: str = "native",
+    key: Optional[str] = None
+) -> Union[Plan, None, bytes]:
     # Underscore for id_ must be escaped as id\_ so sphinx shows the _.
     # However, this would raise W605. To fix this, a raw string is used.
     r"""
@@ -40,7 +42,7 @@ def fetch(id_: int,
         No plan with the specified id was found.
     """
 
-    request = internal.get(
+    request = await internal.get(
         path=f"/plan/{id_}",
         return_format=return_format,
         key=key
@@ -52,9 +54,11 @@ def fetch(id_: int,
     return request  # if the format is not a dict
 
 
-def create(plan: Plan,
-           return_format: str = "native",
-           key: Optional[str] = None) -> Union[Plan, bytes]:
+async def create(
+    plan: Plan,
+    return_format: str = "native",
+    key: Optional[str] = None
+) -> Union[Plan, bytes]:
     """Creates a new flight plan.
 
     Requires authentication.
@@ -81,7 +85,7 @@ def create(plan: Plan,
         otherwise unusable.
     """
 
-    request = internal.post(
+    request = await internal.post(
         path="/plan/",
         return_format=return_format,
         json_data=plan.to_api_dict(),
@@ -93,9 +97,11 @@ def create(plan: Plan,
     return request
 
 
-def edit(plan: Plan,
-         return_format: str = "native",
-         key: Optional[str] = None) -> Union[Plan, bytes]:
+async def edit(
+    plan: Plan,
+    return_format: str = "native",
+    key: Optional[str] = None
+) -> Union[Plan, bytes]:
     """Edits a flight plan linked to your account.
 
     Requires authentication.
@@ -126,7 +132,7 @@ def edit(plan: Plan,
     """
 
     plan_data = plan.to_api_dict()
-    request = internal.patch(
+    request = await internal.patch(
         path=f"/plan/{plan_data['id']}",
         return_format=return_format,
         json_data=plan_data,
@@ -138,8 +144,10 @@ def edit(plan: Plan,
     return request
 
 
-def delete(id_: int,
-           key: Optional[str] = None) -> StatusResponse:
+async def delete(
+    id_: int,
+    key: Optional[str] = None
+) -> StatusResponse:
     r"""Deletes a flight plan that is linked to your account.
 
     Requires authentication.
@@ -162,13 +170,17 @@ def delete(id_: int,
         No plan with the specified id was found.
     """
 
-    resp = internal.delete(path=f"/plan/{id_}", key=key)
+    resp = await internal.delete(path=f"/plan/{id_}", key=key)
     return StatusResponse(**resp)
 
 
-def search(plan_query: PlanQuery, sort: str = "created",
-           include_route: bool = False, limit: int = 100,
-           key: Optional[str] = None) -> Generator[Plan, None, None]:
+async def search(
+    plan_query: PlanQuery,
+    sort: str = "created",
+    include_route: bool = False,
+    limit: int = 100,
+    key: Optional[str] = None
+) -> AsyncIterable[Plan]:
     """Searches for flight plans.
     A number of search parameters are available.
     They will be combined to form a search request.
@@ -191,24 +203,28 @@ def search(plan_query: PlanQuery, sort: str = "created",
 
     Yields
     -------
-    Generator[Plan, None, None]
-        A generator containing :class:`~flightplandb.datatypes.Plan`
+    AsyncIterable[Plan]
+        An iterable containing :class:`~flightplandb.datatypes.Plan`
         objects.
     """
 
     request_json = plan_query.to_api_dict()
     request_json["includeRoute"] = include_route
 
-    for i in internal.getiter(path="/search/plans",
-                              sort=sort,
-                              params=request_json,
-                              limit=limit,
-                              key=key):
+    async for i in internal.getiter(
+        path="/search/plans",
+        sort=sort,
+        params=request_json,
+        limit=limit,
+        key=key
+    ):
         yield Plan(**i)
 
 
-def has_liked(id_: int,
-              key: Optional[str] = None) -> bool:
+async def has_liked(
+    id_: int,
+    key: Optional[str] = None
+) -> bool:
     r"""Fetches your like status for a flight plan.
 
     Requires authentication.
@@ -226,15 +242,19 @@ def has_liked(id_: int,
         ``True``/``False`` to indicate that the plan was liked / not liked
     """
 
-    resp = internal.get(path=f"/plan/{id_}/like",
-                        ignore_statuses=[404],
-                        key=key)
-    sr = StatusResponse(**resp)
-    return sr.message != "Not Found"
+    resp = await internal.get(
+        path=f"/plan/{id_}/like",
+        ignore_statuses=[404],
+        key=key
+    )
+    status_response = StatusResponse(**resp)
+    return status_response.message != "Not Found"
 
 
-def like(id_: int,
-         key: Optional[str] = None) -> StatusResponse:
+async def like(
+    id_: int,
+    key: Optional[str] = None
+) -> StatusResponse:
     r"""Likes a flight plan.
 
     Requires authentication.
@@ -258,12 +278,14 @@ def like(id_: int,
         No plan with the specified id was found.
     """
 
-    resp = internal.post(path=f"/plan/{id_}/like", key=key)
+    resp = await internal.post(path=f"/plan/{id_}/like", key=key)
     return StatusResponse(**resp)
 
 
-def unlike(id_: int,
-           key: Optional[str] = None) -> bool:
+async def unlike(
+    id_: int,
+    key: Optional[str] = None
+) -> bool:
     r"""Removes a flight plan like.
 
     Requires authentication.
@@ -287,13 +309,15 @@ def unlike(id_: int,
         or the plan was found but wasn't liked.
     """
 
-    internal.delete(path=f"/plan/{id_}/like", key=key)
+    await internal.delete(path=f"/plan/{id_}/like", key=key)
     return True
 
 
-def generate(gen_query: GenerateQuery,
-             include_route: bool = False,
-             key: Optional[str] = None) -> Union[Plan, bytes]:
+async def generate(
+    gen_query: GenerateQuery,
+    include_route: bool = False,
+    key: Optional[str] = None
+) -> Union[Plan, bytes]:
     """Creates a new flight plan using the route generator.
 
     Requires authentication.
@@ -321,14 +345,18 @@ def generate(gen_query: GenerateQuery,
     # due to an API bug this must be a string instead of a boolean
     request_json["includeRoute"] = "true" if include_route else "false"
 
-    resp = internal.post(path="/auto/generate",
-                         json_data=request_json,
-                         key=key)
+    resp = await internal.post(
+        path="/auto/generate",
+        json_data=request_json,
+        key=key
+    )
     return Plan(**resp)
 
 
-def decode(route: str,
-           key: Optional[str] = None) -> Plan:
+async def decode(
+    route: str,
+    key: Optional[str] = None
+) -> Plan:
     """Creates a new flight plan using the route decoder.
 
     Requires authentication.
@@ -359,6 +387,6 @@ def decode(route: str,
         arguments or was otherwise unusable.
     """
 
-    resp = internal.post(
+    resp = await internal.post(
         path="/auto/decode", json_data={"route": route}, key=key)
     return Plan(**resp)

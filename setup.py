@@ -18,8 +18,7 @@ def get_version(rel_path):
         if line.startswith('__version__'):
             delim = '"' if '"' in line else "'"
             return line.split(delim)[1]
-    else:
-        raise RuntimeError("Unable to find version string.")
+    raise RuntimeError("Unable to find version string.")
 
 
 setup(
@@ -38,26 +37,25 @@ setup(
     packages=find_packages(where="src"),
     include_package_data=True,
     install_requires=[
-        "requests==2.26.0",
-        "python-dateutil==2.8.2"
+        "aiohttp~=3.8.1",
+        "python-dateutil~=2.8.2"
     ],
     extras_require={
         "dev": [
-            "Sphinx==4.5.0",
+            "Sphinx==5.1.1",
             "sphinx-rtd-theme==1.0.0"
         ],
         "test": [
-            "pytest~=6.2.5",
-            "pytest-mock~=3.6.1",
-            "pytest_socket~=0.4.1"
+            "pytest~=7.1.3",
+            "pytest-socket~=0.5.1",
+            "pytest-asyncio~=0.19.0"
         ]
     },
-    python_requires='>=3.7.0',
+    python_requires='>=3.8.0',
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Intended Audience :: Developers",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",

@@ -4,7 +4,7 @@ from flightplandb.datatypes import Weather
 from flightplandb import internal
 
 
-def fetch(icao: str, key: Optional[str] = None) -> Weather:
+async def fetch(icao: str, key: Optional[str] = None) -> Weather:
     """
     Fetches current weather conditions at an airport
 
@@ -26,4 +26,4 @@ def fetch(icao: str, key: Optional[str] = None) -> Weather:
         No airport with the specified ICAO code was found.
     """
 
-    return Weather(**internal.get(path=f"/weather/{icao}", key=key))
+    return Weather(**(await internal.get(path=f"/weather/{icao}", key=key)))

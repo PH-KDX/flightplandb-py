@@ -21,7 +21,7 @@ jobs:
   unittests:
     strategy:
       matrix:
-        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
+        python-version: [ '3.8', '3.9', '3.10']
     runs-on: ubuntu-latest
 
     name: Unit tests, Python ${{ matrix.python-version }}

@@ -11,8 +11,10 @@ For more information on Flight Plan Database, see their excellent `About page <h
 
 Prerequisites
 ^^^^^^^^^^^^^^^^^^^^
-FlightplanDB-py works with Python 3.7 or higher. Python 3.6 or
-lower is not supported due to dataclasses, which were introduced with
+FlightplanDB-py is supported for Python 3.8 or higher. Python 3.7 would probably have worked with
+the library, but is not officially supported; the absence of AsyncMock means that the unittests
+will not execute.
+Python 3.6 or lower will not work due to dataclasses, which were introduced with
 `PEP 557 <https://www.python.org/dev/peps/pep-0557/>`_, being used in the library.
 
 Installation
@@ -66,8 +68,9 @@ To test if the package has correctly installed, open a Python shell
 
 .. code-block:: python3
 
-   import flightplandb
-   flightplandb.api.ping()
+    import flightplandb
+    import asyncio
+    asyncio.run(flightplandb.api.ping())
 
 which should return
 ``StatusResponse(message='OK', errors=None)``
@@ -88,6 +91,10 @@ These calls, together with :meth:`flightplandb.api.ping()`, will not increment y
 
 The limit for unauthenticated users is IP-based, and is currently set to 100.
 The limit for authenticated users is key-based, and is currently set to 2500.
+
+Please note that some functions which return an iterable, such as the user search or plan search,
+can make multiple HTTP requests to fetch all the paginated information, thus increasing your request
+count by more than 1.
 
 
 .. _authentication:

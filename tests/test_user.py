@@ -1,10 +1,24 @@
+from unittest import mock
+import pytest
 import flightplandb
 from flightplandb.datatypes import User, Plan, UserSmall
 import datetime
 from dateutil.tz import tzutc
 
 
-def test_self_info(mocker):
+class AsyncIter:
+    def __init__(self, items):
+        self.items = items
+
+    async def __aiter__(self):
+        for item in self.items:
+            yield item
+
+
+# localhost is set on every test to allow async loops
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.get")
+async def test_self_info(patched_internal_get):
     json_response = {
         "id": 18990,
         "username": "discordflightplannerbot",
@@ -35,23 +49,20 @@ def test_self_info(mocker):
         plansLikes=0
     )
 
-    def patched_get(path, key):
-        return json_response
+    patched_internal_get.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.get",
-        new=patched_get)
-
-    spy = mocker.spy(flightplandb.internal, "get")
-
-    response = flightplandb.user.me()
+    response = await flightplandb.user.me()
     # check that UserAPI method decoded data correctly for given response
     assert response == correct_response
     # check that UserAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(path='/me', key=None)
+    patched_internal_get.assert_awaited_once_with(
+        path='/me', key=None
+    )
 
 
-def test_user_info(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.get")
+async def test_user_info(patched_internal_get):
     json_response = {
         "id": 1,
         "username": "lemon",
@@ -82,23 +93,20 @@ def test_user_info(mocker):
             plansLikes=33
         )
 
-    def patched_get(path, key):
-        return json_response
+    patched_internal_get.return_value = json_response
 
-    mocker.patch(
-        target="flightplandb.internal.get",
-        new=patched_get)
-
-    spy = mocker.spy(flightplandb.internal, "get")
-
-    response = flightplandb.user.fetch("lemon")
+    response = await flightplandb.user.fetch("lemon")
     # check that UserAPI method decoded data correctly for given response
     assert response == correct_response
     # check that UserAPI method made correct request of FlightPlanDB
-    spy.assert_called_once_with(path='/user/lemon', key=None)
+    patched_internal_get.assert_awaited_once_with(
+        path='/user/lemon', key=None
+    )
 
 
-def test_user_plans(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.getiter")
+async def test_user_plans(patched_internal_getiter):
     json_response = [
         {
             "id": 62373,
@@ -114,7 +122,7 @@ def test_user_plans(mocker):
             "downloads": 1,
             "popularity": 1,
             "notes": "",
-            "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hpe@lnCxw \Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+            "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hp e@`nnDd~f@zkmH",
             "createdAt": "2015-08-04T20:48:08.000Z",
             "updatedAt": "2015-08-04T20:48:08.000Z",
             "tags": [
@@ -167,7 +175,7 @@ def test_user_plans(mocker):
             downloads=1,
             popularity=1,
             notes="",
-            encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hpe@lnCxw \Dbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+            encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hp e@`nnDd~f@zkmH",
             createdAt="2015-08-04T20:48:08.000Z",
             updatedAt="2015-08-04T20:48:08.000Z",
             tags=[
@@ -205,27 +213,28 @@ def test_user_plans(mocker):
             )
         ]
 
-    def patched_getiter(path, limit, sort, key):
-        return (i for i in json_response)
-
-    mocker.patch(
-        target="flightplandb.internal.getiter",
-        new=patched_getiter)
-
-    spy = mocker.spy(flightplandb.internal, "getiter")
-
-    response = flightplandb.user.plans("lemon")
-    # check that UserAPI method decoded data correctly for given response
-    assert list(i for i in response) == correct_response_list
-    # check that UserAPI method made correct request of FlightPlanDB
-    spy.assert_has_calls([mocker.call(
+    correct_calls = [mock.call(
         path='/user/lemon/plans',
         limit=100,
         sort='created',
-        key=None)])
+        key=None
+    )]
+
+    patched_internal_getiter.return_value = AsyncIter(json_response)
+
+    response = flightplandb.user.plans("lemon")
+    # check that UserAPI method decoded data correctly for given response
+    response_list = []
+    async for i in response:
+        response_list.append(i)
+    assert response_list == correct_response_list
+    # check that UserAPI method made correct request of FlightPlanDB
+    patched_internal_getiter.assert_has_calls(correct_calls)
 
 
-def test_user_likes(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.getiter")
+async def test_user_likes(patched_internal_getiter):
     json_response = [
             {
                 "id": 62373,
@@ -241,7 +250,7 @@ def test_user_likes(mocker):
                 "downloads": 1,
                 "popularity": 1,
                 "notes": "",
-                "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hpe@lnCxwDbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+                "encodedPolyline": r"aaf{E`|y}T|Ftf@px\\hp e@`nnDd~f@zkmH",
                 "createdAt": "2015-08-04T20:48:08.000Z",
                 "updatedAt": "2015-08-04T20:48:08.000Z",
                 "tags": [
@@ -294,7 +303,7 @@ def test_user_likes(mocker):
                 downloads=1,
                 popularity=1,
                 notes="",
-                encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hpe@lnCxwDbsk@rfx@vhjC`nnDd~f@zkv@nb~ChdmH",
+                encodedPolyline=r"aaf{E`|y}T|Ftf@px\\hp e@`nnDd~f@zkmH",
                 createdAt="2015-08-04T20:48:08.000Z",
                 updatedAt="2015-08-04T20:48:08.000Z",
                 tags=[
@@ -332,27 +341,28 @@ def test_user_likes(mocker):
                 )
         ]
 
-    def patched_getiter(path, limit, sort, key):
-        return (i for i in json_response)
-
-    mocker.patch(
-        target="flightplandb.internal.getiter",
-        new=patched_getiter)
-
-    spy = mocker.spy(flightplandb.internal, "getiter")
-
-    response = flightplandb.user.likes("lemon")
-    # check that UserAPI method decoded data correctly for given response
-    assert list(i for i in response) == correct_response_list
-    # check that UserAPI method made correct request of FlightPlanDB
-    spy.assert_has_calls([mocker.call(
+    correct_calls = [mock.call(
         path='/user/lemon/likes',
         limit=100,
         sort='created',
-        key=None)])
+        key=None
+    )]
+
+    patched_internal_getiter.return_value = AsyncIter(json_response)
+
+    response = flightplandb.user.likes("lemon")
+    # check that UserAPI method decoded data correctly for given response
+    response_list = []
+    async for i in response:
+        response_list.append(i)
+    assert response_list == correct_response_list
+    # check that UserAPI method made correct request of FlightPlanDB
+    patched_internal_getiter.assert_has_calls(correct_calls)
 
 
-def test_user_search(mocker):
+@pytest.mark.allow_hosts(['127.0.0.1', '::1'])
+@mock.patch("flightplandb.internal.getiter")
+async def test_user_search(patched_internal_getiter):
     json_response = [
             {"id": 1,
                 "username": 'lemon',
@@ -386,21 +396,20 @@ def test_user_search(mocker):
                 gravatarHash='b807060d00c10513ce04b70918dd07a1')
         ]
 
-    def patched_getiter(path, limit, params, key):
-        return (i for i in json_response)
-
-    mocker.patch(
-        target="flightplandb.internal.getiter",
-        new=patched_getiter)
-
-    spy = mocker.spy(flightplandb.internal, "getiter")
-
-    response = flightplandb.user.search("lemon")
-    # check that UserAPI method decoded data correctly for given response
-    assert list(i for i in response) == correct_response_list
-    # check that UserAPI method made correct request of FlightPlanDB
-    spy.assert_has_calls([mocker.call(
+    correct_calls = [mock.call(
         path='/search/users',
         limit=100,
         params={'q': 'lemon'},
-        key=None)])
+        key=None
+    )]
+
+    patched_internal_getiter.return_value = AsyncIter(json_response)
+
+    response = flightplandb.user.search("lemon")
+    # check that UserAPI method decoded data correctly for given response
+    response_list = []
+    async for i in response:
+        response_list.append(i)
+    assert response_list == correct_response_list
+    # check that UserAPI method made correct request of FlightPlanDB
+    patched_internal_getiter.assert_has_calls(correct_calls)

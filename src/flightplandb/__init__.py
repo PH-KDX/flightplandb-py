@@ -10,7 +10,9 @@ library, read the documentation at https://flightplandb-py.readthedocs.io/.
 
 
 # Version of the flightplandb package
-__version__ = "0.7.0"
+version_filepath = "src/flightplandb/VERSION"
+with open(version_filepath) as version_file:
+    __version__ = version_file.readline()
 
 from . import (
     internal, exceptions, datatypes,

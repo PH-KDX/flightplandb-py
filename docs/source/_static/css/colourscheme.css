@@ -3049,10 +3049,10 @@
     }
     html.writer-html4 .rst-content dl:not(.docutils) > dt,
     html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) > dt {
-        background-color: rgb(32, 35, 36);
+        background-color: rgb(32, 35, 36) !important;
         background-image: none;
-        color: rgb(84, 164, 217);
-        border-top-color: rgb(28, 89, 128);
+        color: rgb(84, 164, 217) !important;
+        border-top-color: rgb(28, 89, 128) !important;
     }
     html.writer-html4 .rst-content dl:not(.docutils) > dt::before,
     html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) > dt::before {
@@ -3104,7 +3104,7 @@
         background-color: rgb(32, 35, 36); background-image: none;
     }
     html.writer-html4 .rst-content dl:not(.docutils) .descclassname, html.writer-html4 .rst-content dl:not(.docutils) .descname, html.writer-html4 .rst-content dl:not(.docutils) .sig-name, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) .descclassname, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) .descname, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) .sig-name {
-    	color: rgb(255, 255, 255);
+    	color: rgb(255, 255, 255) !important;
     }
     span[id*="MathJax-Span"] {
         color: rgb(192, 186, 178);

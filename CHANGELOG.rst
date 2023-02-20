@@ -3,8 +3,10 @@ Changelog
 
 0.7.1
 ^^^^^^^^^^^^^^^^^^^^
-This is a minor update, which adds support for Python 3.11 and changes a few things with
-regard to the package configuration. No breaking changes have been introduced.
+This is a minor update, which adds support for Python 3.11 and moves the package configuration
+from setup.py to pyproject.toml. No breaking changes have been introduced. A bug has been fixed
+which was causing aiohttp to crash on null parameters, and a bug in the quickstart example has
+been fixed.
 
 0.7.0
 ^^^^^^^^^^^^^^^^^^^^

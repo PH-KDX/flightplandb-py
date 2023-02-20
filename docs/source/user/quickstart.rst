@@ -41,7 +41,7 @@ request limit from 100 to 2500.
         resp = fpdb.plan.search(
             plan_query=query,
             include_route=True,
-            sort="distance"
+            sort="distance",
             limit=3,
             key=API_KEY
         )
@@ -54,6 +54,8 @@ request limit from 100 to 2500.
 
         # then check remaining requests by subtracting the requests made from the total limit
         print((await fpdb.api.limit_cap())-(await fpdb.api.limit_used()))
+    
+    asyncio.run(main())
 
 Try saving this program in a file in your project directory and running it.
 Experiment around with different commands to get a feel for the library.

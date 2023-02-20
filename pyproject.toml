@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flightplandb"
+authors = [
+    {name = "PH-KDX", email = "smtp.python.email.sender@gmail.com"},
+]
+description = "Python wrapper for the Flight Plan Database API"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "GPL v3"}
+
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.10",
+    "Operating System :: OS Independent",
+    "Topic :: Internet",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+    "Topic :: Games/Entertainment :: Simulation",
+]
+dependencies = [
+    "aiohttp >= 3.8.4; python_version >= '3.11'",
+    "aiohttp >= 3.5.2; python_version < '3.11'",
+    "python-dateutil~=2.8.2",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+docs = ["Sphinx==6.1.3", "sphinx-rtd-theme==1.2.0"]
+test = ["pytest~=7.2.1", "pytest-socket~=0.6.0", "pytest-asyncio~=0.20.3"]
+
+[project.urls]
+"Homepage" = "https://github.com/PH-KDX/flightplandb-py/"
+"Documentation" = "https://flightplandb-py.readthedocs.io/"
+"Issue tracker" = "https://github.com/PH-KDX/flightplandb-py/issues"
+"Changelog" = "https://github.com/PH-KDX/flightplandb-py/blob/main/CHANGELOG.rst"
+
+[tool.setuptools.dynamic]
+version = {attr = "flightplandb.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

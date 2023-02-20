@@ -11,6 +11,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import os
 import sys
+from flightplandb import __version__
 sys.path.insert(0, os.path.abspath('../../'))
 
 
@@ -21,7 +22,7 @@ copyright = '2022, PH-KDX'
 author = 'PH-KDX'
 
 # The full version, including alpha/beta/rc tags
-release = '0.7.0'
+release = __version__
 # readthedocs.io insists on the version field being filled for epub builds
 version = release
 

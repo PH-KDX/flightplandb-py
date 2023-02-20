@@ -49,3 +49,7 @@ version = {attr = "flightplandb.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-vv --disable-socket"
+asyncio_mode = "auto"

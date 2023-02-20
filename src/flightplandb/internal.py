@@ -130,9 +130,9 @@ async def request(
     for _key, _value in params.items():
         if _value in (True, False):
             params[_key] = json.dumps(_value)
-        elif _value == None:
+        elif _value is None:
             _null_keys.append(_key)
-    
+
     # popping null keys directly when iterating over the dictionary would cause
     # the dictionary to change size while iterating, which would crash
     for _key in _null_keys:
@@ -448,9 +448,9 @@ async def getiter(
     for _key, _value in params.items():
         if _value in (True, False):
             params[_key] = json.dumps(_value)
-        elif _value == None:
+        elif _value is None:
             _null_keys.append(_key)
-    
+
     # popping null keys directly when iterating over the dictionary would cause
     # the dictionary to change size while iterating, which would crash
     for _key in _null_keys:

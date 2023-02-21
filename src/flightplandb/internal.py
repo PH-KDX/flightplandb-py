@@ -125,9 +125,18 @@ async def request(
         params = {}
 
     # the API only takes "true" or "false", not True or False
+    # additionally, aiohttp refuses to pass in a boolean or nonetype in the params
+    _null_keys = []
     for _key, _value in params.items():
         if _value in (True, False):
             params[_key] = json.dumps(_value)
+        elif _value is None:
+            _null_keys.append(_key)
+
+    # popping null keys directly when iterating over the dictionary would cause
+    # the dictionary to change size while iterating, which would crash
+    for _key in _null_keys:
+        params.pop(_key)
 
     # convert the API content return_format to an HTTP Accept type
     try:
@@ -417,11 +426,6 @@ async def getiter(
     if not params:
         params = {}
 
-    # the API only takes "true" or "false", not True or False
-    for key, value in params.items():
-        if value in (True, False):
-            params[key] = json.dumps(value)
-
     valid_sort_orders = ["created", "updated", "popularity", "distance"]
     if sort not in valid_sort_orders:
         raise ValueError(
@@ -437,6 +441,20 @@ async def getiter(
 
     # initially no results have been fetched yet
     num_results = 0
+
+    # the API only takes "true" or "false", not True or False
+    # additionally, aiohttp refuses to pass in a boolean or nonetype in the params
+    _null_keys = []
+    for _key, _value in params.items():
+        if _value in (True, False):
+            params[_key] = json.dumps(_value)
+        elif _value is None:
+            _null_keys.append(_key)
+
+    # popping null keys directly when iterating over the dictionary would cause
+    # the dictionary to change size while iterating, which would crash
+    for _key in _null_keys:
+        params.pop(_key)
 
     async with aiohttp.ClientSession() as session:
         async with session.get(

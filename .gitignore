@@ -18,6 +18,8 @@ dist
 
 docs/build
 
+build/
+
 ignore/
 
 venv

@@ -123,6 +123,7 @@ async def request(
         ignore_statuses = []
     if not params:
         params = {}
+    request_headers = {}
 
     # the API only takes "true" or "false", not True or False
     # additionally, aiohttp refuses to pass in a boolean or nonetype in the params
@@ -152,13 +153,14 @@ async def request(
 
     # set auth in headers if key is provided
     if key is not None:
-        params["Authorization"] = _auth_str(key=key)
+        request_headers["Authorization"] = _auth_str(key=key)
 
     async with aiohttp.ClientSession() as session:
         async with session.request(
             method=method,
             url=urljoin(url_base, path),
-            headers=params,
+            params=params,
+            headers=request_headers,
             json=json_data
         ) as resp:
 
@@ -425,6 +427,7 @@ async def getiter(
         ignore_statuses = []
     if not params:
         params = {}
+    request_headers = {}
 
     valid_sort_orders = ["created", "updated", "popularity", "distance"]
     if sort not in valid_sort_orders:
@@ -437,7 +440,7 @@ async def getiter(
 
     # set auth in headers if key is provided
     if key is not None:
-        params["Authorization"] = _auth_str(key=key)
+        request_headers["Authorization"] = _auth_str(key=key)
 
     # initially no results have been fetched yet
     num_results = 0
@@ -460,6 +463,7 @@ async def getiter(
         async with session.get(
             url=url,
             params=params,
+            headers=request_headers,
         ) as r_fpdb:
             status_handler(r_fpdb.status, ignore_statuses)
 
@@ -476,7 +480,8 @@ async def getiter(
             params['page'] = page
             async with session.get(
                 url=url,
-                params=params
+                params=params,
+                headers=request_headers
             ) as r_fpdb:
                 status_handler(r_fpdb.status, ignore_statuses)
                 # ...keep cycling through pages...

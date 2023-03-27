@@ -1,6 +1,11 @@
 Changelog
 --------------------
 
+0.7.2
+^^^^^^^^^^^^^^^^^^^^
+This fixes a bug in the core API interface where HTTP headers were being passed into
+requests as parameters.
+
 0.7.1
 ^^^^^^^^^^^^^^^^^^^^
 This is a minor update, which adds support for Python 3.11 and moves the package configuration

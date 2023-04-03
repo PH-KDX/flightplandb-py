@@ -405,8 +405,8 @@ class PlanQuery:
         Minimum route distance
     distanceMax : Optional[str]
         Maximum route distance, with units determined by the X-Units header
-    tags : Optional[str]
-        Tag names to search, comma separated
+    tags : Optional[List[str]]
+        List of tag names to search
     """
     q: Optional[str] = None
     From: Optional[str] = None
@@ -418,11 +418,14 @@ class PlanQuery:
     flightNumber: Optional[str] = None
     distanceMin: Optional[str] = None
     distanceMax: Optional[str] = None
-    tags: Optional[str] = None
+    tags: Optional[List[str]] = None
     includeRoute: Optional[bool] = None
 
     def to_api_dict(self):
-        return self.__dict__
+        plan_query_dict = self.__dict__
+        if self.tags:
+            plan_query_dict["tags"] = ", ".join(self.tags)
+        return plan_query_dict
 
 
 @dataclass

@@ -19,14 +19,16 @@
 """This file mostly contains internal functions called by the API,
 so you're unlikely to ever use them."""
 
-from typing import AsyncIterable, List, Tuple, Dict, Union, Optional, Literal, overload, get_args
+from typing import (
+    AsyncIterable, Any, List, Tuple, Dict, Union, Optional, Literal, overload, get_args
+)
 
 from base64 import b64encode
 from urllib.parse import urljoin
 import json
 import aiohttp
 
-from multidict import CIMultiDict
+from multidict import CIMultiDict, CIMultiDictProxy
 
 from flightplandb.exceptions import status_handler
 
@@ -109,7 +111,7 @@ async def request(
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None
-) -> Tuple[CIMultiDict, Dict]:
+) -> Tuple[CIMultiDictProxy[str], Dict]:
     ...
 
 @overload
@@ -121,7 +123,7 @@ async def request(
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None
-) -> Tuple[CIMultiDict, bytes]:
+) -> Tuple[CIMultiDictProxy[str], bytes]:
     ...
 
 @overload
@@ -133,7 +135,7 @@ async def request(
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None
-) -> Tuple[CIMultiDict, str]:
+) -> Tuple[CIMultiDictProxy[str], str]:
     ...
 
 async def request(
@@ -144,7 +146,7 @@ async def request(
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None
-) -> Tuple[CIMultiDict, Union[Dict, bytes, str]]:
+) -> Tuple[CIMultiDictProxy[str], Union[Any, bytes, str]]:
     """General HTTP requests function for non-paginated results.
 
     Parameters

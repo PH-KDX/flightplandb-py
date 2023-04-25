@@ -19,7 +19,7 @@
 """This file mostly contains internal functions called by the API,
 so you're unlikely to ever use them."""
 
-from typing import AsyncIterable, List, Dict, Union, Optional
+from typing import AsyncIterable, List, Tuple, Dict, Union, Optional, Literal, overload, get_args
 
 from base64 import b64encode
 from urllib.parse import urljoin
@@ -51,16 +51,100 @@ def _auth_str(key):
 
     return authstr
 
+format_return_types = {
+    # if a dict is requested, the JSON will later be converted to that
+    "native": "application/vnd.fpd.v1+json",
+    # otherwise, pure JSON will be returned
+    "json": "application/vnd.fpd.v1+json",
+    "xml": "application/vnd.fpd.v1+xml",
+    "csv": "text/vnd.fpd.export.v1.csv+csv",
+    "pdf": "application/vnd.fpd.export.v1.pdf",
+    "kml": "application/vnd.fpd.export.v1.kml+xml",
+    "xplane": "application/vnd.fpd.export.v1.xplane",
+    "xplane11": "application/vnd.fpd.export.v1.xplane11",
+    "fs9": "application/vnd.fpd.export.v1.fs9",
+    "fsx": "application/vnd.fpd.export.v1.fsx",
+    "squawkbox": "application/vnd.fpd.export.v1.squawkbox",
+    "xfmc": "application/vnd.fpd.export.v1.xfmc",
+    "pmdg": "application/vnd.fpd.export.v1.pmdg",
+    "airbusx": "application/vnd.fpd.export.v1.airbusx",
+    "qualitywings": "application/vnd.fpd.export.v1.qualitywings",
+    "ifly747": "application/vnd.fpd.export.v1.ifly747",
+    "flightgear": "application/vnd.fpd.export.v1.flightgear",
+    "tfdi717": "application/vnd.fpd.export.v1.tfdi717",
+    "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
+}
+native_return_types_hints = Literal["native"]
+bytes_return_types_hints = Literal["pdf"]
+str_return_types_hints = Literal[
+    "json",
+    "xml",
+    "csv",
+    "kml",
+    "xplane",
+    "xplane11",
+    "fs9",
+    "fsx",
+    "squawkbox",
+    "xfmc",
+    "pmdg",
+    "airbusx",
+    "qualitywings",
+    "ifly747",
+    "flightgear",
+    "tfdi717",
+    "infiniteflight",
+]
+native_return_values = get_args(native_return_types_hints)
+bytes_return_values = get_args(bytes_return_types_hints)
+str_return_values = get_args(str_return_types_hints)
 
+
+@overload
 async def request(
     method: str,
     path: str,
-    return_format="native",
+    return_format: native_return_types_hints,
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None
-) -> Union[Dict, bytes]:
+) -> Tuple[CIMultiDict, Dict]:
+    ...
+
+@overload
+async def request(
+    method: str,
+    path: str,
+    return_format: bytes_return_types_hints,
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Tuple[CIMultiDict, bytes]:
+    ...
+
+@overload
+async def request(
+    method: str,
+    path: str,
+    return_format: str_return_types_hints,
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Tuple[CIMultiDict, str]:
+    ...
+
+async def request(
+    method: str,
+    path: str,
+    return_format: Union[native_return_types_hints, bytes_return_types_hints, str_return_types_hints],
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Tuple[CIMultiDict, Union[Dict, bytes, str]]:
     """General HTTP requests function for non-paginated results.
 
     Parameters
@@ -83,9 +167,10 @@ async def request(
 
     Returns
     -------
-    Union[Dict, bytes]
-        A ``dataclass`` if ``return_format`` is ``"native"``,
-        otherwise ``bytes``
+    Tuple[CIMultiDict, Union[Dict, str, bytes]]
+        A tuple of 1. the response headers and 2. A ``dataclass``
+        if ``return_format`` is ``"native"``, otherwise ``str`` or ``bytes``
+        depending on if the return format is utf-8.
 
     Raises
     ------
@@ -94,30 +179,6 @@ async def request(
     HTTPError
         Invalid HTTP status in response
     """
-
-    format_return_types = {
-        # if a dict is requested, the JSON will later be converted to that
-        "native": "application/vnd.fpd.v1+json",
-        # otherwise, pure JSON will be returned
-        "json": "application/vnd.fpd.v1+json",
-        "xml": "application/vnd.fpd.v1+xml",
-        "csv": "text/vnd.fpd.export.v1.csv+csv",
-        "pdf": "application/vnd.fpd.export.v1.pdf",
-        "kml": "application/vnd.fpd.export.v1.kml+xml",
-        "xplane": "application/vnd.fpd.export.v1.xplane",
-        "xplane11": "application/vnd.fpd.export.v1.xplane11",
-        "fs9": "application/vnd.fpd.export.v1.fs9",
-        "fsx": "application/vnd.fpd.export.v1.fsx",
-        "squawkbox": "application/vnd.fpd.export.v1.squawkbox",
-        "xfmc": "application/vnd.fpd.export.v1.xfmc",
-        "pmdg": "application/vnd.fpd.export.v1.pmdg",
-        "airbusx": "application/vnd.fpd.export.v1.airbusx",
-        "qualitywings": "application/vnd.fpd.export.v1.qualitywings",
-        "ifly747": "application/vnd.fpd.export.v1.ifly747",
-        "flightgear": "application/vnd.fpd.export.v1.flightgear",
-        "tfdi717": "application/vnd.fpd.export.v1.tfdi717",
-        "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
-    }
 
     if not ignore_statuses:
         ignore_statuses = []
@@ -167,11 +228,15 @@ async def request(
             status_handler(resp.status, ignore_statuses)
 
             header = resp.headers
+            if return_format in native_return_values:
+                response_content = await resp.json()
+            # if the format is not a dict
+            elif return_format in str_return_values:
+                response_content = await resp.text()
+            elif return_format in bytes_return_values:
+                response_content = await resp.read()
 
-            if return_format == "native":
-                return header, await resp.json()
-            else:
-                return header, await resp.text()  # if the format is not a dict
+            return header, response_content
 
 
 # and here go the specific non-paginated HTTP calls

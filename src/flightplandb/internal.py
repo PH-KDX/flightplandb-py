@@ -28,7 +28,7 @@ from urllib.parse import urljoin
 import json
 import aiohttp
 
-from multidict import CIMultiDict, CIMultiDictProxy
+from multidict import CIMultiDictProxy
 
 from flightplandb.exceptions import status_handler
 
@@ -52,6 +52,7 @@ def _auth_str(key):
     )
 
     return authstr
+
 
 format_return_types = {
     # if a dict is requested, the JSON will later be converted to that
@@ -106,13 +107,14 @@ str_return_values = get_args(str_return_types_hints)
 async def request(
     method: str,
     path: str,
-    return_format: native_return_types_hints="native",
+    return_format: native_return_types_hints = "native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None
 ) -> Tuple[CIMultiDictProxy[str], Dict]:
     ...
+
 
 @overload
 async def request(
@@ -126,6 +128,7 @@ async def request(
 ) -> Tuple[CIMultiDictProxy[str], bytes]:
     ...
 
+
 @overload
 async def request(
     method: str,
@@ -138,10 +141,11 @@ async def request(
 ) -> Tuple[CIMultiDictProxy[str], str]:
     ...
 
+
 async def request(
     method: str,
     path: str,
-    return_format: Union[native_return_types_hints, bytes_return_types_hints, str_return_types_hints]="native",
+    return_format: Union[native_return_types_hints, bytes_return_types_hints, str_return_types_hints] = "native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,

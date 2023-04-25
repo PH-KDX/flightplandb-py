@@ -106,7 +106,7 @@ str_return_values = get_args(str_return_types_hints)
 async def request(
     method: str,
     path: str,
-    return_format: native_return_types_hints,
+    return_format: native_return_types_hints="native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
@@ -141,7 +141,7 @@ async def request(
 async def request(
     method: str,
     path: str,
-    return_format: Union[native_return_types_hints, bytes_return_types_hints, str_return_types_hints],
+    return_format: Union[native_return_types_hints, bytes_return_types_hints, str_return_types_hints]="native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
@@ -244,7 +244,7 @@ async def request(
 # and here go the specific non-paginated HTTP calls
 async def get_headers(
     key: Optional[str] = None
-) -> CIMultiDict:
+) -> CIMultiDictProxy[str]:
     """Calls :meth:`request()` for request headers.
 
     Parameters

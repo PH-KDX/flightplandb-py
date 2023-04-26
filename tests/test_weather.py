@@ -27,7 +27,7 @@ async def test_weather_api(patched_internal_get):
     response = await flightplandb.weather.fetch("EHAM")
     # check that TagsAPI method made correct request of FlightPlanDB
     patched_internal_get.assert_awaited_once_with(
-        path='/weather/EHAM', key=None
+        path='/weather/EHAM', return_format='native', key=None
     )
     # check that TagsAPI method decoded data correctly for given response
     assert response == correct_response

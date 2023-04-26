@@ -270,6 +270,39 @@ async def get_headers(
     return headers
 
 
+@overload
+async def get(
+    path: str,
+    return_format: native_return_types_hints = "native",
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Dict:
+    ...
+
+
+@overload
+async def get(
+    path: str,
+    return_format: bytes_return_types_hints,
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> bytes:
+    ...
+
+
+@overload
+async def get(
+    path: str,
+    return_format: str_return_types_hints,
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> str:
+    ...
+
+
 async def get(
     path: str,
     return_format: all_return_types_hints = "native",
@@ -315,6 +348,42 @@ async def get(
         key=key
     )
     return resp
+
+
+@overload
+async def post(
+    path: str,
+    return_format: native_return_types_hints = "native",
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Dict:
+    ...
+
+
+@overload
+async def post(
+    path: str,
+    return_format: bytes_return_types_hints,
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> bytes:
+    ...
+
+
+@overload
+async def post(
+    path: str,
+    return_format: str_return_types_hints,
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> str:
+    ...
 
 
 async def post(
@@ -366,6 +435,42 @@ async def post(
     return resp
 
 
+@overload
+async def patch(
+    path: str,
+    return_format: native_return_types_hints = "native",
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Dict:
+    ...
+
+
+@overload
+async def patch(
+    path: str,
+    return_format: bytes_return_types_hints,
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> bytes:
+    ...
+
+
+@overload
+async def patch(
+    path: str,
+    return_format: str_return_types_hints,
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    json_data: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> str:
+    ...
+
+
 async def patch(
     path: str,
     return_format: all_return_types_hints = "native",
@@ -414,6 +519,39 @@ async def patch(
         json_data=json_data
     )
     return resp
+
+
+@overload
+async def delete(
+    path: str,
+    return_format: native_return_types_hints = "native",
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> Dict:
+    ...
+
+
+@overload
+async def delete(
+    path: str,
+    return_format: bytes_return_types_hints,
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> bytes:
+    ...
+
+
+@overload
+async def delete(
+    path: str,
+    return_format: str_return_types_hints,
+    ignore_statuses: Optional[List] = None,
+    params: Optional[Dict] = None,
+    key: Optional[str] = None
+) -> str:
+    ...
 
 
 async def delete(

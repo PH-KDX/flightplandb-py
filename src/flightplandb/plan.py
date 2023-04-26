@@ -75,7 +75,10 @@ async def fetch(
         key=key
     )
 
-    return Plan(**request) if (isinstance(request, dict) and return_format in internal.native_return_values) else request
+    if (isinstance(request, dict) and return_format in internal.native_return_values):
+        return Plan(**request)
+    else:
+        return request
 
 
 @overload

@@ -98,6 +98,7 @@ str_return_types_hints = Literal[
     "tfdi717",
     "infiniteflight",
 ]
+all_return_types_hints = Union[native_return_types_hints, bytes_return_types_hints, str_return_types_hints]
 native_return_values = get_args(native_return_types_hints)
 bytes_return_values = get_args(bytes_return_types_hints)
 str_return_values = get_args(str_return_types_hints)
@@ -145,7 +146,7 @@ async def request(
 async def request(
     method: str,
     path: str,
-    return_format: Union[native_return_types_hints, bytes_return_types_hints, str_return_types_hints] = "native",
+    return_format: all_return_types_hints = "native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
@@ -271,11 +272,11 @@ async def get_headers(
 
 async def get(
     path: str,
-    return_format="native",
+    return_format: all_return_types_hints = "native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     key: Optional[str] = None
-) -> Union[Dict, bytes]:
+) -> Union[Dict, str, bytes]:
     """Calls :meth:`request()` for get requests.
 
     Parameters
@@ -318,12 +319,12 @@ async def get(
 
 async def post(
     path: str,
-    return_format="native",
+    return_format: all_return_types_hints = "native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None
-) -> Union[Dict, bytes]:
+) -> Union[Dict, str, bytes]:
     """Calls :meth:`request()` for post requests.
 
     Parameters
@@ -367,12 +368,12 @@ async def post(
 
 async def patch(
     path: str,
-    return_format="native",
+    return_format: all_return_types_hints = "native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None
-) -> Union[Dict, bytes]:
+) -> Union[Dict, str, bytes]:
     """Calls :meth:`request()` for patch requests.
 
     Parameters
@@ -417,11 +418,11 @@ async def patch(
 
 async def delete(
     path: str,
-    return_format="native",
+    return_format: all_return_types_hints = "native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     key: Optional[str] = None
-) -> Union[Dict, bytes]:
+) -> Union[Dict, str, bytes]:
     """Calls :meth:`request()` for delete requests.
 
     Parameters

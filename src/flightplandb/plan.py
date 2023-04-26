@@ -1,5 +1,5 @@
 """Flightplan-related commands."""
-from typing import AsyncIterable, Union, Optional
+from typing import AsyncIterable, Union, Dict, Optional, overload
 from flightplandb.datatypes import (
     StatusResponse, PlanQuery,
     Plan, GenerateQuery
@@ -7,11 +7,38 @@ from flightplandb.datatypes import (
 from flightplandb import internal
 
 
+@overload
 async def fetch(
     id_: int,
-    return_format: str = "native",
+    return_format: internal.native_return_types_hints = "native",
     key: Optional[str] = None
-) -> Union[Plan, None, bytes]:
+) -> Plan:
+    ...
+
+
+@overload
+async def fetch(
+    id_: int,
+    return_format: internal.bytes_return_types_hints,
+    key: Optional[str] = None
+) -> bytes:
+    ...
+
+
+@overload
+async def fetch(
+    id_: int,
+    return_format: internal.str_return_types_hints,
+    key: Optional[str] = None
+) -> str:
+    ...
+
+
+async def fetch(
+    id_: int,
+    return_format: internal.all_return_types_hints = "native",
+    key: Optional[str] = None
+) -> Union[Plan, Dict, str, bytes]:
     # Underscore for id_ must be escaped as id\_ so sphinx shows the _.
     # However, this would raise W605. To fix this, a raw string is used.
     r"""
@@ -48,17 +75,41 @@ async def fetch(
         key=key
     )
 
-    if return_format == "native":
-        return Plan(**request)
+    return Plan(**request) if (isinstance(request, dict) and return_format in internal.native_return_values) else request
 
-    return request  # if the format is not a dict
+
+@overload
+async def create(
+    plan: Plan,
+    return_format: internal.native_return_types_hints = "native",
+    key: Optional[str] = None
+) -> Plan:
+    ...
+
+
+@overload
+async def create(
+    plan: Plan,
+    return_format: internal.bytes_return_types_hints,
+    key: Optional[str] = None
+) -> bytes:
+    ...
+
+
+@overload
+async def create(
+    plan: Plan,
+    return_format: internal.str_return_types_hints,
+    key: Optional[str] = None
+) -> str:
+    ...
 
 
 async def create(
     plan: Plan,
-    return_format: str = "native",
+    return_format: internal.all_return_types_hints = "native",
     key: Optional[str] = None
-) -> Union[Plan, bytes]:
+) -> Union[Plan, Dict, bytes, str]:
     """Creates a new flight plan.
 
     Requires authentication.
@@ -91,17 +142,44 @@ async def create(
         json_data=plan.to_api_dict(),
         key=key)
 
-    if return_format == "native":
+    if (isinstance(request, dict) and return_format in internal.native_return_values):
         return Plan(**request)
+    else:
+        return request
 
-    return request
+
+@overload
+async def edit(
+    plan: Plan,
+    return_format: internal.native_return_types_hints = "native",
+    key: Optional[str] = None
+) -> Plan:
+    ...
+
+
+@overload
+async def edit(
+    plan: Plan,
+    return_format: internal.bytes_return_types_hints,
+    key: Optional[str] = None
+) -> bytes:
+    ...
+
+
+@overload
+async def edit(
+    plan: Plan,
+    return_format: internal.str_return_types_hints,
+    key: Optional[str] = None
+) -> str:
+    ...
 
 
 async def edit(
     plan: Plan,
-    return_format: str = "native",
+    return_format: internal.all_return_types_hints = "native",
     key: Optional[str] = None
-) -> Union[Plan, bytes]:
+) -> Union[Plan, Dict, bytes, str]:
     """Edits a flight plan linked to your account.
 
     Requires authentication.
@@ -138,8 +216,10 @@ async def edit(
         json_data=plan_data,
         key=key)
 
-    if return_format == "native":
+    if (isinstance(request, dict) and return_format in internal.native_return_values):
         return Plan(**request)
+    else:
+        return request
 
     return request
 

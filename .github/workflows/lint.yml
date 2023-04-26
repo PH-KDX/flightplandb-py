@@ -1,0 +1,18 @@
+name: Lint
+on: [push, workflow_dispatch]
+jobs:
+  # no need to set up a matrix for the lint
+  flake8-lint:
+    runs-on: ubuntu-latest
+    name: Flake8 Lint
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v2
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11"
+      - name: flake8 Lint
+        uses: py-actions/flake8@v1
+        with:
+          max-line-length: "120"

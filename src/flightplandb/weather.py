@@ -26,4 +26,4 @@ async def fetch(icao: str, key: Optional[str] = None) -> Weather:
         No airport with the specified ICAO code was found.
     """
 
-    return Weather(**(await internal.get(path=f"/weather/{icao}", return_format="native", key=key)))
+    return Weather(**(await internal.get(path=f"/weather/{icao}", key=key)))

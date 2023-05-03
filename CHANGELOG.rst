@@ -1,6 +1,14 @@
 Changelog
 --------------------
 
+0.8.0
+^^^^^^^^^^^^^^^^^^^^
+This makes the entire library compatible with PEP-561, so that it can now be used with a static
+type checker like mypy. Additionally, the codebase has been reformatted with black and isort, and
+the tags field of a PlanQuery now takes a list of strings, rather than a single string containing
+the tags separated by commas and spaces.
+
+
 0.7.2
 ^^^^^^^^^^^^^^^^^^^^
 This fixes a bug in the core API interface where HTTP headers were being passed into

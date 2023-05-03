@@ -5,7 +5,8 @@
 # FlightplanDB-py
 
 ## Project status
-![Unittests and lint](https://github.com/PH-KDX/flightplandb-py/actions/workflows/test_and_lint.yml/badge.svg)
+![Unittests and lint](https://github.com/PH-KDX/flightplandb-py/actions/workflows/test.yml/badge.svg)
+![Lint](https://github.com/PH-KDX/flightplandb-py/actions/workflows/lint.yml/badge.svg)
 [![PyPi](https://img.shields.io/pypi/v/flightplandb.svg)](https://pypi.org/project/flightplandb/)
 ![Python](https://img.shields.io/pypi/pyversions/flightplandb.svg)
 

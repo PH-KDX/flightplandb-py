@@ -45,13 +45,6 @@ made into a function argument rather than a dataclass field, fixing issue #13. P
 code are also refactored to use keyword arguments instead of positional arguments to help
 reduce bugs.
 
-0.5.0
-^^^^^^^^^^^^^^^^^^^^
-This adds support for the OM, MM, and IM navaid types, fixing issue #14. ``include_route`` is
-made into a function argument rather than a dataclass field, fixing issue #13. Parts of the
-code are also refactored to use keyword arguments instead of positional arguments to help
-reduce bugs.
-
 0.4.1
 ^^^^^^^^^^^^^^^^^^^^
 This documents the return format options for plan fetching, and differentiates between a

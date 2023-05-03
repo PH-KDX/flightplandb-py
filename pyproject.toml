@@ -57,3 +57,7 @@ flightplandb = ['py.typed']
 [tool.pytest.ini_options]
 addopts = "-vv --disable-socket"
 asyncio_mode = "auto"
+
+[tool.isort]
+profile = "black"
+line_length = 88

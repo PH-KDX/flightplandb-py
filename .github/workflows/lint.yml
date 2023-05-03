@@ -21,5 +21,6 @@ jobs:
         uses: py-actions/flake8@v1
         with:
           max-line-length: "88"  # match limit set by black
+          args: "--extend-ignore E203"
       - name: isort
         uses: isort/isort-action@v1

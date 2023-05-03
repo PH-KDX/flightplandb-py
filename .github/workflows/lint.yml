@@ -16,7 +16,7 @@ jobs:
         uses: psf/black@stable
         with:
           options: "--check --verbose"
-          src: "./src ./tests"
+          src: "./src ./tests ./docs/source/conf.py"
       - name: flake8
         uses: py-actions/flake8@v1
         with:

@@ -2,9 +2,9 @@ name: Lint
 on: [push, workflow_dispatch]
 jobs:
   # no need to set up a matrix for the lint
-  black-lint:
+  lint:
     runs-on: ubuntu-latest
-    name: Black Lint
+    name: Lint
     steps:
       - name: Check out source repository
         uses: actions/checkout@v2
@@ -12,8 +12,14 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.11"
-      - name: Run black
+      - name: black
         uses: psf/black@stable
         with:
           options: "--check --verbose"
           src: "./src ./tests"
+      - name: flake8
+        uses: py-actions/flake8@v1
+        with:
+          max-line-length: "88"  # match limit set by black
+      - name: isort
+        uses: isort/isort-action@v1

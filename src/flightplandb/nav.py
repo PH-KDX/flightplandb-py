@@ -1,7 +1,8 @@
 """Commands related to navigation aids and airports."""
 from typing import AsyncIterable, List, Optional
-from flightplandb.datatypes import Airport, Track, SearchNavaid
+
 from flightplandb import internal
+from flightplandb.datatypes import Airport, SearchNavaid, Track
 
 
 async def airport(icao: str, key: Optional[str] = None) -> Airport:

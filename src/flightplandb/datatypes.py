@@ -17,9 +17,10 @@
 # with FlightplanDB-py.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from typing import List, Union, Optional
 from dataclasses import dataclass
 from datetime import datetime
+from typing import List, Optional, Union
+
 from dateutil.parser import isoparse
 
 

@@ -19,28 +19,16 @@
 """This file mostly contains internal functions called by the API,
 so you're unlikely to ever use them."""
 
-from typing import (
-    AsyncIterable,
-    Any,
-    List,
-    Tuple,
-    Dict,
-    Union,
-    Optional,
-    Literal,
-    overload,
-    get_args,
-)
-
-from base64 import b64encode
-from urllib.parse import urljoin
 import json
-import aiohttp
+from base64 import b64encode
+from typing import (Any, AsyncIterable, Dict, List, Literal, Optional, Tuple,
+                    Union, get_args, overload)
+from urllib.parse import urljoin
 
+import aiohttp
 from multidict import CIMultiDictProxy
 
 from flightplandb.exceptions import status_handler
-
 
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directive-autoclass
 # https://github.com/python/cpython/blob/main/Lib/random.py#L792

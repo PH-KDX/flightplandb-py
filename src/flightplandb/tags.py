@@ -1,7 +1,8 @@
 """Contains the command for fetching flight plan tags."""
 from typing import List, Optional
-from flightplandb.datatypes import Tag
+
 from flightplandb import internal
+from flightplandb.datatypes import Tag
 
 
 async def fetch(key: Optional[str] = None) -> List[Tag]:

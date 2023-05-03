@@ -1,7 +1,8 @@
 """Weather. I mean, how much is there to say?"""
 from typing import Optional
-from flightplandb.datatypes import Weather
+
 from flightplandb import internal
+from flightplandb.datatypes import Weather
 
 
 async def fetch(icao: str, key: Optional[str] = None) -> Weather:

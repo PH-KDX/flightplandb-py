@@ -1,5 +1,7 @@
 from unittest import mock
+
 import pytest
+
 import flightplandb
 from flightplandb.datatypes import Tag
 

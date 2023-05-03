@@ -1,7 +1,8 @@
 """Commands related to registered users."""
 from typing import AsyncIterable, Optional
-from flightplandb.datatypes import Plan, User, UserSmall
+
 from flightplandb import internal
+from flightplandb.datatypes import Plan, User, UserSmall
 
 
 async def me(key: Optional[str] = None) -> User:

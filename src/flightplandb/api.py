@@ -1,5 +1,6 @@
 """These functions return information about the API."""
 from typing import Optional
+
 from flightplandb import internal
 from flightplandb.datatypes import StatusResponse
 

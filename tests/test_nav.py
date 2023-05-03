@@ -1,21 +1,13 @@
-from unittest import mock
-import pytest
-import flightplandb
-from flightplandb.datatypes import (
-    Airport,
-    Timezone,
-    Runway,
-    RunwayEnds,
-    Frequency,
-    Weather,
-    Times,
-    Track,
-    Route,
-    RouteNode,
-    SearchNavaid,
-)
 import datetime
+from unittest import mock
+
+import pytest
 from dateutil.tz import tzutc
+
+import flightplandb
+from flightplandb.datatypes import (Airport, Frequency, Route, RouteNode,
+                                    Runway, RunwayEnds, SearchNavaid, Times,
+                                    Timezone, Track, Weather)
 
 
 class AsyncIter:

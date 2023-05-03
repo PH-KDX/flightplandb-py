@@ -1,7 +1,9 @@
 """Flightplan-related commands."""
-from typing import AsyncIterable, Union, Dict, Optional, overload
-from flightplandb.datatypes import StatusResponse, PlanQuery, Plan, GenerateQuery
+from typing import AsyncIterable, Dict, Optional, Union, overload
+
 from flightplandb import internal
+from flightplandb.datatypes import (GenerateQuery, Plan, PlanQuery,
+                                    StatusResponse)
 
 
 @overload

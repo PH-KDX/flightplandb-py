@@ -1,9 +1,11 @@
-from unittest import mock
-import pytest
-import flightplandb
-from flightplandb.datatypes import User, Plan, UserSmall
 import datetime
+from unittest import mock
+
+import pytest
 from dateutil.tz import tzutc
+
+import flightplandb
+from flightplandb.datatypes import Plan, User, UserSmall
 
 
 class AsyncIter:

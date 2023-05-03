@@ -5,9 +5,19 @@ import pytest
 from dateutil.tz import tzutc
 
 import flightplandb
-from flightplandb.datatypes import (Airport, Frequency, Route, RouteNode,
-                                    Runway, RunwayEnds, SearchNavaid, Times,
-                                    Timezone, Track, Weather)
+from flightplandb.datatypes import (
+    Airport,
+    Frequency,
+    Route,
+    RouteNode,
+    Runway,
+    RunwayEnds,
+    SearchNavaid,
+    Times,
+    Timezone,
+    Track,
+    Weather,
+)
 
 
 class AsyncIter:

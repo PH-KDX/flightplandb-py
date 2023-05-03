@@ -21,8 +21,18 @@ so you're unlikely to ever use them."""
 
 import json
 from base64 import b64encode
-from typing import (Any, AsyncIterable, Dict, List, Literal, Optional, Tuple,
-                    Union, get_args, overload)
+from typing import (
+    Any,
+    AsyncIterable,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
+    get_args,
+    overload,
+)
 from urllib.parse import urljoin
 
 import aiohttp

@@ -2,8 +2,7 @@
 from typing import AsyncIterable, Dict, Optional, Union, overload
 
 from flightplandb import internal
-from flightplandb.datatypes import (GenerateQuery, Plan, PlanQuery,
-                                    StatusResponse)
+from flightplandb.datatypes import GenerateQuery, Plan, PlanQuery, StatusResponse
 
 
 @overload

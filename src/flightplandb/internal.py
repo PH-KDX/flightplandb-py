@@ -175,9 +175,10 @@ async def request(
     Returns
     -------
     Tuple[CIMultiDict, Union[Dict, str, bytes]]
-        A tuple of 1. the response headers and 2. A ``dataclass``
-        if ``return_format`` is ``"native"``, otherwise ``str`` or ``bytes``
-        depending on if the return format is utf-8.
+        | A tuple of:
+        | 1. A dict of the response headers, but the keys are case-insensitive
+        | 2. A ``Dict`` if ``return_format`` is ``"native"``, otherwise ``str`` or ``bytes``
+               depending on if the return format is UTF-8 or something else.
 
     Raises
     ------
@@ -259,8 +260,8 @@ async def get_headers(
 
     Returns
     -------
-    CaseInsensitiveDict
-        A dict of headers, but the keys are case-insensitive.
+    CIMultiDictProxy
+        A dict of the response headers, but the keys are case-insensitive.
     """
     headers, _ = await request(
         method="get",
@@ -329,8 +330,8 @@ async def get(
     Returns
     -------
     Union[Dict, bytes]
-        A ``dataclass`` if ``return_format`` is ``"native"``,
-        otherwise ``bytes``
+        A ``Dict`` if ``return_format`` is ``"native"``, otherwise ``str`` or ``bytes``
+        depending on if the return format is UTF-8 or something else.
     """
 
     # I HATE not being able to set empty lists as default arguments
@@ -415,8 +416,8 @@ async def post(
     Returns
     -------
     Union[Dict, bytes]
-        A ``dataclass`` if ``return_format`` is ``"native"``,
-        otherwise ``bytes``
+        A ``Dict`` if ``return_format`` is ``"native"``, otherwise ``str`` or ``bytes``
+        depending on if the return format is UTF-8 or something else.
     """
     if not ignore_statuses:
         ignore_statuses = []
@@ -500,8 +501,8 @@ async def patch(
     Returns
     -------
     Union[Dict, bytes]
-        A ``dataclass`` if ``return_format`` is ``"native"``,
-        otherwise ``bytes``
+        A ``Dict`` if ``return_format`` is ``"native"``, otherwise ``str`` or ``bytes``
+        depending on if the return format is UTF-8 or something else.
     """
 
     if not ignore_statuses:
@@ -580,8 +581,8 @@ async def delete(
     Returns
     -------
     Union[Dict, bytes]
-        A ``dataclass`` if ``return_format`` is ``"native"``,
-        otherwise ``bytes``
+        A ``Dict`` if ``return_format`` is ``"native"``, otherwise ``str`` or ``bytes``
+        depending on if the return format is UTF-8 or something else.
     """
 
     if not ignore_statuses:

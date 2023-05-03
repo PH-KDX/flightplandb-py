@@ -57,11 +57,13 @@ async def fetch(
 
     Returns
     -------
-    Union[Plan, None, bytes]
-        :class:`~flightplandb.datatypes.Plan` by default or if ``"native"``
-        is specified as the ``return_format``.
+    Union[Plan, Dict, bytes, str]
+        :class:`~flightplandb.datatypes.Plan` of the specified plan
+        if ``"native"`` is specified as the ``return_format`` (default).
 
-        ``bytes`` if a different format than ``"native"`` was specified.
+        ``bytes`` if PDF was specified as the ``return_format``.
+
+        ``str`` if a different ``return_format`` was specified.
 
     Raises
     ------
@@ -129,8 +131,14 @@ async def create(
 
     Returns
     -------
-    Plan
-        The registered flight plan created on flight plan database
+    Union[Plan, Dict, bytes, str]
+        :class:`~flightplandb.datatypes.Plan` of the registered plan
+        created on Flight Plan Database if ``"native"`` is specified
+        as the ``return_format`` (default).
+
+        ``bytes`` if PDF was specified as the ``return_format``.
+
+        ``str`` if a different ``return_format`` was specified.
 
     Raises
     ------
@@ -199,9 +207,15 @@ async def edit(
 
     Returns
     -------
-    Plan
-        The registered flight plan created on flight plan database,
-        corresponding to the route after being edited
+    Union[Plan, Dict, bytes, str]
+        :class:`~flightplandb.datatypes.Plan` of the registered flight
+        plan created on flight plan database, corresponding to the
+        route after being edited if ``"native"`` is specified
+        as the ``return_format`` (default).
+
+        ``bytes`` if PDF was specified as the ``return_format``.
+
+        ``str`` if a different ``return_format`` was specified.
 
     Raises
     ------
@@ -260,7 +274,7 @@ async def delete(
 async def search(
     plan_query: PlanQuery,
     sort: str = "created",
-    include_route: bool = False,
+    include_route: Optional[bool] = False,
     limit: int = 100,
     key: Optional[str] = None
 ) -> AsyncIterable[Plan]:
@@ -279,7 +293,7 @@ async def search(
         created, updated, popularity, and distance
     limit : int
         Maximum number of plans to return, defaults to 100
-    include_route : bool
+    include_route : bool, optional
         Include route in response, defaults to False
     key : `str`, optional
         API authentication key.
@@ -398,9 +412,9 @@ async def unlike(
 
 async def generate(
     gen_query: GenerateQuery,
-    include_route: bool = False,
+    include_route: Optional[bool] = False,
     key: Optional[str] = None
-) -> Union[Plan, bytes]:
+) -> Plan:
     """Creates a new flight plan using the route generator.
 
     Requires authentication.
@@ -409,7 +423,7 @@ async def generate(
     ----------
     gen_query : GenerateQuery
         A dataclass with options for flight plan generation
-    include_route : bool
+    include_route : bool, optional
         Include route in response, defaults to False
     key : `str`, optional
         API authentication key.
@@ -419,8 +433,6 @@ async def generate(
     Plan
         The registered flight plan created on flight plan database,
         corresponding to the generated route
-    include_route : bool, optional
-        Include route in response, defaults to false
     """
 
     request_json = gen_query.to_api_dict()

@@ -184,8 +184,9 @@ async def request(
     Tuple[CIMultiDict, Union[Dict, str, bytes]]
         | A tuple of:
         | 1. A dict of the response headers, but the keys are case-insensitive
-        | 2. A ``Dict`` if ``return_format`` is ``"native"``, otherwise ``str`` or ``bytes``
-               depending on if the return format is UTF-8 or something else.
+        | 2. A ``Dict`` if ``return_format`` is ``"native"``,
+                otherwise ``str`` or ``bytes`` depending on if
+                the return format is UTF-8 or something else.
 
     Raises
     ------

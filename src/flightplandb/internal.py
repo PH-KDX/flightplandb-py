@@ -20,7 +20,16 @@
 so you're unlikely to ever use them."""
 
 from typing import (
-    AsyncIterable, Any, List, Tuple, Dict, Union, Optional, Literal, overload, get_args
+    AsyncIterable,
+    Any,
+    List,
+    Tuple,
+    Dict,
+    Union,
+    Optional,
+    Literal,
+    overload,
+    get_args,
 )
 
 from base64 import b64encode
@@ -47,9 +56,7 @@ def _auth_str(key):
     else:
         raise ValueError("API key must be a string!")
 
-    authstr = "Basic " + (
-        b64encode(key + b":").strip().decode()
-    )
+    authstr = "Basic " + (b64encode(key + b":").strip().decode())
 
     return authstr
 
@@ -75,7 +82,7 @@ format_return_types = {
     "ifly747": "application/vnd.fpd.export.v1.ifly747",
     "flightgear": "application/vnd.fpd.export.v1.flightgear",
     "tfdi717": "application/vnd.fpd.export.v1.tfdi717",
-    "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight"
+    "infiniteflight": "application/vnd.fpd.export.v1.infiniteflight",
 }
 native_return_types_hints = Literal["native"]
 bytes_return_types_hints = Literal["pdf"]
@@ -98,7 +105,9 @@ str_return_types_hints = Literal[
     "tfdi717",
     "infiniteflight",
 ]
-all_return_types_hints = Union[native_return_types_hints, bytes_return_types_hints, str_return_types_hints]
+all_return_types_hints = Union[
+    native_return_types_hints, bytes_return_types_hints, str_return_types_hints
+]
 native_return_values = get_args(native_return_types_hints)
 bytes_return_values = get_args(bytes_return_types_hints)
 str_return_values = get_args(str_return_types_hints)
@@ -112,7 +121,7 @@ async def request(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Tuple[CIMultiDictProxy[str], Dict]:
     ...
 
@@ -125,7 +134,7 @@ async def request(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Tuple[CIMultiDictProxy[str], bytes]:
     ...
 
@@ -138,7 +147,7 @@ async def request(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Tuple[CIMultiDictProxy[str], str]:
     ...
 
@@ -150,7 +159,7 @@ async def request(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Tuple[CIMultiDictProxy[str], Union[Any, bytes, str]]:
     """General HTTP requests function for non-paginated results.
 
@@ -215,7 +224,7 @@ async def request(
     except KeyError as exc:
         raise ValueError(
             f"'{return_format}' is not a valid data return type option"
-            ) from exc
+        ) from exc
 
     # then add it to the request headers
     params["Accept"] = return_format_encoded
@@ -230,9 +239,8 @@ async def request(
             url=urljoin(url_base, path),
             params=params,
             headers=request_headers,
-            json=json_data
+            json=json_data,
         ) as resp:
-
             status_handler(resp.status, ignore_statuses)
 
             header = resp.headers
@@ -248,9 +256,7 @@ async def request(
 
 
 # and here go the specific non-paginated HTTP calls
-async def get_headers(
-    key: Optional[str] = None
-) -> CIMultiDictProxy[str]:
+async def get_headers(key: Optional[str] = None) -> CIMultiDictProxy[str]:
     """Calls :meth:`request()` for request headers.
 
     Parameters
@@ -263,11 +269,7 @@ async def get_headers(
     CIMultiDictProxy
         A dict of the response headers, but the keys are case-insensitive.
     """
-    headers, _ = await request(
-        method="get",
-        path="",
-        key=key
-    )
+    headers, _ = await request(method="get", path="", key=key)
     return headers
 
 
@@ -277,7 +279,7 @@ async def get(
     return_format: native_return_types_hints = "native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Dict:
     ...
 
@@ -288,7 +290,7 @@ async def get(
     return_format: bytes_return_types_hints,
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> bytes:
     ...
 
@@ -299,7 +301,7 @@ async def get(
     return_format: str_return_types_hints,
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> str:
     ...
 
@@ -309,7 +311,7 @@ async def get(
     return_format: all_return_types_hints = "native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Union[Dict, str, bytes]:
     """Calls :meth:`request()` for get requests.
 
@@ -346,7 +348,7 @@ async def get(
         return_format=return_format,
         ignore_statuses=ignore_statuses,
         params=params,
-        key=key
+        key=key,
     )
     return resp
 
@@ -358,7 +360,7 @@ async def post(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Dict:
     ...
 
@@ -370,7 +372,7 @@ async def post(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> bytes:
     ...
 
@@ -382,7 +384,7 @@ async def post(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> str:
     ...
 
@@ -393,7 +395,7 @@ async def post(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Union[Dict, str, bytes]:
     """Calls :meth:`request()` for post requests.
 
@@ -431,7 +433,7 @@ async def post(
         ignore_statuses=ignore_statuses,
         params=params,
         json_data=json_data,
-        key=key
+        key=key,
     )
     return resp
 
@@ -443,7 +445,7 @@ async def patch(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Dict:
     ...
 
@@ -455,7 +457,7 @@ async def patch(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> bytes:
     ...
 
@@ -467,7 +469,7 @@ async def patch(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> str:
     ...
 
@@ -478,7 +480,7 @@ async def patch(
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Union[Dict, str, bytes]:
     """Calls :meth:`request()` for patch requests.
 
@@ -517,7 +519,7 @@ async def patch(
         ignore_statuses=ignore_statuses,
         params=params,
         key=key,
-        json_data=json_data
+        json_data=json_data,
     )
     return resp
 
@@ -528,7 +530,7 @@ async def delete(
     return_format: native_return_types_hints = "native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Dict:
     ...
 
@@ -539,7 +541,7 @@ async def delete(
     return_format: bytes_return_types_hints,
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> bytes:
     ...
 
@@ -550,7 +552,7 @@ async def delete(
     return_format: str_return_types_hints,
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> str:
     ...
 
@@ -560,7 +562,7 @@ async def delete(
     return_format: all_return_types_hints = "native",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Union[Dict, str, bytes]:
     """Calls :meth:`request()` for delete requests.
 
@@ -596,7 +598,7 @@ async def delete(
         return_format=return_format,
         ignore_statuses=ignore_statuses,
         params=params,
-        key=key
+        key=key,
     )
     return resp
 
@@ -607,7 +609,7 @@ async def getiter(
     sort: str = "created",
     ignore_statuses: Optional[List] = None,
     params: Optional[Dict] = None,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> AsyncIterable[Dict]:
     """Get :meth:`request()` for paginated results.
 
@@ -642,8 +644,7 @@ async def getiter(
 
     valid_sort_orders = ["created", "updated", "popularity", "distance"]
     if sort not in valid_sort_orders:
-        raise ValueError(
-            f"sort argument must be one of {', '.join(valid_sort_orders)}")
+        raise ValueError(f"sort argument must be one of {', '.join(valid_sort_orders)}")
     else:
         params["sort"] = sort
 
@@ -681,18 +682,16 @@ async def getiter(
             # I detest responses which "may" be paginated
             # therefore I choose to pretend that all pages are paginated
             # if it is unpaginated I say it is paginated with 1 page
-            if 'X-Page-Count' in r_fpdb.headers:
-                num_pages = int(r_fpdb.headers['X-Page-Count'])
+            if "X-Page-Count" in r_fpdb.headers:
+                num_pages = int(r_fpdb.headers["X-Page-Count"])
             else:
                 num_pages = 1
 
         # while page <= num_pages...
         for page in range(0, num_pages):
-            params['page'] = page
+            params["page"] = page
             async with session.get(
-                url=url,
-                params=params,
-                headers=request_headers
+                url=url, params=params, headers=request_headers
             ) as r_fpdb:
                 status_handler(r_fpdb.status, ignore_statuses)
                 # ...keep cycling through pages...

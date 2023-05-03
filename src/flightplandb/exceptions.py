@@ -106,39 +106,38 @@ def status_handler(status_code, ignore_statuses=None):
             raise BadRequestException(
                 status_code=status_code,
                 message="The request could not be understood by "
-                "the server due to malformed syntax."
+                "the server due to malformed syntax.",
             )
         if status_code == 401:
             raise UnauthorizedException(
                 status_code=status_code,
                 message="You are incorrectly authorised and "
-                "may not make this request."
+                "may not make this request.",
             )
         elif status_code == 403:
             raise ForbiddenException(
                 status_code=status_code,
                 message="The server understood the request, "
-                "but is refusing to fulfill it."
+                "but is refusing to fulfill it.",
             )
         elif status_code == 404:
             raise NotFoundException(
                 status_code=status_code,
                 message="The server has not found anything "
-                "matching the Request-URI."
+                "matching the Request-URI.",
             )
         elif status_code == 429:
             raise TooManyRequestsException(
                 status_code=status_code,
-                message="Your requests limit for the server has been exceeded."
+                message="Your requests limit for the server has been exceeded.",
             )
         elif status_code == 500:
             raise InternalServerException(
                 status_code=status_code,
                 message="The server encountered an unexpected condition "
-                "which prevented it from fulfilling the request."
+                "which prevented it from fulfilling the request.",
             )
         else:
             raise BaseErrorHandler(
-                status_code=status_code,
-                message="Unknown Error Occurred."
+                status_code=status_code, message="Unknown Error Occurred."
             )

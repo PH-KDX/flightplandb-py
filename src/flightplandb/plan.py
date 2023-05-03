@@ -1,9 +1,6 @@
 """Flightplan-related commands."""
 from typing import AsyncIterable, Union, Dict, Optional, overload
-from flightplandb.datatypes import (
-    StatusResponse, PlanQuery,
-    Plan, GenerateQuery
-)
+from flightplandb.datatypes import StatusResponse, PlanQuery, Plan, GenerateQuery
 from flightplandb import internal
 
 
@@ -11,7 +8,7 @@ from flightplandb import internal
 async def fetch(
     id_: int,
     return_format: internal.native_return_types_hints = "native",
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Plan:
     ...
 
@@ -20,16 +17,14 @@ async def fetch(
 async def fetch(
     id_: int,
     return_format: internal.bytes_return_types_hints,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> bytes:
     ...
 
 
 @overload
 async def fetch(
-    id_: int,
-    return_format: internal.str_return_types_hints,
-    key: Optional[str] = None
+    id_: int, return_format: internal.str_return_types_hints, key: Optional[str] = None
 ) -> str:
     ...
 
@@ -37,7 +32,7 @@ async def fetch(
 async def fetch(
     id_: int,
     return_format: internal.all_return_types_hints = "native",
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Union[Plan, Dict, str, bytes]:
     # Underscore for id_ must be escaped as id\_ so sphinx shows the _.
     # However, this would raise W605. To fix this, a raw string is used.
@@ -72,12 +67,10 @@ async def fetch(
     """
 
     request = await internal.get(
-        path=f"/plan/{id_}",
-        return_format=return_format,
-        key=key
+        path=f"/plan/{id_}", return_format=return_format, key=key
     )
 
-    if (isinstance(request, dict) and return_format in internal.native_return_values):
+    if isinstance(request, dict) and return_format in internal.native_return_values:
         return Plan(**request)
     else:
         return request
@@ -87,7 +80,7 @@ async def fetch(
 async def create(
     plan: Plan,
     return_format: internal.native_return_types_hints = "native",
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Plan:
     ...
 
@@ -96,7 +89,7 @@ async def create(
 async def create(
     plan: Plan,
     return_format: internal.bytes_return_types_hints,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> bytes:
     ...
 
@@ -105,7 +98,7 @@ async def create(
 async def create(
     plan: Plan,
     return_format: internal.str_return_types_hints,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> str:
     ...
 
@@ -113,7 +106,7 @@ async def create(
 async def create(
     plan: Plan,
     return_format: internal.all_return_types_hints = "native",
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Union[Plan, Dict, bytes, str]:
     """Creates a new flight plan.
 
@@ -151,9 +144,10 @@ async def create(
         path="/plan/",
         return_format=return_format,
         json_data=plan.to_api_dict(),
-        key=key)
+        key=key,
+    )
 
-    if (isinstance(request, dict) and return_format in internal.native_return_values):
+    if isinstance(request, dict) and return_format in internal.native_return_values:
         return Plan(**request)
     else:
         return request
@@ -163,7 +157,7 @@ async def create(
 async def edit(
     plan: Plan,
     return_format: internal.native_return_types_hints = "native",
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Plan:
     ...
 
@@ -172,7 +166,7 @@ async def edit(
 async def edit(
     plan: Plan,
     return_format: internal.bytes_return_types_hints,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> bytes:
     ...
 
@@ -181,7 +175,7 @@ async def edit(
 async def edit(
     plan: Plan,
     return_format: internal.str_return_types_hints,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> str:
     ...
 
@@ -189,7 +183,7 @@ async def edit(
 async def edit(
     plan: Plan,
     return_format: internal.all_return_types_hints = "native",
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Union[Plan, Dict, bytes, str]:
     """Edits a flight plan linked to your account.
 
@@ -231,9 +225,10 @@ async def edit(
         path=f"/plan/{plan_data['id']}",
         return_format=return_format,
         json_data=plan_data,
-        key=key)
+        key=key,
+    )
 
-    if (isinstance(request, dict) and return_format in internal.native_return_values):
+    if isinstance(request, dict) and return_format in internal.native_return_values:
         return Plan(**request)
     else:
         return request
@@ -241,10 +236,7 @@ async def edit(
     return request
 
 
-async def delete(
-    id_: int,
-    key: Optional[str] = None
-) -> StatusResponse:
+async def delete(id_: int, key: Optional[str] = None) -> StatusResponse:
     r"""Deletes a flight plan that is linked to your account.
 
     Requires authentication.
@@ -276,7 +268,7 @@ async def search(
     sort: str = "created",
     include_route: Optional[bool] = False,
     limit: int = 100,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> AsyncIterable[Plan]:
     """Searches for flight plans.
     A number of search parameters are available.
@@ -309,19 +301,12 @@ async def search(
     request_json["includeRoute"] = include_route
 
     async for i in internal.getiter(
-        path="/search/plans",
-        sort=sort,
-        params=request_json,
-        limit=limit,
-        key=key
+        path="/search/plans", sort=sort, params=request_json, limit=limit, key=key
     ):
         yield Plan(**i)
 
 
-async def has_liked(
-    id_: int,
-    key: Optional[str] = None
-) -> bool:
+async def has_liked(id_: int, key: Optional[str] = None) -> bool:
     r"""Fetches your like status for a flight plan.
 
     Requires authentication.
@@ -339,19 +324,12 @@ async def has_liked(
         ``True``/``False`` to indicate that the plan was liked / not liked
     """
 
-    resp = await internal.get(
-        path=f"/plan/{id_}/like",
-        ignore_statuses=[404],
-        key=key
-    )
+    resp = await internal.get(path=f"/plan/{id_}/like", ignore_statuses=[404], key=key)
     status_response = StatusResponse(**resp)
     return status_response.message != "Not Found"
 
 
-async def like(
-    id_: int,
-    key: Optional[str] = None
-) -> StatusResponse:
+async def like(id_: int, key: Optional[str] = None) -> StatusResponse:
     r"""Likes a flight plan.
 
     Requires authentication.
@@ -379,10 +357,7 @@ async def like(
     return StatusResponse(**resp)
 
 
-async def unlike(
-    id_: int,
-    key: Optional[str] = None
-) -> bool:
+async def unlike(id_: int, key: Optional[str] = None) -> bool:
     r"""Removes a flight plan like.
 
     Requires authentication.
@@ -413,7 +388,7 @@ async def unlike(
 async def generate(
     gen_query: GenerateQuery,
     include_route: Optional[bool] = False,
-    key: Optional[str] = None
+    key: Optional[str] = None,
 ) -> Plan:
     """Creates a new flight plan using the route generator.
 
@@ -440,18 +415,11 @@ async def generate(
     # due to an API bug this must be a string instead of a boolean
     request_json["includeRoute"] = "true" if include_route else "false"
 
-    resp = await internal.post(
-        path="/auto/generate",
-        json_data=request_json,
-        key=key
-    )
+    resp = await internal.post(path="/auto/generate", json_data=request_json, key=key)
     return Plan(**resp)
 
 
-async def decode(
-    route: str,
-    key: Optional[str] = None
-) -> Plan:
+async def decode(route: str, key: Optional[str] = None) -> Plan:
     """Creates a new flight plan using the route decoder.
 
     Requires authentication.
@@ -482,6 +450,5 @@ async def decode(
         arguments or was otherwise unusable.
     """
 
-    resp = await internal.post(
-        path="/auto/decode", json_data={"route": route}, key=key)
+    resp = await internal.post(path="/auto/decode", json_data={"route": route}, key=key)
     return Plan(**resp)

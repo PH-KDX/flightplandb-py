@@ -12,12 +12,16 @@ library, read the documentation at https://flightplandb-py.readthedocs.io/.
 # Version of the flightplandb package
 __version__ = "0.7.2"
 
-from . import (
-    internal, exceptions, datatypes,
-    api, nav, plan, tags, user, weather
-    )
+from . import internal, exceptions, datatypes, api, nav, plan, tags, user, weather
 
 __all__ = [
-    "internal", "exceptions", "datatypes", "api",
-    "nav", "plan", "tags", "user", "weather"
-    ]
+    "internal",
+    "exceptions",
+    "datatypes",
+    "api",
+    "nav",
+    "plan",
+    "tags",
+    "user",
+    "weather",
+]

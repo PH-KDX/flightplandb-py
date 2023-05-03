@@ -55,10 +55,7 @@ async def fetch(username: str, key: Optional[str] = None) -> User:
 
 
 async def plans(
-    username: str,
-    sort: str = "created",
-    limit: int = 100,
-    key: Optional[str] = None
+    username: str, sort: str = "created", limit: int = 100, key: Optional[str] = None
 ) -> AsyncIterable[Plan]:
     """Fetches flight plans created by a user.
 
@@ -81,19 +78,13 @@ async def plans(
         limited by ``limit``
     """
     async for i in internal.getiter(
-        path=f"/user/{username}/plans",
-        sort=sort,
-        limit=limit,
-        key=key
+        path=f"/user/{username}/plans", sort=sort, limit=limit, key=key
     ):
         yield Plan(**i)
 
 
 async def likes(
-    username: str,
-    sort: str = "created",
-    limit: int = 100,
-    key: Optional[str] = None
+    username: str, sort: str = "created", limit: int = 100, key: Optional[str] = None
 ) -> AsyncIterable[Plan]:
     """Fetches flight plans liked by a user.
 
@@ -117,18 +108,13 @@ async def likes(
     """
 
     async for i in internal.getiter(
-        path=f"/user/{username}/likes",
-        sort=sort,
-        limit=limit,
-        key=key
+        path=f"/user/{username}/likes", sort=sort, limit=limit, key=key
     ):
         yield Plan(**i)
 
 
 async def search(
-    username: str,
-    limit=100,
-    key: Optional[str] = None
+    username: str, limit=100, key: Optional[str] = None
 ) -> AsyncIterable[UserSmall]:
     """Searches for users by username. For more detailed info on a
     specific user, use :meth:`fetch`
@@ -151,9 +137,6 @@ async def search(
     """
 
     async for i in internal.getiter(
-        path="/search/users",
-        limit=limit,
-        params={"q": username},
-        key=key
+        path="/search/users", limit=limit, params={"q": username}, key=key
     ):
         yield UserSmall(**i)

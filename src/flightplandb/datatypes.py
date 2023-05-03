@@ -24,7 +24,7 @@ from dateutil.parser import isoparse
 
 
 def _datetime_to_iso(timestamp: datetime):
-    return timestamp.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+    return timestamp.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
 
 
 @dataclass
@@ -39,6 +39,7 @@ class StatusResponse:
     errors : Optional[List[str]]
         A list of any errors raised
     """
+
     message: str
     errors: Optional[List[str]]
 
@@ -73,6 +74,7 @@ class User:
     plansLikes : Optional[int]
         Total like count of all user's plans
     """
+
     id: int
     username: str
     location: Optional[str] = None
@@ -114,6 +116,7 @@ class UserSmall:
     gravatarHash : Optional[str]
         Gravatar hash based on user's account email address.
     """
+
     id: int
     username: str
     location: Optional[str] = None
@@ -136,6 +139,7 @@ class Application:
     url : Optional[str]
         Application URL
     """
+
     id: int
     name: Optional[str] = None
     url: Optional[str] = None
@@ -157,10 +161,11 @@ class Via:
     validtypes : List[str]
         Do not change. Valid Via types.
     """
+
     ident: str
     type: str
 
-    validtypes = ['SID', 'STAR', 'AWY-HI', 'AWY-LO', 'NAT', 'PACOT']
+    validtypes = ["SID", "STAR", "AWY-HI", "AWY-LO", "NAT", "PACOT"]
 
     def __post_init__(self):
         if self.type not in self.validtypes:
@@ -197,6 +202,7 @@ class RouteNode:
     validtypes : List[str]
         Do not change. Valid RouteNode types.
     """
+
     ident: str
     type: str
     lat: float
@@ -206,7 +212,7 @@ class RouteNode:
     name: Optional[str] = None
     via: Optional[Via] = None
 
-    validtypes = ['UKN', 'APT', 'NDB', 'VOR', 'FIX', 'DME', 'LATLON']
+    validtypes = ["UKN", "APT", "NDB", "VOR", "FIX", "DME", "LATLON"]
 
     def __post_init__(self):
         if self.type not in self.validtypes:
@@ -233,20 +239,24 @@ class Route:
     westLevels : Optional[List[str]]
         Valid westbound flightlevels. Only used inside a NATS :class:`Track`.
     """
+
     nodes: List[RouteNode]
     eastLevels: Optional[List[str]] = None
     westLevels: Optional[List[str]] = None
 
     def __post_init__(self):
-        self.nodes = list(map(
-            lambda node: (
-                RouteNode(**node) if (isinstance(node, dict)) else node),
-            self.nodes))
+        self.nodes = list(
+            map(
+                lambda node: (RouteNode(**node) if (isinstance(node, dict)) else node),
+                self.nodes,
+            )
+        )
 
     def to_api_dict(self):
         resp_dict = self.__dict__
-        resp_dict["nodes"] = list(map(
-            lambda node: node.to_api_dict(), resp_dict["nodes"]))
+        resp_dict["nodes"] = list(
+            map(lambda node: node.to_api_dict(), resp_dict["nodes"])
+        )
         return resp_dict
 
 
@@ -265,6 +275,7 @@ class Cycle:
     release : int
         Cycle release
     """
+
     id: int
     ident: str
     year: int
@@ -324,6 +335,7 @@ class Plan:
         Navigation data cycle associated with the item.
         ``None`` if no cycle linked
     """
+
     fromICAO: Optional[str]
     toICAO: Optional[str]
     fromName: Optional[str]
@@ -347,12 +359,11 @@ class Plan:
     cycle: Optional[Cycle] = None
 
     def __post_init__(self):
-
         if self.createdAt and type(self.createdAt) != datetime:
-            self.createdAt = (isoparse(self.createdAt))
+            self.createdAt = isoparse(self.createdAt)
 
         if self.updatedAt and type(self.updatedAt) != datetime:
-            self.updatedAt = (isoparse(self.updatedAt))
+            self.updatedAt = isoparse(self.updatedAt)
 
         if self.user and isinstance(self.user, dict):
             self.user = User(**self.user)
@@ -408,6 +419,7 @@ class PlanQuery:
     tags : Optional[List[str]]
         List of tag names to search
     """
+
     q: Optional[str] = None
     From: Optional[str] = None
     to: Optional[str] = None
@@ -459,6 +471,7 @@ class GenerateQuery:
     descentSpeed : Optional[float]
         Basic flight profile descent speed (speed)
     """
+
     fromICAO: str
     toICAO: str
     useNAT: Optional[bool] = True
@@ -491,6 +504,7 @@ class Tag:
     popularity: int
         Popularity index of the tag
     """
+
     name: str
     description: Optional[str]
     planCount: int
@@ -512,6 +526,7 @@ class Timezone:
         The number of seconds the airport timezone is currently
         offset from UTC. Positive is ahead of UTC. ``None`` if not available
     """
+
     name: Optional[str]
     offset: Optional[float]
 
@@ -534,24 +549,29 @@ class Times:
     dusk : datetime
         Time of dusk
     """
+
     sunrise: datetime
     sunset: datetime
     dawn: datetime
     dusk: datetime
 
     def __post_init__(self):
-        self.sunrise = (isoparse(self.sunrise)
-                        if not isinstance(self.sunrise, datetime)
-                        else self.sunrise)
-        self.sunset = (isoparse(self.sunset)
-                       if not isinstance(self.sunset, datetime)
-                       else self.sunset)
-        self.dawn = (isoparse(self.dawn)
-                     if not isinstance(self.dawn, datetime)
-                     else self.dawn)
-        self.dusk = (isoparse(self.dusk)
-                     if not isinstance(self.dusk, datetime)
-                     else self.dusk)
+        self.sunrise = (
+            isoparse(self.sunrise)
+            if not isinstance(self.sunrise, datetime)
+            else self.sunrise
+        )
+        self.sunset = (
+            isoparse(self.sunset)
+            if not isinstance(self.sunset, datetime)
+            else self.sunset
+        )
+        self.dawn = (
+            isoparse(self.dawn) if not isinstance(self.dawn, datetime) else self.dawn
+        )
+        self.dusk = (
+            isoparse(self.dusk) if not isinstance(self.dusk, datetime) else self.dusk
+        )
 
     def to_api_dict(self):
         plan_dict = self.__dict__
@@ -575,6 +595,7 @@ class RunwayEnds:
     lon : float
         The longitude of the runway end
     """
+
     ident: str
     lat: float
     lon: float
@@ -616,6 +637,7 @@ class Navaid:
     validtypes : List[str]
         Do not change. Valid Navaid types.
     """
+
     ident: str
     type: str
     lat: float
@@ -629,7 +651,7 @@ class Navaid:
     elevation: float
     range: float
 
-    validtypes = ['LOC-ILS', 'LOC-LOC', 'GS', 'DME', 'OM', 'MM', 'IM']
+    validtypes = ["LOC-ILS", "LOC-LOC", "GS", "DME", "OM", "MM", "IM"]
 
     def __post_init__(self):
         if self.type not in self.validtypes:
@@ -668,6 +690,7 @@ class Runway:
     navaids: List[Navaid]
         List of navaids associated with the current runway
     """
+
     ident: str
     width: float
     length: float
@@ -688,10 +711,10 @@ class Runway:
 
     def to_api_dict(self):
         resp_dict = self.__dict__
-        resp_dict["ends"] = list(map(lambda end: end.to_api_dict(),
-                                     resp_dict["ends"]))
-        resp_dict["navaids"] = list(map(lambda aid: aid.to_api_dict(),
-                                        resp_dict["navaids"]))
+        resp_dict["ends"] = list(map(lambda end: end.to_api_dict(), resp_dict["ends"]))
+        resp_dict["navaids"] = list(
+            map(lambda aid: aid.to_api_dict(), resp_dict["navaids"])
+        )
         return resp_dict
 
 
@@ -709,6 +732,7 @@ class Frequency:
         The frequency name. ``None`` if not available
 
     """
+
     type: str
     frequency: float
     name: Optional[str]
@@ -728,6 +752,7 @@ class Weather:
     TAF : Optional[str]
         Current TAF report for the airport
     """
+
     METAR: Optional[str]
     TAF: Optional[str]
 
@@ -774,6 +799,7 @@ class Airport:
     weather: Weather
         Airport weather information
     """
+
     ICAO: str
     IATA: Optional[str]
     name: str
@@ -800,8 +826,7 @@ class Airport:
             self.runways = list(map(lambda rw: Runway(**rw), self.runways))
 
         if self.frequencies and isinstance(self.frequencies[0], dict):
-            self.frequencies = list(
-                map(lambda rw: Frequency(**rw), self.frequencies))
+            self.frequencies = list(map(lambda rw: Frequency(**rw), self.frequencies))
 
         if self.weather and isinstance(self.weather, dict):
             self.weather = Weather(**self.weather)
@@ -810,10 +835,12 @@ class Airport:
         resp_dict = self.__dict__
         resp_dict["timezone"] = resp_dict["timezone"].to_api_dict()
         resp_dict["times"] = resp_dict["times"].to_api_dict()
-        resp_dict["runways"] = list(map(lambda rwy: rwy.to_api_dict(),
-                                        resp_dict["runways"]))
-        resp_dict["frequencies"] = list(map(lambda freq: freq.to_api_dict(),
-                                            resp_dict["frequencies"]))
+        resp_dict["runways"] = list(
+            map(lambda rwy: rwy.to_api_dict(), resp_dict["runways"])
+        )
+        resp_dict["frequencies"] = list(
+            map(lambda freq: freq.to_api_dict(), resp_dict["frequencies"])
+        )
         resp_dict["weather"] = resp_dict["weather"].to_api_dict()
         return resp_dict
 
@@ -833,6 +860,7 @@ class Track:
     validTo : datetime
         UTC datetime the track is valid to
     """
+
     ident: Union[str, int]
     route: Route
     validFrom: datetime
@@ -881,6 +909,7 @@ class SearchNavaid:
     validtypes : List[str]
         Do not change. Valid SearchNavaid types
     """
+
     ident: str
     type: str
     lat: float
@@ -890,7 +919,7 @@ class SearchNavaid:
     airportICAO: Optional[str] = None
     name: Optional[float] = None
 
-    validtypes = ['UKN', 'APT', 'NDB', 'VOR', 'FIX', 'DME', 'LATLON']
+    validtypes = ["UKN", "APT", "NDB", "VOR", "FIX", "DME", "LATLON"]
 
     def __post_init__(self):
         if self.type not in self.validtypes:

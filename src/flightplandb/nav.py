@@ -44,9 +44,7 @@ async def nats(key: Optional[str] = None) -> List[Track]:
     """
 
     return list(
-        map(
-            lambda n: Track(**n), await internal.get(path="/nav/NATS", key=key)
-        )
+        map(lambda n: Track(**n), await internal.get(path="/nav/NATS", key=key))
     )
 
 
@@ -65,18 +63,13 @@ async def pacots(key: Optional[str] = None) -> List[Track]:
     """
 
     return list(
-        map(
-            lambda t: Track(**t), await internal.get(
-                path="/nav/PACOTS", key=key
-            )
-        )
+        map(lambda t: Track(**t), await internal.get(path="/nav/PACOTS", key=key))
     )
 
 
 async def search(
-        query: str,
-        type_: Optional[str] = None, key: Optional[str] = None
-        ) -> AsyncIterable[SearchNavaid]:
+    query: str, type_: Optional[str] = None, key: Optional[str] = None
+) -> AsyncIterable[SearchNavaid]:
     r"""Searches navaids using a query.
 
     Parameters
@@ -103,7 +96,5 @@ async def search(
             params["types"] = type_
         else:
             raise ValueError(f"{type_} is not a valid Navaid type")
-    async for i in internal.getiter(
-        path="/search/nav", params=params, key=key
-    ):
+    async for i in internal.getiter(path="/search/nav", params=params, key=key):
         yield SearchNavaid(**i)

@@ -19,6 +19,4 @@ async def fetch(key: Optional[str] = None) -> List[Tag]:
         A list of the current popular tags.
     """
 
-    return list(
-        map(lambda t: Tag(**t), await internal.get(path="/tags", key=key))
-    )
+    return list(map(lambda t: Tag(**t), await internal.get(path="/tags", key=key)))

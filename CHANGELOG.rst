@@ -10,6 +10,7 @@ the tags separated by commas and spaces. ``pdf`` is now the only return format w
 ``native`` returns a dataclass and all other formats return a UTF-8 string.
 
 The changelog has also been updated to include the changes of version 0.5.0 and earlier.
+A pre-commit file has been added to ensure all checks will pass before committing.
 
 
 0.7.2

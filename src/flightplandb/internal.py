@@ -226,7 +226,7 @@ async def request(
         ) from exc
 
     # then add it to the request headers
-    params["Accept"] = return_format_encoded
+    request_headers["Accept"] = return_format_encoded
 
     # set auth in headers if key is provided
     if key is not None:

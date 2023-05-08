@@ -18,7 +18,7 @@ jobs:
           options: "--check --verbose"
           src: "./src ./tests ./docs/source/conf.py"
       - name: flake8
-        uses: py-actions/flake8@v1
+        uses: py-actions/flake8@v2
         with:
           max-line-length: "88"  # match limit set by black
           args: "--extend-ignore E203"

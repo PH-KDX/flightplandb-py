@@ -344,8 +344,8 @@ class Plan:
     popularity: Optional[int] = None
     notes: Optional[str] = None
     encodedPolyline: Optional[str] = None
-    createdAt: Optional[datetime] = None
-    updatedAt: Optional[datetime] = None
+    createdAt: Optional[Union[datetime, str]] = None
+    updatedAt: Optional[Union[datetime, str]] = None
     tags: Optional[List[str]] = None
     user: Optional[User] = None
     application: Optional[Application] = None
@@ -353,10 +353,10 @@ class Plan:
     cycle: Optional[Cycle] = None
 
     def __post_init__(self) -> None:
-        if self.createdAt and type(self.createdAt) != datetime:
+        if self.createdAt and type(self.createdAt) == str:
             self.createdAt = isoparse(self.createdAt)
 
-        if self.updatedAt and type(self.updatedAt) != datetime:
+        if self.updatedAt and type(self.updatedAt) == str:
             self.updatedAt = isoparse(self.updatedAt)
 
         if self.user and isinstance(self.user, dict):
@@ -544,27 +544,27 @@ class Times:
         Time of dusk
     """
 
-    sunrise: datetime
-    sunset: datetime
-    dawn: datetime
-    dusk: datetime
+    sunrise: Union[datetime, str]
+    sunset: Union[datetime, str]
+    dawn: Union[datetime, str]
+    dusk: Union[datetime, str]
 
     def __post_init__(self) -> None:
         self.sunrise = (
             isoparse(self.sunrise)
-            if not isinstance(self.sunrise, datetime)
+            if isinstance(self.sunrise, str)
             else self.sunrise
         )
         self.sunset = (
             isoparse(self.sunset)
-            if not isinstance(self.sunset, datetime)
+            if isinstance(self.sunset, str)
             else self.sunset
         )
         self.dawn = (
-            isoparse(self.dawn) if not isinstance(self.dawn, datetime) else self.dawn
+            isoparse(self.dawn) if isinstance(self.dawn, str) else self.dawn
         )
         self.dusk = (
-            isoparse(self.dusk) if not isinstance(self.dusk, datetime) else self.dusk
+            isoparse(self.dusk) if isinstance(self.dusk, str) else self.dusk
         )
 
     def to_api_dict(self) -> Dict[str, Any]:
@@ -698,10 +698,10 @@ class Runway:
     navaids: List[Navaid]
 
     def __post_init__(self) -> None:
-        if self.ends and (isinstance(self.ends[0], dict)):
-            self.ends = [RunwayEnds(**rwe) for rwe in self.ends]
-        if self.navaids and (isinstance(self.navaids[0], dict)):
-            self.navaids = [Navaid(**na) for na in self.navaids]
+        if self.ends:
+            self.ends = [(RunwayEnds(**rwe) if isinstance(rwe, dict) else rwe) for rwe in self.ends]
+        if self.navaids:
+            self.navaids = [(Navaid(**na) if isinstance(na, dict) else na) for na in self.navaids]
 
     def to_api_dict(self) -> Dict[str, Any]:
         resp_dict = self.__dict__
@@ -814,11 +814,11 @@ class Airport:
         if self.times and isinstance(self.times, dict):
             self.times = Times(**self.times)
 
-        if self.runways and isinstance(self.runways[0], dict):
-            self.runways = [Runway(**rw) for rw in self.runways]
+        if self.runways:
+            self.runways = [(Runway(**rw) if isinstance(rw, dict) else rw) for rw in self.runways]
 
-        if self.frequencies and isinstance(self.frequencies[0], dict):
-            self.frequencies = [Frequency(**fq) for fq in self.frequencies]
+        if self.frequencies:
+            self.frequencies = [(Frequency(**fq) if isinstance(fq, dict) else fq) for fq in self.frequencies]
 
         if self.weather and isinstance(self.weather, dict):
             self.weather = Weather(**self.weather)

@@ -19,7 +19,7 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional, Union, Dict, Any
+from typing import Any, Dict, List, Optional, Union
 
 from dateutil.parser import isoparse
 
@@ -246,7 +246,10 @@ class Route:
     westLevels: Optional[List[str]] = None
 
     def __post_init__(self) -> None:
-        self.nodes = [(RouteNode(**node) if (isinstance(node, dict)) else node) for node in self.nodes]
+        self.nodes = [
+            (RouteNode(**node) if (isinstance(node, dict)) else node)
+            for node in self.nodes
+        ]
 
     def to_api_dict(self) -> Dict[str, Any]:
         resp_dict = self.__dict__
@@ -551,21 +554,13 @@ class Times:
 
     def __post_init__(self) -> None:
         self.sunrise = (
-            isoparse(self.sunrise)
-            if isinstance(self.sunrise, str)
-            else self.sunrise
+            isoparse(self.sunrise) if isinstance(self.sunrise, str) else self.sunrise
         )
         self.sunset = (
-            isoparse(self.sunset)
-            if isinstance(self.sunset, str)
-            else self.sunset
+            isoparse(self.sunset) if isinstance(self.sunset, str) else self.sunset
         )
-        self.dawn = (
-            isoparse(self.dawn) if isinstance(self.dawn, str) else self.dawn
-        )
-        self.dusk = (
-            isoparse(self.dusk) if isinstance(self.dusk, str) else self.dusk
-        )
+        self.dawn = isoparse(self.dawn) if isinstance(self.dawn, str) else self.dawn
+        self.dusk = isoparse(self.dusk) if isinstance(self.dusk, str) else self.dusk
 
     def to_api_dict(self) -> Dict[str, Any]:
         plan_dict = self.__dict__
@@ -699,9 +694,14 @@ class Runway:
 
     def __post_init__(self) -> None:
         if self.ends:
-            self.ends = [(RunwayEnds(**rwe) if isinstance(rwe, dict) else rwe) for rwe in self.ends]
+            self.ends = [
+                (RunwayEnds(**rwe) if isinstance(rwe, dict) else rwe)
+                for rwe in self.ends
+            ]
         if self.navaids:
-            self.navaids = [(Navaid(**na) if isinstance(na, dict) else na) for na in self.navaids]
+            self.navaids = [
+                (Navaid(**na) if isinstance(na, dict) else na) for na in self.navaids
+            ]
 
     def to_api_dict(self) -> Dict[str, Any]:
         resp_dict = self.__dict__
@@ -815,10 +815,15 @@ class Airport:
             self.times = Times(**self.times)
 
         if self.runways:
-            self.runways = [(Runway(**rw) if isinstance(rw, dict) else rw) for rw in self.runways]
+            self.runways = [
+                (Runway(**rw) if isinstance(rw, dict) else rw) for rw in self.runways
+            ]
 
         if self.frequencies:
-            self.frequencies = [(Frequency(**fq) if isinstance(fq, dict) else fq) for fq in self.frequencies]
+            self.frequencies = [
+                (Frequency(**fq) if isinstance(fq, dict) else fq)
+                for fq in self.frequencies
+            ]
 
         if self.weather and isinstance(self.weather, dict):
             self.weather = Weather(**self.weather)
@@ -828,7 +833,9 @@ class Airport:
         resp_dict["timezone"] = resp_dict["timezone"].to_api_dict()
         resp_dict["times"] = resp_dict["times"].to_api_dict()
         resp_dict["runways"] = [rwy.to_api_dict() for rwy in resp_dict["runways"]]
-        resp_dict["frequencies"] = [freq.to_api_dict() for freq in resp_dict["frequencies"]]
+        resp_dict["frequencies"] = [
+            freq.to_api_dict() for freq in resp_dict["frequencies"]
+        ]
         resp_dict["weather"] = resp_dict["weather"].to_api_dict()
         return resp_dict
 

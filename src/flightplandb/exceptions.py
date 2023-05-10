@@ -1,5 +1,5 @@
 "Contains all the internally defined exceptions used by the library."
-from typing import Union, Tuple
+from typing import Tuple, Union
 
 
 class BaseErrorHandler(Exception):
@@ -100,7 +100,9 @@ class InternalServerException(BaseErrorHandler):
     """
 
 
-def status_handler(status_code: int, ignore_statuses: Union[Tuple[int], Tuple[()]] = ()) -> None:
+def status_handler(
+    status_code: int, ignore_statuses: Union[Tuple[int], Tuple[()]] = ()
+) -> None:
     "Raises correct custom exception for appropriate HTTP status code."
     if status_code not in ignore_statuses and status_code >= 400:
         if status_code == 400:

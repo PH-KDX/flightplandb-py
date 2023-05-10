@@ -25,8 +25,6 @@ from typing import (
     Any,
     AsyncIterable,
     Dict,
-    List,
-    Tuple,
     Literal,
     Optional,
     Tuple,
@@ -416,7 +414,7 @@ async def post(
         A ``Dict`` if ``return_format`` is ``"native"``, otherwise ``str`` or ``bytes``
         depending on if the return format is UTF-8 or something else.
     """
-    
+
     if not params:
         params = {}
 
@@ -579,7 +577,6 @@ async def delete(
         depending on if the return format is UTF-8 or something else.
     """
 
-    
     if not params:
         params = {}
 

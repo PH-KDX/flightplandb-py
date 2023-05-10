@@ -620,7 +620,7 @@ async def test_plan_has_liked(patched_internal_get):
     response = await flightplandb.plan.has_liked(42)
     # check that TagsAPI method made correct request of FlightPlanDB
     patched_internal_get.assert_awaited_once_with(
-        path="/plan/42/like", ignore_statuses=[404], key=None
+        path="/plan/42/like", ignore_statuses=(404,), key=None
     )
     # check that TagsAPI method decoded data correctly for given response
     assert response == correct_response

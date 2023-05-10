@@ -1,4 +1,5 @@
 "Contains all the internally defined exceptions used by the library."
+from typing import Union, Tuple
 
 
 class BaseErrorHandler(Exception):
@@ -14,7 +15,7 @@ class BaseErrorHandler(Exception):
         Description of the error
     """
 
-    def __init__(self, status_code=None, message=None):
+    def __init__(self, status_code: int, message: str):
         self.status_code = status_code
         self.message = message
         super().__init__(self.status_code, self.message)
@@ -27,7 +28,7 @@ class BadRequestException(BaseErrorHandler):
     Attributes
     ----------
     status_code
-        Not used
+        Status code of the error
     message
         A verbose description of this error.
     """
@@ -40,7 +41,7 @@ class UnauthorizedException(BaseErrorHandler):
     Attributes
     ----------
     status_code
-        Not used
+        Status code of the error
     message
         A verbose description of this error.
     """
@@ -54,7 +55,7 @@ class ForbiddenException(BaseErrorHandler):
     Attributes
     ----------
     status_code
-        Not used
+        Status code of the error
     message
         A verbose description of this error.
     """
@@ -67,7 +68,7 @@ class NotFoundException(BaseErrorHandler):
     Attributes
     ----------
     status_code
-        Not used
+        Status code of the error
     message
         A verbose description of this error.
     """
@@ -80,7 +81,7 @@ class TooManyRequestsException(BaseErrorHandler):
     Attributes
     ----------
     status_code
-        Not used
+        Status code of the error
     message
         A verbose description of this error.
     """
@@ -93,13 +94,13 @@ class InternalServerException(BaseErrorHandler):
     Attributes
     ----------
     status_code
-        Not used
+        Status code of the error
     message
         A verbose description of this error.
     """
 
 
-def status_handler(status_code, ignore_statuses=None):
+def status_handler(status_code: int, ignore_statuses: Union[Tuple[int], Tuple[()]] = ()) -> None:
     "Raises correct custom exception for appropriate HTTP status code."
     if status_code not in ignore_statuses and status_code >= 400:
         if status_code == 400:
@@ -108,7 +109,7 @@ def status_handler(status_code, ignore_statuses=None):
                 message="The request could not be understood by "
                 "the server due to malformed syntax.",
             )
-        if status_code == 401:
+        elif status_code == 401:
             raise UnauthorizedException(
                 status_code=status_code,
                 message="You are incorrectly authorised and "

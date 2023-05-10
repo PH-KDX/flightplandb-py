@@ -325,7 +325,7 @@ async def has_liked(id_: int, key: Optional[str] = None) -> bool:
         ``True``/``False`` to indicate that the plan was liked / not liked
     """
 
-    resp = await internal.get(path=f"/plan/{id_}/like", ignore_statuses=[404], key=key)
+    resp = await internal.get(path=f"/plan/{id_}/like", ignore_statuses=(404, ), key=key)
     status_response = StatusResponse(**resp)
     return status_response.message != "Not Found"
 

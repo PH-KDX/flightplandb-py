@@ -26,6 +26,7 @@ from typing import (
     AsyncIterable,
     Dict,
     List,
+    Tuple,
     Literal,
     Optional,
     Tuple,
@@ -116,7 +117,7 @@ async def request(
     method: str,
     path: str,
     return_format: native_return_types_hints = "native",
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -129,7 +130,7 @@ async def request(
     method: str,
     path: str,
     return_format: bytes_return_types_hints,
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -142,7 +143,7 @@ async def request(
     method: str,
     path: str,
     return_format: str_return_types_hints,
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -154,7 +155,7 @@ async def request(
     method: str,
     path: str,
     return_format: all_return_types_hints = "native",
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -196,8 +197,6 @@ async def request(
         Invalid HTTP status in response
     """
 
-    if not ignore_statuses:
-        ignore_statuses = []
     if not params:
         params = {}
     request_headers = {}
@@ -276,7 +275,7 @@ async def get_headers(key: Optional[str] = None) -> CIMultiDictProxy[str]:
 async def get(
     path: str,
     return_format: native_return_types_hints = "native",
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     key: Optional[str] = None,
 ) -> Dict:
@@ -287,7 +286,7 @@ async def get(
 async def get(
     path: str,
     return_format: bytes_return_types_hints,
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     key: Optional[str] = None,
 ) -> bytes:
@@ -298,7 +297,7 @@ async def get(
 async def get(
     path: str,
     return_format: str_return_types_hints,
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     key: Optional[str] = None,
 ) -> str:
@@ -308,7 +307,7 @@ async def get(
 async def get(
     path: str,
     return_format: all_return_types_hints = "native",
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     key: Optional[str] = None,
 ) -> Union[Dict, str, bytes]:
@@ -335,9 +334,6 @@ async def get(
         depending on if the return format is UTF-8 or something else.
     """
 
-    # I HATE not being able to set empty lists as default arguments
-    if not ignore_statuses:
-        ignore_statuses = []
     if not params:
         params = {}
 
@@ -356,7 +352,7 @@ async def get(
 async def post(
     path: str,
     return_format: native_return_types_hints = "native",
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -368,7 +364,7 @@ async def post(
 async def post(
     path: str,
     return_format: bytes_return_types_hints,
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -380,7 +376,7 @@ async def post(
 async def post(
     path: str,
     return_format: str_return_types_hints,
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -391,7 +387,7 @@ async def post(
 async def post(
     path: str,
     return_format: all_return_types_hints = "native",
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -420,8 +416,7 @@ async def post(
         A ``Dict`` if ``return_format`` is ``"native"``, otherwise ``str`` or ``bytes``
         depending on if the return format is UTF-8 or something else.
     """
-    if not ignore_statuses:
-        ignore_statuses = []
+    
     if not params:
         params = {}
 
@@ -441,7 +436,7 @@ async def post(
 async def patch(
     path: str,
     return_format: native_return_types_hints = "native",
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -453,7 +448,7 @@ async def patch(
 async def patch(
     path: str,
     return_format: bytes_return_types_hints,
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -465,7 +460,7 @@ async def patch(
 async def patch(
     path: str,
     return_format: str_return_types_hints,
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -476,7 +471,7 @@ async def patch(
 async def patch(
     path: str,
     return_format: all_return_types_hints = "native",
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     json_data: Optional[Dict] = None,
     key: Optional[str] = None,
@@ -506,8 +501,6 @@ async def patch(
         depending on if the return format is UTF-8 or something else.
     """
 
-    if not ignore_statuses:
-        ignore_statuses = []
     if not params:
         params = {}
 
@@ -527,7 +520,7 @@ async def patch(
 async def delete(
     path: str,
     return_format: native_return_types_hints = "native",
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     key: Optional[str] = None,
 ) -> Dict:
@@ -538,7 +531,7 @@ async def delete(
 async def delete(
     path: str,
     return_format: bytes_return_types_hints,
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     key: Optional[str] = None,
 ) -> bytes:
@@ -549,7 +542,7 @@ async def delete(
 async def delete(
     path: str,
     return_format: str_return_types_hints,
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     key: Optional[str] = None,
 ) -> str:
@@ -559,7 +552,7 @@ async def delete(
 async def delete(
     path: str,
     return_format: all_return_types_hints = "native",
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     key: Optional[str] = None,
 ) -> Union[Dict, str, bytes]:
@@ -586,8 +579,7 @@ async def delete(
         depending on if the return format is UTF-8 or something else.
     """
 
-    if not ignore_statuses:
-        ignore_statuses = []
+    
     if not params:
         params = {}
 
@@ -606,7 +598,7 @@ async def getiter(
     path: str,
     limit: int = 100,
     sort: str = "created",
-    ignore_statuses: Optional[List] = None,
+    ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
     params: Optional[Dict] = None,
     key: Optional[str] = None,
 ) -> AsyncIterable[Dict]:
@@ -635,8 +627,6 @@ async def getiter(
         An iterable of dicts. Return format cannot be specified.
     """
 
-    if not ignore_statuses:
-        ignore_statuses = []
     if not params:
         params = {}
     request_headers = {}

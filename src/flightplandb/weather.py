@@ -1,5 +1,5 @@
 """Weather. I mean, how much is there to say?"""
-from typing import Optional
+from typing import Optional, Dict
 
 from flightplandb import internal
 from flightplandb.datatypes import Weather
@@ -27,4 +27,8 @@ async def fetch(icao: str, key: Optional[str] = None) -> Weather:
         No airport with the specified ICAO code was found.
     """
 
-    return Weather(**(await internal.get(path=f"/weather/{icao}", key=key)))
+    weather_response = await internal.get(path=f"/weather/{icao}", key=key)
+    if isinstance(weather_response, Dict):
+        return Weather(**weather_response)
+    else:
+        raise ValueError("could not convert response to a Weather datatype; it is not a valid mapping")

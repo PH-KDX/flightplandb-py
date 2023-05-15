@@ -25,6 +25,7 @@ from typing import (
     Any,
     AsyncIterable,
     Dict,
+    List,
     Literal,
     Optional,
     Tuple,
@@ -45,15 +46,15 @@ from flightplandb.exceptions import status_handler
 url_base: str = "https://api.flightplandatabase.com"
 
 
-def _auth_str(key):
+def _auth_str(key: str) -> str:
     """Returns a API auth string."""
 
     if isinstance(key, str):
-        key = key.encode("latin1")
+        encoded_key = key.encode("latin1")
     else:
         raise ValueError("API key must be a string!")
 
-    authstr = "Basic " + (b64encode(key + b":").strip().decode())
+    authstr = "Basic " + (b64encode(encoded_key + b":").strip().decode())
 
     return authstr
 
@@ -116,10 +117,10 @@ async def request(
     path: str,
     return_format: native_return_types_hints = "native",
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
-) -> Tuple[CIMultiDictProxy[str], Dict]:
+) -> Tuple[CIMultiDictProxy[str], Dict[str, Any]]:
     ...
 
 
@@ -129,8 +130,8 @@ async def request(
     path: str,
     return_format: bytes_return_types_hints,
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
 ) -> Tuple[CIMultiDictProxy[str], bytes]:
     ...
@@ -142,8 +143,8 @@ async def request(
     path: str,
     return_format: str_return_types_hints,
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
 ) -> Tuple[CIMultiDictProxy[str], str]:
     ...
@@ -154,8 +155,8 @@ async def request(
     path: str,
     return_format: all_return_types_hints = "native",
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
 ) -> Tuple[CIMultiDictProxy[str], Union[Any, bytes, str]]:
     """General HTTP requests function for non-paginated results.
@@ -168,7 +169,7 @@ async def request(
         The endpoint's path to which the request is being made
     return_format : `str`, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : `List`, optional
+    ignore_statuses : `Tuple`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
     params : `Dict`, optional
@@ -274,9 +275,9 @@ async def get(
     path: str,
     return_format: native_return_types_hints = "native",
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
-) -> Dict:
+) -> Union[Dict[str, Any], List[Any]]:
     ...
 
 
@@ -285,7 +286,7 @@ async def get(
     path: str,
     return_format: bytes_return_types_hints,
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
 ) -> bytes:
     ...
@@ -296,7 +297,7 @@ async def get(
     path: str,
     return_format: str_return_types_hints,
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
 ) -> str:
     ...
@@ -306,9 +307,9 @@ async def get(
     path: str,
     return_format: all_return_types_hints = "native",
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
-) -> Union[Dict, str, bytes]:
+) -> Union[Dict[str, Any], List[Any], str, bytes]:
     """Calls :meth:`request()` for get requests.
 
     Parameters
@@ -317,7 +318,7 @@ async def get(
         The endpoint's path to which the request is being made
     return_format : `str`, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : `List`, optional
+    ignore_statuses : `Tuple`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
     params : `Dict`, optional
@@ -351,10 +352,10 @@ async def post(
     path: str,
     return_format: native_return_types_hints = "native",
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
-) -> Dict:
+) -> Dict[str, Any]:
     ...
 
 
@@ -363,8 +364,8 @@ async def post(
     path: str,
     return_format: bytes_return_types_hints,
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
 ) -> bytes:
     ...
@@ -375,8 +376,8 @@ async def post(
     path: str,
     return_format: str_return_types_hints,
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
 ) -> str:
     ...
@@ -386,10 +387,10 @@ async def post(
     path: str,
     return_format: all_return_types_hints = "native",
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
-) -> Union[Dict, str, bytes]:
+) -> Union[Dict[str, Any], str, bytes]:
     """Calls :meth:`request()` for post requests.
 
     Parameters
@@ -398,7 +399,7 @@ async def post(
         The endpoint's path to which the request is being made
     return_format : `str`, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : `List`, optional
+    ignore_statuses : `Tuple`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
     params : `Dict`, optional
@@ -435,10 +436,10 @@ async def patch(
     path: str,
     return_format: native_return_types_hints = "native",
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
-) -> Dict:
+) -> Dict[str, Any]:
     ...
 
 
@@ -447,8 +448,8 @@ async def patch(
     path: str,
     return_format: bytes_return_types_hints,
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
 ) -> bytes:
     ...
@@ -459,8 +460,8 @@ async def patch(
     path: str,
     return_format: str_return_types_hints,
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
 ) -> str:
     ...
@@ -470,10 +471,10 @@ async def patch(
     path: str,
     return_format: all_return_types_hints = "native",
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
-    json_data: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
-) -> Union[Dict, str, bytes]:
+) -> Union[Dict[str, Any], str, bytes]:
     """Calls :meth:`request()` for patch requests.
 
     Parameters
@@ -482,7 +483,7 @@ async def patch(
         The endpoint's path to which the request is being made
     return_format : `str`, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : `List`, optional
+    ignore_statuses : `Tuple`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
     params : `Dict`, optional
@@ -519,9 +520,9 @@ async def delete(
     path: str,
     return_format: native_return_types_hints = "native",
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
-) -> Dict:
+) -> Dict[str, Any]:
     ...
 
 
@@ -530,7 +531,7 @@ async def delete(
     path: str,
     return_format: bytes_return_types_hints,
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
 ) -> bytes:
     ...
@@ -541,7 +542,7 @@ async def delete(
     path: str,
     return_format: str_return_types_hints,
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
 ) -> str:
     ...
@@ -551,9 +552,9 @@ async def delete(
     path: str,
     return_format: all_return_types_hints = "native",
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
-) -> Union[Dict, str, bytes]:
+) -> Union[Dict[str, Any], str, bytes]:
     """Calls :meth:`request()` for delete requests.
 
     Parameters
@@ -562,7 +563,7 @@ async def delete(
         The endpoint's path to which the request is being made
     return_format : `str`, optional
         The API response format, defaults to ``"native"``
-    ignore_statuses : `List`, optional
+    ignore_statuses : `Tuple`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
     params : `Dict`, optional
@@ -596,9 +597,9 @@ async def getiter(
     limit: int = 100,
     sort: str = "created",
     ignore_statuses: Union[Tuple[int], Tuple[()]] = (),
-    params: Optional[Dict] = None,
+    params: Optional[Dict[str, Any]] = None,
     key: Optional[str] = None,
-) -> AsyncIterable[Dict]:
+) -> AsyncIterable[Dict[str, Any]]:
     """Get :meth:`request()` for paginated results.
 
     Parameters
@@ -610,7 +611,7 @@ async def getiter(
     sort : `str`, optional
         Sort order to return results in. Valid sort orders are
         created, updated, popularity, and distance
-    ignore_statuses : `List`, optional
+    ignore_statuses : `Tuple`, optional
         Statuses (together with 200 OK) which don't
         raise an HTTPError, defaults to None
     params : `Dict`, optional

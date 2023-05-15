@@ -1,5 +1,5 @@
 """Flightplan-related commands."""
-from typing import AsyncIterable, Dict, Optional, Union, overload
+from typing import AsyncIterable, Dict, Optional, Union, overload, Any
 
 from flightplandb import internal
 from flightplandb.datatypes import GenerateQuery, Plan, PlanQuery, StatusResponse
@@ -34,7 +34,7 @@ async def fetch(
     id_: int,
     return_format: internal.all_return_types_hints = "native",
     key: Optional[str] = None,
-) -> Union[Plan, Dict, str, bytes]:
+) -> Union[Plan, Dict[str, Any], str, bytes]:
     # Underscore for id_ must be escaped as id\_ so sphinx shows the _.
     # However, this would raise W605. To fix this, a raw string is used.
     r"""
@@ -73,8 +73,10 @@ async def fetch(
 
     if isinstance(request, dict) and return_format in internal.native_return_values:
         return Plan(**request)
-    else:
+    elif isinstance(request, (dict, str, bytes)):
         return request
+    else:
+        raise ValueError(f"Expected dict, str, or bytes response, got {type(request)}")
 
 
 @overload
@@ -108,7 +110,7 @@ async def create(
     plan: Plan,
     return_format: internal.all_return_types_hints = "native",
     key: Optional[str] = None,
-) -> Union[Plan, Dict, bytes, str]:
+) -> Union[Plan, Dict[str, Any], bytes, str]:
     """Creates a new flight plan.
 
     Requires authentication.
@@ -185,7 +187,7 @@ async def edit(
     plan: Plan,
     return_format: internal.all_return_types_hints = "native",
     key: Optional[str] = None,
-) -> Union[Plan, Dict, bytes, str]:
+) -> Union[Plan, Dict[str, Any], bytes, str]:
     """Edits a flight plan linked to your account.
 
     Requires authentication.
@@ -326,8 +328,10 @@ async def has_liked(id_: int, key: Optional[str] = None) -> bool:
     """
 
     resp = await internal.get(path=f"/plan/{id_}/like", ignore_statuses=(404,), key=key)
-    status_response = StatusResponse(**resp)
-    return status_response.message != "Not Found"
+    if isinstance(resp, Dict):
+        return StatusResponse(**resp).message != "Not Found"
+    else:
+        raise ValueError("could not convert response to a StatusResponse datatype; it is not a valid mapping")
 
 
 async def like(id_: int, key: Optional[str] = None) -> StatusResponse:

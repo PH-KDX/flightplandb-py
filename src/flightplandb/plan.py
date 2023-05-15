@@ -1,5 +1,5 @@
 """Flightplan-related commands."""
-from typing import AsyncIterable, Dict, Optional, Union, overload, Any
+from typing import Any, AsyncIterable, Dict, Optional, Union, overload
 
 from flightplandb import internal
 from flightplandb.datatypes import GenerateQuery, Plan, PlanQuery, StatusResponse
@@ -331,7 +331,10 @@ async def has_liked(id_: int, key: Optional[str] = None) -> bool:
     if isinstance(resp, Dict):
         return StatusResponse(**resp).message != "Not Found"
     else:
-        raise ValueError("could not convert response to a StatusResponse datatype; it is not a valid mapping")
+        raise ValueError(
+            "Could not convert response to a StatusResponse datatype; "
+            "it is not a valid mapping"
+        )
 
 
 async def like(id_: int, key: Optional[str] = None) -> StatusResponse:

@@ -1,5 +1,5 @@
 """Weather. I mean, how much is there to say?"""
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 from flightplandb import internal
 from flightplandb.datatypes import Weather
@@ -31,4 +31,7 @@ async def fetch(icao: str, key: Optional[str] = None) -> Weather:
     if isinstance(weather_response, Dict):
         return Weather(**weather_response)
     else:
-        raise ValueError("could not convert response to a Weather datatype; it is not a valid mapping")
+        raise ValueError(
+            "Could not convert response to a Weather datatype; "
+            "it is not a valid mapping"
+        )

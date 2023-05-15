@@ -1,5 +1,5 @@
 """Contains the command for fetching flight plan tags."""
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 from flightplandb import internal
 from flightplandb.datatypes import Tag
@@ -25,5 +25,7 @@ async def fetch(key: Optional[str] = None) -> List[Tag]:
         if isinstance(tag, Dict):
             tags_list.append(Tag(**tag))
         else:
-            raise ValueError(f"could not convert {tag} to a Tag datatype; it is not a valid mapping")
+            raise ValueError(
+                f"could not convert {tag} to a Tag datatype; it is not a valid mapping"
+            )
     return tags_list

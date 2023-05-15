@@ -1,5 +1,5 @@
 """Commands related to registered users."""
-from typing import AsyncIterable, Optional, Dict
+from typing import AsyncIterable, Dict, Optional
 
 from flightplandb import internal
 from flightplandb.datatypes import Plan, User, UserSmall
@@ -30,7 +30,9 @@ async def me(key: Optional[str] = None) -> User:
     if isinstance(resp, Dict):
         return User(**resp)
     else:
-        raise ValueError("could not convert response to a User datatype; it is not a valid mapping")
+        raise ValueError(
+            "could not convert response to a User datatype; it is not a valid mapping"
+        )
 
 
 async def fetch(username: str, key: Optional[str] = None) -> User:
@@ -58,7 +60,9 @@ async def fetch(username: str, key: Optional[str] = None) -> User:
     if isinstance(resp, Dict):
         return User(**resp)
     else:
-        raise ValueError("could not convert response to a User datatype; it is not a valid mapping")
+        raise ValueError(
+            "could not convert response to a User datatype; it is not a valid mapping"
+        )
 
 
 async def plans(

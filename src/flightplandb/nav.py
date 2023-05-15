@@ -1,5 +1,5 @@
 """Commands related to navigation aids and airports."""
-from typing import AsyncIterable, List, Optional, Dict
+from typing import AsyncIterable, Dict, List, Optional
 
 from flightplandb import internal
 from flightplandb.datatypes import Airport, SearchNavaid, Track
@@ -30,7 +30,10 @@ async def airport(icao: str, key: Optional[str] = None) -> Airport:
     if isinstance(resp, Dict):
         return Airport(**resp)
     else:
-        raise ValueError("could not convert response to a Airport datatype; it is not a valid mapping")
+        raise ValueError(
+            "Could not convert response to a Airport datatype; "
+            "it is not a valid mapping"
+        )
 
 
 async def nats(key: Optional[str] = None) -> List[Track]:

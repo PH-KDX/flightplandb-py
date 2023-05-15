@@ -1,5 +1,5 @@
 """These functions return information about the API."""
-from typing import Optional
+from typing import Optional, Dict
 
 from flightplandb import internal
 from flightplandb.datatypes import StatusResponse
@@ -116,7 +116,10 @@ async def ping(key: Optional[str] = None) -> StatusResponse:
     """
 
     resp = await internal.get(path="", key=key)
-    return StatusResponse(**resp)
+    if isinstance(resp, Dict):
+        return StatusResponse(**resp)
+    else:
+        raise ValueError("could not convert response to a StatusResponse datatype; it is not a valid mapping")
 
 
 async def revoke(key: str) -> StatusResponse:
@@ -141,4 +144,7 @@ async def revoke(key: str) -> StatusResponse:
     """
 
     resp = await internal.get(path="/auth/revoke", key=key)
-    return StatusResponse(**resp)
+    if isinstance(resp, Dict):
+        return StatusResponse(**resp)
+    else:
+        raise ValueError("could not convert response to a StatusResponse datatype; it is not a valid mapping")

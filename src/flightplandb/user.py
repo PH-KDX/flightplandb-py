@@ -1,5 +1,5 @@
 """Commands related to registered users."""
-from typing import AsyncIterable, Optional
+from typing import AsyncIterable, Optional, Dict
 
 from flightplandb import internal
 from flightplandb.datatypes import Plan, User, UserSmall
@@ -27,7 +27,10 @@ async def me(key: Optional[str] = None) -> User:
     """
 
     resp = await internal.get(path="/me", key=key)
-    return User(**resp)
+    if isinstance(resp, Dict):
+        return User(**resp)
+    else:
+        raise ValueError("could not convert response to a User datatype; it is not a valid mapping")
 
 
 async def fetch(username: str, key: Optional[str] = None) -> User:
@@ -52,7 +55,10 @@ async def fetch(username: str, key: Optional[str] = None) -> User:
     """
 
     resp = await internal.get(path=f"/user/{username}", key=key)
-    return User(**resp)
+    if isinstance(resp, Dict):
+        return User(**resp)
+    else:
+        raise ValueError("could not convert response to a User datatype; it is not a valid mapping")
 
 
 async def plans(
@@ -115,7 +121,7 @@ async def likes(
 
 
 async def search(
-    username: str, limit=100, key: Optional[str] = None
+    username: str, limit: int = 100, key: Optional[str] = None
 ) -> AsyncIterable[UserSmall]:
     """Searches for users by username. For more detailed info on a
     specific user, use :meth:`fetch`

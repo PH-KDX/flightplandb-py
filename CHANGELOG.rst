@@ -1,6 +1,10 @@
 Changelog
 --------------------
 
+0.8.1
+^^^^^^^^^^^^^^^^^^^^
+This makes the library compatible with mypy strict checking, and slightly cleans up the release workflow.
+
 0.8.0
 ^^^^^^^^^^^^^^^^^^^^
 This makes the entire library compatible with PEP-561, so that it can now be used with a static
@@ -11,7 +15,6 @@ the tags separated by commas and spaces. ``pdf`` is now the only return format w
 
 The changelog has also been updated to include the changes of version 0.5.0 and earlier.
 A pre-commit file has been added to ensure all checks will pass before committing.
-
 
 0.7.2
 ^^^^^^^^^^^^^^^^^^^^

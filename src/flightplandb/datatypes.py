@@ -356,10 +356,10 @@ class Plan:
     cycle: Optional[Cycle] = None
 
     def __post_init__(self) -> None:
-        if self.createdAt and type(self.createdAt) == str:
+        if self.createdAt and isinstance(self.createdAt, str):
             self.createdAt = isoparse(self.createdAt)
 
-        if self.updatedAt and type(self.updatedAt) == str:
+        if self.updatedAt and isinstance(self.updatedAt, str):
             self.updatedAt = isoparse(self.updatedAt)
 
         if self.user and isinstance(self.user, dict):

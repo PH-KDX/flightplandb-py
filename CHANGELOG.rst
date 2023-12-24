@@ -1,6 +1,10 @@
 Changelog
 --------------------
 
+0.8.2
+^^^^^^^^^^^^^^^^^^^^
+This adds support for Python 3.12.
+
 0.8.1
 ^^^^^^^^^^^^^^^^^^^^
 This makes the library compatible with mypy strict checking, and slightly cleans up the release workflow.

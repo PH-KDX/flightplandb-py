@@ -22,5 +22,6 @@ jobs:
         with:
           max-line-length: "88"  # match limit set by black
           args: "--extend-ignore E203"
+          flake8-version: "6.1.0"
       - name: isort
         uses: isort/isort-action@v1

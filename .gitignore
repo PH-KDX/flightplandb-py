@@ -16,6 +16,8 @@ dist
 .python-version
 .docblock.json
 
+.coverage
+
 docs/build
 
 build/

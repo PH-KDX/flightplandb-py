@@ -63,3 +63,9 @@ asyncio_mode = "auto"
 [tool.isort]
 profile = "black"
 line_length = 88
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: not covered",
+    "@overload",
+]

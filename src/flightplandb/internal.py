@@ -40,9 +40,6 @@ from multidict import CIMultiDictProxy
 
 from flightplandb.exceptions import status_handler
 
-# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directive-autoclass
-# https://github.com/python/cpython/blob/main/Lib/random.py#L792
-
 url_base: str = "https://api.flightplandatabase.com"
 
 

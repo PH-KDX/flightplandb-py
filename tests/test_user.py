@@ -243,6 +243,17 @@ async def test_user_plans(patched_internal_getiter):
 
 @pytest.mark.allow_hosts(["127.0.0.1", "::1"])
 @mock.patch("flightplandb.internal.getiter")
+async def test_user_invalid_plan(patched_internal_getiter):
+    patched_internal_getiter.return_value = AsyncIter(["foobar"])
+
+    with pytest.raises(ValueError):
+        [x async for x in flightplandb.user.plans("lemon")]
+    # check that UserAPI method made correct request of FlightPlanDB
+    patched_internal_getiter.assert_called_once_with(path="/user/lemon/plans", sort="created", limit=100, key=None)
+
+
+@pytest.mark.allow_hosts(["127.0.0.1", "::1"])
+@mock.patch("flightplandb.internal.getiter")
 async def test_user_likes(patched_internal_getiter):
     json_response = [
         {
@@ -364,6 +375,17 @@ async def test_user_likes(patched_internal_getiter):
 
 @pytest.mark.allow_hosts(["127.0.0.1", "::1"])
 @mock.patch("flightplandb.internal.getiter")
+async def test_user_invalid_liked_plan(patched_internal_getiter):
+    patched_internal_getiter.return_value = AsyncIter(["foobar"])
+
+    with pytest.raises(ValueError):
+        [x async for x in flightplandb.user.likes("lemon")]
+    # check that UserAPI method made correct request of FlightPlanDB
+    patched_internal_getiter.assert_called_once_with(path="/user/lemon/likes", sort="created", limit=100, key=None)
+
+
+@pytest.mark.allow_hosts(["127.0.0.1", "::1"])
+@mock.patch("flightplandb.internal.getiter")
 async def test_user_search(patched_internal_getiter):
     json_response = [
         {
@@ -421,3 +443,14 @@ async def test_user_search(patched_internal_getiter):
     assert response_list == correct_response_list
     # check that UserAPI method made correct request of FlightPlanDB
     patched_internal_getiter.assert_has_calls(correct_calls)
+
+
+@pytest.mark.allow_hosts(["127.0.0.1", "::1"])
+@mock.patch("flightplandb.internal.getiter")
+async def test_user_invalid_searched_plan(patched_internal_getiter):
+    patched_internal_getiter.return_value = AsyncIter(["foobar"])
+
+    with pytest.raises(ValueError):
+        [x async for x in flightplandb.user.search("lemon")]
+    # check that UserAPI method made correct request of FlightPlanDB
+    patched_internal_getiter.assert_called_once_with(path="/search/users", limit=100, params={"q": "lemon"}, key=None)

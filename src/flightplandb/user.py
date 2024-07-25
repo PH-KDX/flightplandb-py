@@ -91,7 +91,12 @@ async def plans(
     async for i in internal.getiter(
         path=f"/user/{username}/plans", sort=sort, limit=limit, key=key
     ):
-        yield Plan(**i)
+        if isinstance(i, dict):
+            yield Plan(**i)
+        else:
+            raise ValueError(
+                f"could not convert {i} to a Plan datatype; it is not a valid mapping"
+            )
 
 
 async def likes(
@@ -121,7 +126,12 @@ async def likes(
     async for i in internal.getiter(
         path=f"/user/{username}/likes", sort=sort, limit=limit, key=key
     ):
-        yield Plan(**i)
+        if isinstance(i, dict):
+            yield Plan(**i)
+        else:
+            raise ValueError(
+                f"could not convert {i} to a Plan datatype; it is not a valid mapping"
+            )
 
 
 async def search(
@@ -150,4 +160,9 @@ async def search(
     async for i in internal.getiter(
         path="/search/users", limit=limit, params={"q": username}, key=key
     ):
-        yield UserSmall(**i)
+        if isinstance(i, dict):
+            yield UserSmall(**i)
+        else:
+            raise ValueError(
+                f"could not convert {i} to a Plan datatype; it is not a valid mapping"
+            )

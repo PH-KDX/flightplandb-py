@@ -47,3 +47,29 @@ async def test_tags_api(patched_internal_get):
     patched_internal_get.assert_awaited_once_with(path="/tags", key=None)
     # check that TagsAPI method decoded data correctly for given response
     assert response == correct_response
+
+
+@pytest.mark.allow_hosts(["127.0.0.1", "::1"])
+@mock.patch("flightplandb.internal.get")
+async def test_tags_api_invalid_response(patched_internal_get):
+    json_response = 1
+
+    patched_internal_get.return_value = json_response
+
+    with pytest.raises(ValueError):
+        await flightplandb.tags.fetch()
+    # check that UserAPI method made correct request of FlightPlanDB
+    patched_internal_get.assert_awaited_once_with(path="/tags", key=None)
+
+
+@pytest.mark.allow_hosts(["127.0.0.1", "::1"])
+@mock.patch("flightplandb.internal.get")
+async def test_tags_api_invalid_item(patched_internal_get):
+    json_response = [1]
+
+    patched_internal_get.return_value = json_response
+
+    with pytest.raises(ValueError):
+        await flightplandb.tags.fetch()
+    # check that UserAPI method made correct request of FlightPlanDB
+    patched_internal_get.assert_awaited_once_with(path="/tags", key=None)

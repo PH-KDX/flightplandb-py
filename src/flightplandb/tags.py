@@ -21,7 +21,12 @@ async def fetch(key: Optional[str] = None) -> List[Tag]:
     """
 
     tags_list = []
-    for tag in await internal.get(path="/tags", key=key):
+    response = await internal.get(path="/tags", key=key)
+    if not isinstance(response, list):
+        raise ValueError(
+            f"could not iterate over {response}; it is not a valid list"
+        )
+    for tag in response:
         if isinstance(tag, Dict):
             tags_list.append(Tag(**tag))
         else:

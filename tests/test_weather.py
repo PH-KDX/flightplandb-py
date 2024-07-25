@@ -31,3 +31,16 @@ async def test_weather_api(patched_internal_get):
     patched_internal_get.assert_awaited_once_with(path="/weather/EHAM", key=None)
     # check that TagsAPI method decoded data correctly for given response
     assert response == correct_response
+
+
+@pytest.mark.allow_hosts(["127.0.0.1", "::1"])
+@mock.patch("flightplandb.internal.get")
+async def test_weather_api_invalid_response(patched_internal_get):
+    json_response = "foobar"
+
+    patched_internal_get.return_value = json_response
+
+    with pytest.raises(ValueError):
+        await flightplandb.weather.fetch("EHAM")
+    # check that TagsAPI method made correct request of FlightPlanDB
+    patched_internal_get.assert_awaited_once_with(path="/weather/EHAM", key=None)

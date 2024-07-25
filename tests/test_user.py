@@ -58,6 +58,19 @@ async def test_self_info(patched_internal_get):
 
 @pytest.mark.allow_hosts(["127.0.0.1", "::1"])
 @mock.patch("flightplandb.internal.get")
+async def test_self_info_invalid_response(patched_internal_get):
+    json_response = 1
+
+    patched_internal_get.return_value = json_response
+
+    with pytest.raises(ValueError):
+        await flightplandb.user.me()
+    # check that UserAPI method made correct request of FlightPlanDB
+    patched_internal_get.assert_awaited_once_with(path="/me", key=None)
+
+
+@pytest.mark.allow_hosts(["127.0.0.1", "::1"])
+@mock.patch("flightplandb.internal.get")
 async def test_user_info(patched_internal_get):
     json_response = {
         "id": 1,
@@ -90,6 +103,19 @@ async def test_user_info(patched_internal_get):
     response = await flightplandb.user.fetch("lemon")
     # check that UserAPI method decoded data correctly for given response
     assert response == correct_response
+    # check that UserAPI method made correct request of FlightPlanDB
+    patched_internal_get.assert_awaited_once_with(path="/user/lemon", key=None)
+
+
+@pytest.mark.allow_hosts(["127.0.0.1", "::1"])
+@mock.patch("flightplandb.internal.get")
+async def test_user_info_invalid_response(patched_internal_get):
+    json_response = 1
+
+    patched_internal_get.return_value = json_response
+
+    with pytest.raises(ValueError):
+        await flightplandb.user.fetch("lemon")
     # check that UserAPI method made correct request of FlightPlanDB
     patched_internal_get.assert_awaited_once_with(path="/user/lemon", key=None)
 
